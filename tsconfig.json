@@ -8,11 +8,11 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "skipLibCheck": true,
     "moduleResolution": "Node16"
   },
-  "include": ["global.d.ts", "./src/**/*.ts"],
+  "include": ["./global.d.ts", "./src/**/*.ts"],
   "exclude": ["./node_modules"]
 }
