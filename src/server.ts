@@ -2,7 +2,7 @@ import app from './express'
 import config from './config/config'
 import mongoose from 'mongoose'
 
-const connectDb = async () => {
+export const connectDb = async () => {
   try {
     await mongoose.connect(config.mongoUri)
   } catch (error) {
