@@ -4,11 +4,22 @@
   "description": "",
   "main": "src/server.ts",
   "scripts": {
-    "test": "cross-env NODE_ENV=test ts-mocha 'test/**/*.test.ts' --exit",
+    "test:unit": "cross-env NODE_ENV=test ts-mocha 'test/unit/*.ts' --exit",
+    "test:integration": "cross-env NODE_ENV=test ts-mocha 'test/integration/*.ts' --exit",
+    "test": "npm run test:unit && npm run test:integration",
+    "coverage": "nyc --reporter=text npm test",
     "build": "tsc",
     "dev": "nodemon --watch src/server.ts --files",
     "start": "node dist/server.js",
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts"
+  },
+  "nyc": {
+    "exclude": [
+      "src/express.ts",
+      "src/server.ts",
+      "src/config",
+      "test"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -35,6 +46,8 @@
     "@types/lodash": "^4.14.202",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.10.4",
+    "@types/sinon": "^17.0.2",
+    "@types/sinon-test": "^2.4.6",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
     "chai": "^4.3.10",
@@ -45,7 +58,10 @@
     "eslint-plugin-prettier": "^5.0.1",
     "mocha": "^10.2.0",
     "nodemon": "^3.0.2",
+    "nyc": "^15.1.0",
     "prettier": "3.1.1",
+    "sinon": "^17.0.1",
+    "sinon-test": "^3.1.5",
     "ts-mocha": "^10.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
