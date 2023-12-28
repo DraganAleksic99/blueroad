@@ -4,6 +4,9 @@ declare global {
   namespace Express {
     export interface Request {
       profile: IUserDocument
+      auth: {
+        _id: string
+      }
     }
   }
 }

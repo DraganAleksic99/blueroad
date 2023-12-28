@@ -1,7 +1,7 @@
 import { Document, Schema, model } from 'mongoose'
 import bcrypt from 'bcrypt'
 
-export interface IUser {
+interface IUser {
   name: string
   email: string
   created: Date
@@ -9,11 +9,12 @@ export interface IUser {
   hashed_password: string
   salt: string
   _password: string
+  authenticate: (password: string) => boolean
 }
 
 export interface IUserDocument extends IUser, Document {}
 
-const UserSchema = new Schema<IUser & Document>({
+const UserSchema = new Schema<IUserDocument>({
   name: {
     type: String,
     trim: true,
@@ -49,7 +50,7 @@ UserSchema.virtual('password')
   })
 
 UserSchema.methods = {
-  authenticate: function (password) {
+  authenticate: function (password: string) {
     return bcrypt.hashSync(password, this.salt) === this.hashed_password
   }
 }
@@ -63,4 +64,4 @@ UserSchema.path('hashed_password').validate(function () {
   }
 }, undefined)
 
-export default model<IUser & Document>('User', UserSchema)
+export default model<IUserDocument>('User', UserSchema)
