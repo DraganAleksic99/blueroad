@@ -13,4 +13,7 @@ router
 
 router.param('userId', userCtrl.userById)
 
+router.route('/api/users/photo/:userId').get(userCtrl.photo, userCtrl.defaultPhoto)
+router.route('/api/users/defaultPhoto').get(userCtrl.defaultPhoto)
+
 export default router

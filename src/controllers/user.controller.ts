@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
-import User from '../models/user.model'
 import extend from 'lodash/extend'
+import formidable from 'formidable'
+import fs from 'fs'
+import path from 'path'
+import User from '../models/user.model'
 import errorHandler from '../utils/dbErrorHandler'
 
 const create = async (req: Request, res: Response) => {
@@ -19,7 +22,7 @@ const create = async (req: Request, res: Response) => {
 
 const list = async (req: Request, res: Response) => {
   try {
-    const users = await User.find().select('name email created updated')
+    const users = await User.find().select('name email created updated photo')
     res.json(users)
   } catch (err) {
     return res.status(400).json({
@@ -52,19 +55,40 @@ const read = (req: Request, res: Response) => {
 }
 
 const update = async (req: Request, res: Response) => {
-  try {
+  const form = formidable({ keepExtensions: true })
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(400).json({
+        error: 'Photo could not be uploaded'
+      })
+    }
     let user = req.profile
-    user = extend(user, req.body)
-    user.updated = new Date()
-    await user.save()
-    user.hashed_password = undefined
-    user.salt = undefined
-    res.json(user)
-  } catch (err) {
-    return res.status(400).json({
-      error: errorHandler.getErrorMessage(err)
+    user = extend(user, {
+      name: fields.name?.toString() || '',
+      email: fields.email?.toString() || '',
+      password: fields.password?.toString() || '',
+      about: fields.about?.toString() || ''
     })
-  }
+    user.updated = Date.now()
+    if (files.photo) {
+      user = extend(user, {
+        photo: {
+          data: fs.readFileSync(files.photo[0].filepath),
+          contentType: files.photo[0].mimetype
+        }
+      })
+    }
+    try {
+      await user.save()
+      user.hashed_password = undefined
+      user.salt = undefined
+      res.json(user)
+    } catch (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }
+  })
 }
 
 const remove = async (req: Request, res: Response) => {
@@ -81,11 +105,27 @@ const remove = async (req: Request, res: Response) => {
   }
 }
 
+const photo = async (req: Request, res: Response, next: NextFunction) => {
+  if (req.profile.photo.data) {
+    res.set('Cross-Origin-Resource-Policy', 'false')
+    res.set('Content-Type', req.profile.photo.contentType)
+    return res.send(req.profile.photo.data)
+  }
+  next()
+}
+
+const defaultPhoto = (req: Request, res: Response) => {
+  res.set('Cross-Origin-Resource-Policy', 'false')
+  return res.sendFile(path.join(__dirname, '../images/user-profile-default.png'))
+}
+
 export default {
   create,
   list,
   update,
   userById,
   read,
-  remove
+  remove,
+  photo,
+  defaultPhoto
 }

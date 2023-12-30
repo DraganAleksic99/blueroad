@@ -191,7 +191,10 @@ describe('User APIs', () => {
           .request(app)
           .put('/api/users/' + user.id)
           .set('Authorization', 'Bearer ' + token)
-          .send({ name: 'changed', email: 'changed@test.com', password: 'changed' })
+          .set('Content-Type', 'multipart/form-data')
+          .field('name', 'changed')
+          .field('email', 'changed@test.com')
+          .field('password', 'changed')
           .end((err, res) => {
             expect(res).to.have.status(200)
             expect(res.body).to.be.an('Object')
