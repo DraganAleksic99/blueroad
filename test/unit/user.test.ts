@@ -82,7 +82,13 @@ describe('User Controller Tests', () => {
         const nextSpy = sinon.spy()
         const stub = sinon.stub(userModel, 'findById')
 
-        stub.withArgs(req.params.id).returns(req.body)
+        stub.withArgs(req.params.id).returns({
+          populate: sinon.stub().returns({
+            populate: sinon.stub().returns({
+              exec: sinon.stub().returns({ ...req.body, following: [], followers: [] })
+            })
+          })
+        })
 
         await userController.userById(req, res, nextSpy, req.params.id)
 
@@ -101,7 +107,13 @@ describe('User Controller Tests', () => {
         const nextSpy = sinon.spy()
         const stub = sinon.stub(userModel, 'findById')
 
-        stub.withArgs(req.params.id).returns(null)
+        stub.withArgs(req.params.id).returns({
+          populate: sinon.stub().returns({
+            populate: sinon.stub().returns({
+              exec: sinon.stub().returns(null)
+            })
+          })
+        })
 
         await userController.userById(req, res, nextSpy, req.params.id)
 

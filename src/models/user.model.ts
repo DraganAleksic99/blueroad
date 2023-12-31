@@ -9,6 +9,8 @@ interface IUser {
     data: Buffer
     contentType: string
   }
+  following: []
+  followers: []
   created: Date
   updated: number
   hashed_password: string
@@ -40,6 +42,8 @@ const UserSchema = new Schema<IUserDocument>({
     data: Buffer,
     contentType: String
   },
+  following: [{ type: Schema.ObjectId, ref: 'User' }],
+  followers: [{ type: Schema.ObjectId, ref: 'User' }],
   created: {
     type: Date,
     default: Date.now()
