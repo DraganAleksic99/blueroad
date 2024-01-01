@@ -14,11 +14,13 @@ router
 router.param('userId', userCtrl.userById)
 
 router.route('/api/users/photo/:userId').get(userCtrl.photo, userCtrl.defaultPhoto)
-router.route('/api/users/defaultPhoto').get(userCtrl.defaultPhoto)
+router.route('/api/defaultPhoto').get(userCtrl.defaultPhoto)
 
 router.route('/api/follow').put(authCtrl.requireSignIn, userCtrl.addFollowing, userCtrl.addFollower)
 router
   .route('/api/unfollow')
   .put(authCtrl.requireSignIn, userCtrl.removeFollowing, userCtrl.removeFollower)
+
+router.route('/api/users/findpeople/:userId').get(authCtrl.requireSignIn, userCtrl.findPeople)
 
 export default router
