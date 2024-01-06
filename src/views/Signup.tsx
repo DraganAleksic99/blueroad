@@ -23,9 +23,11 @@ export default function Signup() {
     open: false,
     error: ''
   })
+
   const handleChange = name => event => {
     setValues({ ...values, [name]: event.target.value })
   }
+
   const clickSubmit = () => {
     const user = {
       name: values.name || undefined,
@@ -42,7 +44,9 @@ export default function Signup() {
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div
+      style={{ height: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    >
       <Card>
         <CardContent>
           <Typography variant="h6">Sign Up</Typography>

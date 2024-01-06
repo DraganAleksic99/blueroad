@@ -9,7 +9,8 @@ import {
   Button,
   IconButton,
   Snackbar,
-  Typography
+  Typography,
+  useTheme
 } from '@mui/material'
 import { Visibility as VisibilityIcon } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
@@ -20,6 +21,7 @@ import { findPeople } from '../services/userService'
 const baseUrl = 'http://localhost:3500'
 
 export default function FindPeople() {
+  const theme = useTheme()
   const [users, setUsers] = useState([])
   const [values, setValues] = useState({
     open: false,
@@ -87,22 +89,25 @@ export default function FindPeople() {
 
   return (
     <List>
-      <Typography variant="h6">Who to follow</Typography>
+      <Typography variant="h5" sx={{ mb: theme.spacing(3) }}>
+        Who to follow
+      </Typography>
       {users.map((item, i) => {
         return (
           <span key={i}>
-            <ListItem>
+            <ListItem sx={{ p: 0, mb: theme.spacing(2) }}>
               <ListItemAvatar>
                 <Avatar src={baseUrl + '/api/users/photo/' + item._id} />
               </ListItemAvatar>
               <ListItemText primary={item.name} />
-              <ListItemSecondaryAction>
+              <ListItemSecondaryAction sx={{ right: 0 }}>
                 <Link to={'/user/' + item._id}>
                   <IconButton color="secondary">
                     <VisibilityIcon />
                   </IconButton>
                 </Link>
                 <Button
+                  sx={{ ml: theme.spacing(2) }}
                   aria-label="Follow"
                   variant="contained"
                   color="primary"

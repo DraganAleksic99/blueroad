@@ -9,13 +9,15 @@ import {
   TextField,
   CardActions,
   Button,
-  Avatar
+  Avatar,
+  useTheme
 } from '@mui/material'
 import { Person } from '@mui/icons-material'
 
 const baseUrl = 'http://localhost:3500'
 
 export default function EditProfile() {
+  const theme = useTheme()
   const match = useMatch('/user/edit/:userId')
   const user = useLocation().state
   const navigate = useNavigate()
@@ -59,33 +61,46 @@ export default function EditProfile() {
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div
+      style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    >
       <Card>
         <CardContent>
-          <Typography variant="h6">Edit Profile</Typography>
-          <Avatar
-            src={
-              user.photo?.data
-                ? `${baseUrl}/api/users/photo/${user._id}?${new Date().getTime()}`
-                : `${baseUrl}/api/defaultPhoto`
-            }
+          <Typography variant="h6" sx={{ mb: theme.spacing(3) }}>
+            Edit Profile
+          </Typography>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-around',
+              marginBlockEnd: theme.spacing(3)
+            }}
           >
-            <Person />
-          </Avatar>
-          <div>
-            <input
-              accept="image/*"
-              type="file"
-              onChange={handleChange('photo')}
-              style={{ display: 'none' }}
-              id="icon-button-file"
-            />
-            <label htmlFor="icon-button-file">
-              <Button variant="contained" color="primary" component="span">
-                Upload
-              </Button>
-            </label>
-            <span>{values.photo ? values.photo.name : ''}</span>
+            <Avatar
+              component="div"
+              src={
+                user.photo?.data
+                  ? `${baseUrl}/api/users/photo/${user._id}?${new Date().getTime()}`
+                  : `${baseUrl}/api/defaultPhoto`
+              }
+            >
+              <Person />
+            </Avatar>
+            <div>
+              <input
+                accept="image/*"
+                type="file"
+                onChange={handleChange('photo')}
+                style={{ display: 'none' }}
+                id="icon-button-file"
+              />
+              <label htmlFor="icon-button-file">
+                <Button variant="contained" color="primary" component="span">
+                  Upload
+                </Button>
+              </label>
+              <span>{values.photo ? values.photo.name : ''}</span>
+            </div>
           </div>
           <TextField
             id="name"
@@ -129,7 +144,7 @@ export default function EditProfile() {
             </Typography>
           )}
         </CardContent>
-        <CardActions>
+        <CardActions sx={{ ml: theme.spacing(1) }}>
           <Button color="primary" variant="contained" onClick={clickSubmit}>
             Save
           </Button>

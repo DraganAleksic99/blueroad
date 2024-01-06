@@ -34,7 +34,9 @@ export default function Signin() {
     return <Navigate to="/" />
   }
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div
+      style={{ height: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    >
       <Card>
         <CardContent>
           <Typography variant="h6">Sign In</Typography>
