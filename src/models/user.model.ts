@@ -1,7 +1,7 @@
 import { Document, Schema, model } from 'mongoose'
 import bcrypt from 'bcrypt'
 
-interface IUser {
+export interface IUser {
   name: string
   email: string
   about: string
@@ -9,8 +9,8 @@ interface IUser {
     data: Buffer
     contentType: string
   }
-  following: []
-  followers: []
+  following: IUser[]
+  followers: IUser[]
   created: Date
   updated: number
   hashed_password: string
@@ -46,7 +46,7 @@ const UserSchema = new Schema<IUserDocument>({
   followers: [{ type: Schema.ObjectId, ref: 'User' }],
   created: {
     type: Date,
-    default: Date.now()
+    default: Date.now
   },
   updated: Date,
   hashed_password: {
