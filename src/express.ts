@@ -6,6 +6,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import userRoutes from './routes/user.routes'
 import authRoutes from './routes/auth.routes'
+import postRoutes from './routes/post.routes'
 
 const app: Express = express()
 
@@ -23,6 +24,7 @@ app.use(
 
 app.use('/', userRoutes)
 app.use('/', authRoutes)
+app.use('/', postRoutes)
 
 // eslint-disable-next-line
 app.use((err, req: Request, res: Response, next: NextFunction) => {

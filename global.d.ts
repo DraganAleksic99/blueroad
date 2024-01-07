@@ -1,4 +1,5 @@
 import { IUserDocument } from './src/models/user.model'
+import { IPostDocument } from './src/models/post.model'
 
 declare global {
   namespace Express {
@@ -7,6 +8,7 @@ declare global {
       auth: {
         _id: string
       }
+      post: IPostDocument
     }
   }
 }
