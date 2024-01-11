@@ -83,10 +83,34 @@ const postById = async (req: Request, res: Response, next: NextFunction, id: str
   }
 }
 
+const isPoster = (req: Request, res: Response, next: NextFunction) => {
+  const isPoster = req.post && req.auth && req.post.postedBy._id == req.auth._id
+  if (!isPoster) {
+    return res.status(403).json({
+      error: 'User is not authorized'
+    })
+  }
+  next()
+}
+
+const remove = async (req: Request, res: Response) => {
+  try {
+    const post = req.post
+    const deletedPost = await post.deleteOne()
+    return res.json(deletedPost)
+  } catch (err) {
+    return res.status(400).json({
+      error: dbErrorHandler.getErrorMessage(err)
+    })
+  }
+}
+
 export default {
   listNewsFeed,
   listByUser,
   create,
   photo,
-  postById
+  postById,
+  isPoster,
+  remove
 }

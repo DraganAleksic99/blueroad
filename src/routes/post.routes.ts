@@ -9,6 +9,9 @@ router.route('/api/posts/feed/:userId').get(authCtrl.requireSignIn, postCtrl.lis
 router.route('/api/post/by/:userId').get(authCtrl.requireSignIn, postCtrl.listByUser)
 router.route('/api/posts/new/:userId').post(authCtrl.requireSignIn, postCtrl.create)
 router.route('/api/posts/photo/:postId').get(postCtrl.photo)
+router
+  .route('/api/posts/delete/:postId')
+  .delete(authCtrl.requireSignIn, postCtrl.isPoster, postCtrl.remove)
 
 router.param('userId', userCtrl.userById)
 router.param('postId', postCtrl.postById)
