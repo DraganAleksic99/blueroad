@@ -1,10 +1,10 @@
 const baseUrl = 'http://localhost:3500'
 
-type Params = {
+export type Params = {
   userId: string
 }
 
-type Credentials = {
+export type Credentials = {
   t: string
 }
 
