@@ -105,6 +105,36 @@ const remove = async (req: Request, res: Response) => {
   }
 }
 
+const like = async (req: Request, res: Response) => {
+  try {
+    const result = await Post.findByIdAndUpdate(
+      req.body.postId,
+      { $push: { likes: req.body.userId } },
+      { new: true }
+    )
+    res.json(result)
+  } catch (err) {
+    return res.status(400).json({
+      error: dbErrorHandler.getErrorMessage(err)
+    })
+  }
+}
+
+const unlike = async (req: Request, res: Response) => {
+  try {
+    const result = await Post.findByIdAndUpdate(
+      req.body.postId,
+      { $pull: { likes: req.body.userId } },
+      { new: true }
+    )
+    res.json(result)
+  } catch (err) {
+    return res.status(400).json({
+      error: dbErrorHandler.getErrorMessage(err)
+    })
+  }
+}
+
 export default {
   listNewsFeed,
   listByUser,
@@ -112,5 +142,7 @@ export default {
   photo,
   postById,
   isPoster,
-  remove
+  remove,
+  like,
+  unlike
 }
