@@ -5,12 +5,14 @@ import Signup from './views/Signup'
 import Home from './Home'
 import Profile from './views/Profile'
 import EditProfile from './views/EditProfile'
+import NewsFeed from './views/post/NewsFeed'
 
 const MainRouter = () => {
   return (
     <Routes>
       <Route path="/">
         <Route index element={<Home />} />
+        <Route path="/newsfeed" element={<NewsFeed />} />
         <Route path="/users" element={<Users />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
