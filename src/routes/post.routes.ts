@@ -16,6 +16,9 @@ router
 router.route('/api/posts/like').put(authCtrl.requireSignIn, postCtrl.like)
 router.route('/api/posts/unlike').put(authCtrl.requireSignIn, postCtrl.unlike)
 
+router.route('/api/posts/comment/:userId').put(authCtrl.requireSignIn, postCtrl.comment)
+router.route('/api/posts/uncomment').put(authCtrl.requireSignIn, postCtrl.uncomment)
+
 router.param('userId', userCtrl.userById)
 router.param('postId', postCtrl.postById)
 

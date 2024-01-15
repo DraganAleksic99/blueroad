@@ -135,6 +135,46 @@ const unlike = async (req: Request, res: Response) => {
   }
 }
 
+const comment = async (req: Request, res: Response) => {
+  const comment = req.body.comment
+  comment.postedBy = req.profile
+
+  try {
+    const result = await Post.findByIdAndUpdate(
+      req.body.postId,
+      { $push: { comments: comment } },
+      { new: true }
+    )
+      .populate('comments.postedBy', '_id name')
+      .populate('postedBy', '_id name')
+      .exec()
+    res.json(result)
+  } catch (err) {
+    return res.status(400).json({
+      error: dbErrorHandler.getErrorMessage(err)
+    })
+  }
+}
+
+const uncomment = async (req: Request, res: Response) => {
+  const comment = req.body.comment
+  try {
+    const result = await Post.findByIdAndUpdate(
+      req.body.postId,
+      { $pull: { comments: { _id: comment._id } } },
+      { new: true }
+    )
+      .populate('comments.postedBy', '_id name')
+      .populate('postedBy', '_id name')
+      .exec()
+    res.json(result)
+  } catch (err) {
+    return res.status(400).json({
+      error: dbErrorHandler.getErrorMessage(err)
+    })
+  }
+}
+
 export default {
   listNewsFeed,
   listByUser,
@@ -144,5 +184,7 @@ export default {
   isPoster,
   remove,
   like,
-  unlike
+  unlike,
+  comment,
+  uncomment
 }
