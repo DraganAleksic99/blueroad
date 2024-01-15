@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { AppBar, Typography, Tabs, Tab } from '@mui/material'
 import FollowGrid from '../components/FollowGrid'
-// import PostList from './../post/PostList'
+import PostList from './post/PostList'
 import { User } from './Profile'
+import { TPost } from './post/NewsFeed'
 
 type Props = {
   user: User | Record<string, never>
+  posts: TPost[]
+  onRemove: (post: TPost) => void
 }
 
-export default function ProfileTabs({ user }: Props) {
+export default function ProfileTabs({ user, posts, onRemove }: Props) {
   const [tab, setTab] = useState(0)
 
   const handleTabChange = (event, value: number) => {
@@ -30,7 +33,11 @@ export default function ProfileTabs({ user }: Props) {
           <Tab label="Followers" />
         </Tabs>
       </AppBar>
-      {/* {tab === 0 && <TabContainer><PostList removeUpdate={props.removePostUpdate} posts={props.posts}/></TabContainer>} */}
+      {tab === 0 && (
+        <TabContainer>
+          <PostList removePost={onRemove} posts={posts} />
+        </TabContainer>
+      )}
       {tab === 1 && (
         <TabContainer>
           <FollowGrid users={user.following} />
