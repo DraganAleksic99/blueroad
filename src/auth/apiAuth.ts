@@ -3,6 +3,7 @@ const baseUrl = 'https://social-media-app-e2ia.onrender.com'
 const signin = async user => {
   try {
     const response = await fetch(baseUrl + '/auth/signin/', {
+      mode: 'no-cors',
       method: 'POST',
       headers: {
         Accept: 'application/json',
