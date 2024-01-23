@@ -17,8 +17,7 @@ app.use(compress())
 app.use(helmet())
 app.use(
   cors({
-    credentials: true,
-    origin: 'https://65b01ecf02946231e0b13369--dreamy-malabi-3ff075.netlify.app'
+    credentials: true
   })
 )
 
