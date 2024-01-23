@@ -1,7 +1,7 @@
 import { Avatar, Typography, ImageList, ImageListItem } from '@mui/material'
 import { Link } from 'react-router-dom'
 
-const baseUrl = 'http://localhost:3500'
+const baseUrl = 'https://social-media-app-e2ia.onrender.com'
 
 export default function FollowGrid({ users }) {
   return (

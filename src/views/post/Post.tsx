@@ -28,7 +28,7 @@ type Props = {
   onRemove: (post: TPost) => void
 }
 
-const baseUrl = 'http://localhost:3500'
+const baseUrl = 'https://social-media-app-e2ia.onrender.com'
 
 export default function Post({ post, onRemove }: Props) {
   const theme = useTheme()

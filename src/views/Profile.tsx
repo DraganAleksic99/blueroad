@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react'
-import auth from '../auth/authHelper'
-import { read } from '../services/userService'
 import { Navigate } from 'react-router'
 import { Link, useMatch } from 'react-router-dom'
 import {
@@ -13,14 +11,20 @@ import {
   ListItemText,
   Divider,
   ListItemSecondaryAction,
-  IconButton
+  IconButton,
+  useTheme
 } from '@mui/material'
 import { Person, Edit } from '@mui/icons-material'
 import DeleteUser from './DeleteUser'
 import FollowProfileButton from '../components/FollowProfileButton'
+import { read } from '../services/userService'
+import { loadPosts } from '../services/postService'
+import auth from '../auth/authHelper'
+import MainLayout from '../layouts/MainLayout'
 import ProfileTabs from './ProfileTabs'
+import { TPost } from './post/NewsFeed'
 
-const baseUrl = 'http://localhost:3500'
+const baseUrl = 'https://social-media-app-e2ia.onrender.com'
 
 export type User = {
   _id: string
@@ -37,8 +41,10 @@ export type User = {
 }
 
 export default function Profile() {
+  const theme = useTheme()
   const match = useMatch('/user/:userId')
   const [user, setUser] = useState<User | Record<string, never>>({})
+  const [posts, setPosts] = useState<TPost[]>([])
   const [redirectToLogin, setRedirectToLogin] = useState(false)
   const [following, setFollowing] = useState(false)
 
@@ -60,6 +66,17 @@ export default function Profile() {
     // }
   }, [match.params.userId])
 
+  useEffect(() => {
+    const jwt = auth.isAuthenticated()
+    loadPosts({ userId: user._id }, { t: jwt.token }).then(data => {
+      if (data && data.error) {
+        console.log(data.error)
+      } else {
+        setPosts(data)
+      }
+    })
+  }, [user])
+
   if (redirectToLogin) {
     return <Navigate to="/signin" />
   }
@@ -80,45 +97,56 @@ export default function Profile() {
     })
   }
 
+  const removePost = (post: TPost) => {
+    const updatedPosts = [...posts]
+    const index = updatedPosts.indexOf(post)
+    updatedPosts.splice(index, 1)
+    setPosts(updatedPosts)
+  }
+
   const photoUrl = user.photo?.data
     ? `${baseUrl}/api/users/photo/${user._id}?${new Date().getTime()}`
     : `${baseUrl}/api/defaultPhoto`
 
   return (
     <Paper elevation={4}>
-      <Typography variant="h6">Profile</Typography>
-      <List dense>
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar src={photoUrl}>
-              <Person />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary={user.name} secondary={user.email} />
-          {auth.isAuthenticated().user && auth.isAuthenticated().user._id == user._id ? (
-            <ListItemSecondaryAction>
-              <Link to={'/user/edit/' + user._id} state={user}>
-                <IconButton aria-label="Edit" color="primary">
-                  <Edit />
-                </IconButton>
-              </Link>
-              <DeleteUser userId={user._id} />
-            </ListItemSecondaryAction>
-          ) : (
-            <ListItemSecondaryAction>
-              <FollowProfileButton following={following} onButtonClick={clickFollowButton} />
-            </ListItemSecondaryAction>
-          )}
-        </ListItem>
-        <ListItem>
-          <ListItemText primary={user.about} />
-        </ListItem>
-        <Divider />
-        <ListItem>
-          <ListItemText primary={'Joined: ' + new Date(user.created).toDateString()} />
-        </ListItem>
-      </List>
-      <ProfileTabs user={user} />
+      <MainLayout>
+        <Typography variant="h5" sx={{ mb: theme.spacing(2) }}>
+          Profile
+        </Typography>
+        <List dense>
+          <ListItem>
+            <ListItemAvatar>
+              <Avatar src={photoUrl}>
+                <Person />
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={user.name} secondary={user.email} />
+            {auth.isAuthenticated().user && auth.isAuthenticated().user._id == user._id ? (
+              <ListItemSecondaryAction>
+                <Link to={'/user/edit/' + user._id} state={user}>
+                  <IconButton aria-label="Edit" color="primary">
+                    <Edit />
+                  </IconButton>
+                </Link>
+                <DeleteUser userId={user._id} />
+              </ListItemSecondaryAction>
+            ) : (
+              <ListItemSecondaryAction>
+                <FollowProfileButton following={following} onButtonClick={clickFollowButton} />
+              </ListItemSecondaryAction>
+            )}
+          </ListItem>
+          <ListItem>
+            <ListItemText primary={user.about} />
+          </ListItem>
+          <Divider />
+          <ListItem>
+            <ListItemText primary={'Joined: ' + new Date(user.created).toDateString()} />
+          </ListItem>
+        </List>
+        <ProfileTabs onRemove={removePost} posts={posts} user={user} />
+      </MainLayout>
     </Paper>
   )
 }

@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:3500'
+const baseUrl = 'https://social-media-app-e2ia.onrender.com'
 
 export type Params = {
   userId: string

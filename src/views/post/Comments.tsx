@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom'
 import { comment, uncomment } from '../../services/postService'
 import auth from '../../auth/authHelper'
 
-const baseUrl = 'http://localhost:3500'
+const baseUrl = 'https://social-media-app-e2ia.onrender.com'
 
 export default function Comments({ postId, updateComments, comments }) {
   const theme = useTheme()

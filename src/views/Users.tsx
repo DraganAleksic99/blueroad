@@ -16,7 +16,7 @@ import { Link } from 'react-router-dom'
 import { list } from '../services/userService'
 import MainLayout from '../layouts/MainLayout'
 
-const baseUrl = 'http://localhost:3500'
+const baseUrl = 'https://social-media-app-e2ia.onrender.com'
 
 export default function Users() {
   const theme = useTheme()
