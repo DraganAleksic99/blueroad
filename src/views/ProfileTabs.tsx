@@ -14,7 +14,7 @@ type Props = {
 export default function ProfileTabs({ user, posts, onRemove }: Props) {
   const [tab, setTab] = useState(0)
 
-  const handleTabChange = (event, value: number) => {
+  const handleTabChange = (_event, value: number) => {
     setTab(value)
   }
 
