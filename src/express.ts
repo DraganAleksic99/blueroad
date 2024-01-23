@@ -18,7 +18,7 @@ app.use(helmet())
 app.use(
   cors({
     credentials: true,
-    origin: 'http://localhost:5173'
+    origin: 'https://65b01ecf02946231e0b13369--dreamy-malabi-3ff075.netlify.app'
   })
 )
 
