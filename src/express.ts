@@ -18,7 +18,7 @@ app.use(helmet())
 app.use(
   cors({
     credentials: true,
-    origin: 'https://master--my-social-media-app1.netlify.app/'
+    origin: 'https://master--my-social-media-app1.netlify.app'
   })
 )
 
