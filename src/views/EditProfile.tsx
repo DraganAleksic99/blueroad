@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 import { Person } from '@mui/icons-material'
 
-const baseUrl = 'https://social-media-app-e2ia.onrender.com'
+const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
 
 export default function EditProfile() {
   const theme = useTheme()

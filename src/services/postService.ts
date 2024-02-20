@@ -6,7 +6,7 @@ type Params = {
   userId?: string
 }
 
-const baseUrl = 'https://social-media-app-e2ia.onrender.com'
+const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
 
 const listNewsFeed = async (params: Params, credentials: Credentials, signal: AbortSignal) => {
   try {

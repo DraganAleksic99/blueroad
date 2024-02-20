@@ -17,7 +17,7 @@ import { createPost } from '../../services/postService'
 import auth from '../../auth/authHelper'
 import { User } from '../Profile'
 
-const baseUrl = 'https://social-media-app-e2ia.onrender.com'
+const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
 
 export default function NewPost({ addPost }) {
   const theme = useTheme()

@@ -18,7 +18,7 @@ import { follow } from '../services/userService'
 import auth from '../auth/authHelper'
 import { findPeople } from '../services/userService'
 
-const baseUrl = 'https://social-media-app-e2ia.onrender.com'
+const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
 
 export default function FindPeople() {
   const theme = useTheme()
