@@ -15,10 +15,20 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(compress())
 app.use(helmet())
+
 app.use(
   cors({
     credentials: true,
-    origin: 'https://master--my-social-media-app1.netlify.app'
+    origin: function (origin, callback) {
+      const allowedOrigins = ['http://localhost:3000', 'https://my-social-media-app1.netlify.app']
+      if (origin) {
+        if (allowedOrigins.includes(origin)) {
+          callback(null, true)
+        } else {
+          callback(new Error('Not allowed by CORS'))
+        }
+      }
+    }
   })
 )
 
