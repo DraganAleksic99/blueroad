@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from 'react'
 import { useMatch, Navigate, useLocation, useNavigate } from 'react-router'
-import auth from '../auth/authHelper'
+import auth, { Jwt } from '../auth/authHelper'
 import { update } from '../services/userService'
 import {
   Card,
@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 import { Person } from '@mui/icons-material'
 
-const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
+const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
 
 export default function EditProfile() {
   const theme = useTheme()
@@ -39,7 +39,7 @@ export default function EditProfile() {
   }
 
   const clickSubmit = () => {
-    const jwt = auth.isAuthenticated()
+    const jwt: Jwt = auth.isAuthenticated()
     const userData = new FormData()
     values.name && userData.append('name', values.name)
     values.email && userData.append('email', values.email)

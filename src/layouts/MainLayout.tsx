@@ -1,9 +1,5 @@
 import * as React from 'react'
 
-type Props = {
-  children: React.ReactNode
-}
-
-export default function MainLayout({ children }: Props) {
+export default function MainLayout({ children }: { children: React.ReactNode }) {
   return <div className="layout sidesheet">{children}</div>
 }

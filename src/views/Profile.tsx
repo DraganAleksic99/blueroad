@@ -19,12 +19,12 @@ import DeleteUser from './DeleteUser'
 import FollowProfileButton from '../components/FollowProfileButton'
 import { read } from '../services/userService'
 import { loadPosts } from '../services/postService'
-import auth from '../auth/authHelper'
+import auth, { Jwt } from '../auth/authHelper'
 import MainLayout from '../layouts/MainLayout'
 import ProfileTabs from './ProfileTabs'
 import { TPost } from './post/NewsFeed'
 
-const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
+const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
 
 export type TUser = {
   _id: string
@@ -51,7 +51,7 @@ export default function Profile() {
   useEffect(() => {
     const abortController = new AbortController()
     const signal = abortController.signal
-    const jwt = auth.isAuthenticated()
+    const jwt: Jwt = auth.isAuthenticated()
 
     read({ userId: match.params.userId }, { t: jwt.token }, signal).then(data => {
       if (data && data.error) {

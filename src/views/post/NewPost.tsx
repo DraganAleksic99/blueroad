@@ -14,12 +14,13 @@ import {
 } from '@mui/material'
 import { PhotoCamera } from '@mui/icons-material'
 import { createPost } from '../../services/postService'
-import auth from '../../auth/authHelper'
+import auth, { Jwt } from '../../auth/authHelper'
 import { TUser } from '../Profile'
+import { TPost } from './NewsFeed'
 
 const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
 
-export default function NewPost({ addPost }) {
+export default function NewPost({ addPost }: { addPost: (post: TPost) => void }) {
   const theme = useTheme()
   const [values, setValues] = useState({
     text: '',
@@ -27,7 +28,7 @@ export default function NewPost({ addPost }) {
     error: ''
   })
   const [user, setUser] = useState<TUser | Record<string, never>>({})
-  const jwt = auth.isAuthenticated()
+  const jwt: Jwt = auth.isAuthenticated()
 
   useEffect(() => {
     setUser(auth.isAuthenticated().user)

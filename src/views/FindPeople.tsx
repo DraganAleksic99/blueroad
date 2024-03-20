@@ -15,11 +15,11 @@ import {
 import { Visibility as VisibilityIcon } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import { follow } from '../services/userService'
-import auth from '../auth/authHelper'
+import auth, { Jwt } from '../auth/authHelper'
 import { findPeople } from '../services/userService'
 import { TUser } from './Profile'
 
-const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
+const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
 
 export default function FindPeople() {
   const theme = useTheme()
@@ -28,7 +28,7 @@ export default function FindPeople() {
     open: false,
     followMessage: ''
   })
-  const jwt = auth.isAuthenticated()
+  const jwt: Jwt = auth.isAuthenticated()
 
   useEffect(() => {
     const abortController = new AbortController()

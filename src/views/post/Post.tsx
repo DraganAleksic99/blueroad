@@ -18,10 +18,9 @@ import {
 } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import { removePost, like, unlike } from '../../services/postService'
-import auth from '../../auth/authHelper'
+import auth, { Jwt } from '../../auth/authHelper'
 import Comments from './Comments'
 import { TPost, TComment } from './NewsFeed'
-import { TUser } from '../Profile'
 
 type Props = {
   post: TPost
@@ -32,9 +31,9 @@ const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app
 
 export default function Post({ post, onRemove }: Props) {
   const theme = useTheme()
-  const jwt = auth.isAuthenticated()
+  const jwt: Jwt = auth.isAuthenticated()
 
-  const checkLike = (likes: TUser[]) => {
+  const checkLike = (likes: string[]) => {
     const match = likes.indexOf(jwt.user._id) !== -1
     return match
   }

@@ -16,7 +16,7 @@ import { Link } from 'react-router-dom'
 import { list } from '../services/userService'
 import MainLayout from '../layouts/MainLayout'
 
-const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
+const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
 
 export default function Users() {
   const theme = useTheme()

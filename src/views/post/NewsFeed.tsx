@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Card, Typography, Divider, useTheme, Grid } from '@mui/material'
 import { listNewsFeed } from '../../services/postService'
-import auth from '../../auth/authHelper'
+import auth, { Jwt } from '../../auth/authHelper'
 import PostList from './PostList'
 import NewPost from './NewPost'
 import { TUser } from '../Profile'
@@ -27,7 +27,7 @@ export type TPost = {
   }
   postedBy: TUser
   created: Date
-  likes: TUser[]
+  likes: string[]
   comments: TComment[]
 }
 
@@ -38,7 +38,7 @@ export default function NewsFeed() {
   useEffect(() => {
     const abortController = new AbortController()
     const signal = abortController.signal
-    const jwt = auth.isAuthenticated()
+    const jwt: Jwt = auth.isAuthenticated()
 
     listNewsFeed(
       {

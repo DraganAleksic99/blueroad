@@ -1,6 +1,12 @@
 import { signout } from './apiAuth'
+import { TUser } from '../views/Profile'
 
-function authenticate(jwt, cb) {
+export type Jwt = {
+  token: string
+  user: TUser
+}
+
+function authenticate(jwt: Jwt, cb) {
   if (typeof window !== 'undefined') {
     sessionStorage.setItem('jwt', JSON.stringify(jwt))
   }

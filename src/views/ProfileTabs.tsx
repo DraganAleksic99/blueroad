@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { SyntheticEvent, useState } from 'react'
 import { AppBar, Typography, Tabs, Tab } from '@mui/material'
 import FollowGrid from '../components/FollowGrid'
 import PostList from './post/PostList'
@@ -14,7 +14,7 @@ type Props = {
 export default function ProfileTabs({ user, posts, onRemove }: Props) {
   const [tab, setTab] = useState(0)
 
-  const handleTabChange = (_event, value: number) => {
+  const handleTabChange = (_event: SyntheticEvent, value: number) => {
     setTab(value)
   }
 

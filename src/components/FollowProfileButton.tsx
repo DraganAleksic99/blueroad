@@ -1,9 +1,17 @@
 import { Button } from '@mui/material'
 import { follow, unfollow } from '../services/userService'
-import auth from '../auth/authHelper'
+import auth, { Jwt } from '../auth/authHelper'
 
-export default function FollowProfileButton({ onButtonClick, following }) {
-  const jwt = auth.isAuthenticated()
+type FollowFunction = typeof follow
+type UnfollowFunction = typeof unfollow
+
+type Props = {
+  onButtonClick: (cb: FollowFunction | UnfollowFunction, jwt: Jwt) => void
+  following: boolean
+}
+
+export default function FollowProfileButton({ onButtonClick, following }: Props) {
+  const jwt: Jwt = auth.isAuthenticated()
 
   const followClick = () => {
     onButtonClick(follow, jwt)

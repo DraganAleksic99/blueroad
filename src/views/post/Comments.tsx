@@ -11,8 +11,10 @@ import {
 import { Delete as DeleteIcon } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import { comment, uncomment } from '../../services/postService'
-import auth from '../../auth/authHelper'
+import auth, { Jwt } from '../../auth/authHelper'
 import { TComment } from './NewsFeed'
+
+const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
 
 type Props = {
   postId: string
@@ -20,12 +22,10 @@ type Props = {
   comments: TComment[]
 }
 
-const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
-
 export default function Comments({ postId, updateComments, comments }: Props) {
   const theme = useTheme()
   const [text, setText] = useState('')
-  const jwt = auth.isAuthenticated()
+  const jwt: Jwt = auth.isAuthenticated()
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setText(event.target.value)

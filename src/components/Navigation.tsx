@@ -8,7 +8,8 @@ const Offset = styled('div')(({ theme }) => theme.mixins.toolbar)
 export default function Navigation() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const isActive = path => {
+
+  const isActive = (path: string) => {
     if (pathname == path) return { color: '#ff4081' }
     else return { color: '#ffffff' }
   }

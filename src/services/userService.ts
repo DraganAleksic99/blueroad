@@ -1,4 +1,6 @@
-const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
+import { TUser } from '../views/Profile'
+
+const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
 
 export type Params = {
   userId: string
@@ -8,13 +10,7 @@ export type Credentials = {
   t: string
 }
 
-type User = {
-  name: string
-  email: string
-  password: string
-}
-
-const create = async (user: User) => {
+const create = async (user: TUser) => {
   try {
     const response = await fetch(baseUrl + '/api/users/', {
       method: 'POST',

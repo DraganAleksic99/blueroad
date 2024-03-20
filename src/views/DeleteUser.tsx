@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import auth from '../auth/authHelper'
+import auth, { Jwt } from '../auth/authHelper'
 import { remove } from '../services/userService'
 import { Navigate } from 'react-router'
 import {
@@ -13,11 +13,7 @@ import {
 } from '@mui/material'
 import { Delete } from '@mui/icons-material'
 
-type Props = {
-  userId: string
-}
-
-export default function DeleteUser({ userId }: Props) {
+export default function DeleteUser({ userId }: { userId: string }) {
   const [open, setOpen] = useState(false)
   const [redirect, setRedirect] = useState(false)
 
@@ -30,7 +26,7 @@ export default function DeleteUser({ userId }: Props) {
   }
 
   const deleteAccount = () => {
-    const jwt = auth.isAuthenticated()
+    const jwt: Jwt = auth.isAuthenticated()
     remove({ userId: userId }, { t: jwt.token }).then(data => {
       if (data && data.error) {
         console.log(data.error)
