@@ -32,9 +32,10 @@ export default function Users() {
         setUsers(data)
       }
     })
-    // return function cleanup() {
-    //   abortController.abort()
-    // }
+
+    return function cleanup() {
+      abortController.abort()
+    }
   }, [])
 
   return (

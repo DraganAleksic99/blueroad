@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { AppBar, Typography, Tabs, Tab } from '@mui/material'
 import FollowGrid from '../components/FollowGrid'
 import PostList from './post/PostList'
-import { User } from './Profile'
+import { TUser } from './Profile'
 import { TPost } from './post/NewsFeed'
 
 type Props = {
-  user: User | Record<string, never>
+  user: TUser | Record<string, never>
   posts: TPost[]
   onRemove: (post: TPost) => void
 }

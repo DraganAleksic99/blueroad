@@ -20,12 +20,15 @@ type Props = {
 export default function DeleteUser({ userId }: Props) {
   const [open, setOpen] = useState(false)
   const [redirect, setRedirect] = useState(false)
+
   const clickButton = () => {
     setOpen(true)
   }
+
   const handleRequestClose = () => {
     setOpen(false)
   }
+
   const deleteAccount = () => {
     const jwt = auth.isAuthenticated()
     remove({ userId: userId }, { t: jwt.token }).then(data => {
@@ -37,9 +40,11 @@ export default function DeleteUser({ userId }: Props) {
       }
     })
   }
+
   if (redirect) {
     return <Navigate to="/" />
   }
+
   return (
     <span>
       <IconButton aria-label="Delete" onClick={clickButton} color="secondary">

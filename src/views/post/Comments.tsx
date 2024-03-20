@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ChangeEvent, KeyboardEvent, useState } from 'react'
 import {
   CardHeader,
   CardContent,
@@ -12,19 +12,27 @@ import { Delete as DeleteIcon } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import { comment, uncomment } from '../../services/postService'
 import auth from '../../auth/authHelper'
+import { TComment } from './NewsFeed'
+
+type Props = {
+  postId: string
+  updateComments: (comments: TComment[]) => void
+  comments: TComment[]
+}
 
 const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
 
-export default function Comments({ postId, updateComments, comments }) {
+export default function Comments({ postId, updateComments, comments }: Props) {
   const theme = useTheme()
   const [text, setText] = useState('')
   const jwt = auth.isAuthenticated()
 
-  const handleChange = event => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setText(event.target.value)
   }
-  const addComment = event => {
-    if (event.keyCode == 13 && event.target.value) {
+
+  const addComment = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.code === 'Enter') {
       event.preventDefault()
       comment(
         {
@@ -46,7 +54,7 @@ export default function Comments({ postId, updateComments, comments }) {
     }
   }
 
-  const deleteComment = comment => {
+  const deleteComment = (comment: TComment) => {
     uncomment(
       {
         userId: jwt.user._id
@@ -65,12 +73,12 @@ export default function Comments({ postId, updateComments, comments }) {
     })
   }
 
-  const commentBody = item => {
+  const commentBody = (comment: TComment) => {
     return (
       <p>
-        <Link to={'/user/' + item.postedBy._id}>{item.postedBy.name}</Link>
+        <Link to={'/user/' + comment.postedBy._id}>{comment.postedBy.name}</Link>
         <br />
-        <span>{new Date(item.created).toDateString()} |</span>
+        <span>{new Date(comment.created).toDateString()} |</span>
       </p>
     )
   }
@@ -91,15 +99,15 @@ export default function Comments({ postId, updateComments, comments }) {
         }
       />
       <Divider />
-      {comments.map((item, i) => {
+      {comments.map((comment, i) => {
         return (
           <div key={i}>
             <CardHeader
-              avatar={<Avatar src={baseUrl + '/api/users/photo/' + item.postedBy._id} />}
-              subheader={commentBody(item)}
+              avatar={<Avatar src={baseUrl + '/api/users/photo/' + comment.postedBy._id} />}
+              subheader={commentBody(comment)}
               action={
-                auth.isAuthenticated().user._id === item.postedBy._id && (
-                  <IconButton onClick={() => deleteComment(item)}>
+                auth.isAuthenticated().user._id === comment.postedBy._id && (
+                  <IconButton onClick={() => deleteComment(comment)}>
                     <DeleteIcon />
                   </IconButton>
                 )
@@ -108,7 +116,7 @@ export default function Comments({ postId, updateComments, comments }) {
             <CardContent
               sx={{ mt: `-${theme.spacing(6)}`, mb: `-${theme.spacing(5)}`, ml: theme.spacing(7) }}
             >
-              <p>{item.text}</p>
+              <p>{comment.text}</p>
             </CardContent>
           </div>
         )

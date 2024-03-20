@@ -17,12 +17,13 @@ import { Link } from 'react-router-dom'
 import { follow } from '../services/userService'
 import auth from '../auth/authHelper'
 import { findPeople } from '../services/userService'
+import { TUser } from './Profile'
 
 const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
 
 export default function FindPeople() {
   const theme = useTheme()
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState<TUser[] | []>([])
   const [values, setValues] = useState({
     open: false,
     followMessage: ''
@@ -48,12 +49,13 @@ export default function FindPeople() {
         setUsers(data)
       }
     })
-    // return function cleanup() {
-    //   abortController.abort()
-    // }
+
+    return function cleanup() {
+      abortController.abort()
+    }
   }, [jwt])
 
-  const handleFollow = (user, index) => {
+  const handleFollow = (user: TUser, index: number) => {
     follow(
       {
         userId: jwt.user._id
@@ -68,7 +70,6 @@ export default function FindPeople() {
       } else {
         const toFollow = users
         toFollow.splice(index, 1)
-        console.log(toFollow)
 
         setValues({
           ...values,

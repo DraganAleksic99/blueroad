@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { create } from '../services/userService'
 import {
   Card,
@@ -24,7 +24,7 @@ export default function Signup() {
     error: ''
   })
 
-  const handleChange = name => event => {
+  const handleChange = (name: string) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [name]: event.target.value })
   }
 
@@ -34,6 +34,7 @@ export default function Signup() {
       email: values.email || undefined,
       password: values.password || undefined
     }
+
     create(user).then(data => {
       if (data.error) {
         setValues({ ...values, error: data.error })

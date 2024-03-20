@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, ChangeEvent } from 'react'
 import {
   Card,
   CardHeader,
@@ -15,7 +15,7 @@ import {
 import { PhotoCamera } from '@mui/icons-material'
 import { createPost } from '../../services/postService'
 import auth from '../../auth/authHelper'
-import { User } from '../Profile'
+import { TUser } from '../Profile'
 
 const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
 
@@ -26,7 +26,7 @@ export default function NewPost({ addPost }) {
     photo: null,
     error: ''
   })
-  const [user, setUser] = useState<User | Record<string, never>>({})
+  const [user, setUser] = useState<TUser | Record<string, never>>({})
   const jwt = auth.isAuthenticated()
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export default function NewPost({ addPost }) {
     })
   }
 
-  const handleChange = (name: string) => event => {
+  const handleChange = (name: string) => (event: ChangeEvent<HTMLInputElement>) => {
     const value = name === 'photo' ? event.target.files[0] : event.target.value
     setValues({ ...values, [name]: value })
   }

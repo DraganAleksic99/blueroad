@@ -21,7 +21,7 @@ import { removePost, like, unlike } from '../../services/postService'
 import auth from '../../auth/authHelper'
 import Comments from './Comments'
 import { TPost, TComment } from './NewsFeed'
-import { User } from '../Profile'
+import { TUser } from '../Profile'
 
 type Props = {
   post: TPost
@@ -34,7 +34,7 @@ export default function Post({ post, onRemove }: Props) {
   const theme = useTheme()
   const jwt = auth.isAuthenticated()
 
-  const checkLike = (likes: User[]) => {
+  const checkLike = (likes: TUser[]) => {
     const match = likes.indexOf(jwt.user._id) !== -1
     return match
   }
@@ -44,10 +44,6 @@ export default function Post({ post, onRemove }: Props) {
     likes: post.likes.length,
     comments: post.comments
   })
-
-  // useEffect(() => {
-  //   setValues({...values, like:checkLike(props.post.likes), likes: props.post.likes.length, comments: props.post.comments})
-  // }, [])
 
   const clickLike = () => {
     const callApi = values.like ? unlike : like
@@ -132,12 +128,3 @@ export default function Post({ post, onRemove }: Props) {
     </Card>
   )
 }
-
-/* 
-
-
-
-
-
-
-*/

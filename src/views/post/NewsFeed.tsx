@@ -4,14 +4,18 @@ import { listNewsFeed } from '../../services/postService'
 import auth from '../../auth/authHelper'
 import PostList from './PostList'
 import NewPost from './NewPost'
-import { User } from '../Profile'
+import { TUser } from '../Profile'
 import MainLayout from '../../layouts/MainLayout'
 import FindPeople from '../../views/FindPeople'
 
 export type TComment = {
+  _id?: string
   text: string
   created?: Date
-  postedBy?: string
+  postedBy?: {
+    _id: string
+    name: string
+  }
 }
 
 export type TPost = {
@@ -21,9 +25,9 @@ export type TPost = {
     data: Buffer
     contentType: string
   }
-  postedBy: User
+  postedBy: TUser
   created: Date
-  likes: User[]
+  likes: TUser[]
   comments: TComment[]
 }
 
@@ -51,9 +55,10 @@ export default function NewsFeed() {
         setPosts(data)
       }
     })
-    // return function cleanup() {
-    //   abortController.abort()
-    // }
+
+    return function cleanup() {
+      abortController.abort()
+    }
   }, [])
 
   const addPost = (post: TPost) => {

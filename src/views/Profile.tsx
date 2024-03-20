@@ -26,7 +26,7 @@ import { TPost } from './post/NewsFeed'
 
 const baseUrl = 'https://social-media-app-backend-production-679e.up.railway.app'
 
-export type User = {
+export type TUser = {
   _id: string
   name: string
   email: string
@@ -36,14 +36,14 @@ export type User = {
   photo: {
     data: Buffer
   }
-  following: []
-  followers: []
+  following: TUser[]
+  followers: TUser[]
 }
 
 export default function Profile() {
   const theme = useTheme()
   const match = useMatch('/user/:userId')
-  const [user, setUser] = useState<User | Record<string, never>>({})
+  const [user, setUser] = useState<TUser | Record<string, never>>({})
   const [posts, setPosts] = useState<TPost[]>([])
   const [redirectToLogin, setRedirectToLogin] = useState(false)
   const [following, setFollowing] = useState(false)
@@ -52,6 +52,7 @@ export default function Profile() {
     const abortController = new AbortController()
     const signal = abortController.signal
     const jwt = auth.isAuthenticated()
+
     read({ userId: match.params.userId }, { t: jwt.token }, signal).then(data => {
       if (data && data.error) {
         setRedirectToLogin(true)
@@ -61,13 +62,15 @@ export default function Profile() {
         setFollowing(following)
       }
     })
-    // return function cleanup() {
-    //   abortController.abort()
-    // }
+
+    return function cleanup() {
+      abortController.abort()
+    }
   }, [match.params.userId])
 
   useEffect(() => {
     const jwt = auth.isAuthenticated()
+
     loadPosts({ userId: user._id }, { t: jwt.token }).then(data => {
       if (data && data.error) {
         console.log(data.error)
@@ -81,7 +84,7 @@ export default function Profile() {
     return <Navigate to="/signin" />
   }
 
-  const checkFollow = (user, jwt) => {
+  const checkFollow = (user: TUser, jwt) => {
     const match = user.followers.some(follower => follower._id == jwt.user._id)
     return match
   }
