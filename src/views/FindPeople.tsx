@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   List,
   ListItem,
@@ -28,7 +28,8 @@ export default function FindPeople() {
     open: false,
     followMessage: ''
   })
-  const jwt: Jwt = auth.isAuthenticated()
+
+  const jwt: Jwt = useMemo(() => auth.isAuthenticated(), [])
 
   useEffect(() => {
     const abortController = new AbortController()
