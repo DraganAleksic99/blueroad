@@ -1,5 +1,3 @@
-import { TUser } from '../views/Profile'
-
 const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
 
 export type Params = {
@@ -10,7 +8,7 @@ export type Credentials = {
   t: string
 }
 
-const create = async (user: TUser) => {
+const create = async (user: { name: string; email: string; password: string }) => {
   try {
     const response = await fetch(baseUrl + '/api/users/', {
       method: 'POST',
