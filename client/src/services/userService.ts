@@ -1,4 +1,4 @@
-const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
+const baseUrl = 'https://social-media-app-69re.onrender.com'
 
 export type Params = {
   userId: string
@@ -18,9 +18,10 @@ const create = async (user: { name: string; email: string; password: string }) =
       },
       body: JSON.stringify(user)
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 
@@ -28,11 +29,16 @@ const list = async (signal: AbortSignal) => {
   try {
     const response = await fetch(baseUrl + '/api/users/', {
       method: 'GET',
-      signal: signal
+      signal: signal,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 
@@ -47,9 +53,10 @@ const read = async (params: Params, credentials: Credentials, signal: AbortSigna
         Authorization: 'Bearer ' + credentials.t
       }
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 
@@ -63,9 +70,10 @@ const update = async (params: Params, credentials: Credentials, user: FormData) 
       },
       body: user
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 
@@ -79,9 +87,10 @@ const remove = async (params: Params, credentials: Credentials) => {
         Authorization: 'Bearer ' + credentials.t
       }
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 
@@ -96,9 +105,10 @@ const follow = async (params: Params, credentials: Credentials, followId: string
       },
       body: JSON.stringify({ userId: params.userId, followId: followId })
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 
@@ -113,9 +123,10 @@ const unfollow = async (params: Params, credentials: Credentials, unfollowId: st
       },
       body: JSON.stringify({ userId: params.userId, unfollowId: unfollowId })
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 
@@ -130,9 +141,10 @@ const findPeople = async (params: Params, credentials: Credentials, signal: Abor
         Authorization: 'Bearer ' + credentials.t
       }
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 

@@ -6,7 +6,7 @@ export type Jwt = {
   user: TUser
 }
 
-function authenticate(jwt: Jwt, cb) {
+function authenticate(jwt: Jwt, cb: () => void) {
   if (typeof window !== 'undefined') {
     sessionStorage.setItem('jwt', JSON.stringify(jwt))
   }

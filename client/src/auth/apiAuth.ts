@@ -1,8 +1,8 @@
-const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
+const baseUrl = 'https://social-media-app-69re.onrender.com'
 
 const signin = async (user: { email: string; password: string }) => {
   try {
-    const response = await fetch(baseUrl + '/auth/signin/', {
+    const response = await fetch(baseUrl + '/auth/signin', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -19,7 +19,7 @@ const signin = async (user: { email: string; password: string }) => {
 
 const signout = async () => {
   try {
-    const response = await fetch(baseUrl + '/auth/signout/', { method: 'GET' })
+    const response = await fetch(baseUrl + '/auth/signout', { method: 'GET' })
     return await response.json()
   } catch (err) {
     console.log(err)

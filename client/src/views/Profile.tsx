@@ -24,7 +24,7 @@ import MainLayout from '../layouts/MainLayout'
 import ProfileTabs from './ProfileTabs'
 import { TPost } from './post/NewsFeed'
 
-const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
+const baseUrl = 'https://social-media-app-69re.onrender.com'
 
 export type TUser = {
   _id: string
