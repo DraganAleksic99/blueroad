@@ -22,7 +22,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
 
-const StyledPaper = styled(Paper)({
+export const StyledPaper = styled(Paper)({
   padding: '2rem',
   borderRadius: '16px',
   boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
@@ -30,7 +30,7 @@ const StyledPaper = styled(Paper)({
   backdropFilter: 'blur(10px)'
 })
 
-const StyledButton = styled(Button)({
+export const StyledButton = styled(Button)({
   marginTop: '1.5rem',
   padding: '0.75rem 2rem',
   borderRadius: '8px',
