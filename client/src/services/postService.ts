@@ -6,7 +6,7 @@ type Params = {
   userId?: string
 }
 
-const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
+const baseUrl = 'https://social-media-app-69re.onrender.com'
 
 const listNewsFeed = async (params: Params, credentials: Credentials, signal: AbortSignal) => {
   try {
@@ -19,9 +19,10 @@ const listNewsFeed = async (params: Params, credentials: Credentials, signal: Ab
         Authorization: 'Bearer ' + credentials.t
       }
     })
+    
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 
@@ -35,9 +36,10 @@ const loadPosts = async (params: Params, credentials: Credentials) => {
         Authorization: 'Bearer ' + credentials.t
       }
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 
@@ -52,8 +54,9 @@ const createPost = async (params: Params, credentials: Credentials, post: FormDa
       body: post
     })
     return await response.json()
+
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 
@@ -68,8 +71,9 @@ const removePost = async (params: Params, credentials: Credentials) => {
       }
     })
     return await response.json()
+
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 
@@ -84,9 +88,10 @@ const like = async (params: Params, credentials: Credentials, postId: string) =>
       },
       body: JSON.stringify({ userId: params.userId, postId: postId })
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong. Try again.")
   }
 }
 
@@ -101,9 +106,10 @@ const unlike = async (params: Params, credentials: Credentials, postId: string) 
       },
       body: JSON.stringify({ userId: params.userId, postId: postId })
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error('Something went wrong. Try again.')
   }
 }
 
@@ -123,9 +129,10 @@ const comment = async (
       },
       body: JSON.stringify({ postId: postId, comment: comment })
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error('Something went wrong. Try again.')
   }
 }
 
@@ -145,9 +152,10 @@ const uncomment = async (
       },
       body: JSON.stringify({ userId: params.userId, postId: postId, comment: comment })
     })
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error('Something went wrong. Try again.')
   }
 }
 
