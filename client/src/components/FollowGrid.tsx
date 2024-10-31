@@ -2,7 +2,7 @@ import { Avatar, Typography, ImageList, ImageListItem } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { TUser } from '../views/Profile'
 
-const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
+const baseUrl = 'https://social-media-app-69re.onrender.com'
 
 export default function FollowGrid({ users }: { users: TUser[] }) {
   return (

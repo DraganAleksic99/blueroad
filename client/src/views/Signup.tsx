@@ -207,8 +207,8 @@ export default function Signup() {
               <DialogContentText>New account successfully created</DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Link to="/signin">
-                <Button color="primary" autoFocus={true} variant="contained">
+              <Link to="/login">
+                <Button sx={{ borderRadius: '20px', }} color="primary" autoFocus={true} variant="contained">
                   Log In
                 </Button>
               </Link>
