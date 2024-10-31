@@ -21,6 +21,11 @@ app.use(
     credentials: true,
     origin: function (origin, callback) {
       const allowedOrigins = ['http://localhost:5173', 'https://my-social-media-app1.netlify.app']
+
+      if (!origin) {
+        return callback(null, true)
+      }
+
       if (origin) {
         if (allowedOrigins.includes(origin)) {
           callback(null, true)
