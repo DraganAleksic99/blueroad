@@ -4,25 +4,22 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  ListItemSecondaryAction,
   Avatar,
   Button,
-  IconButton,
   Snackbar,
   Typography,
-  useTheme
+  Paper,
+  Box
 } from '@mui/material'
-import { Visibility as VisibilityIcon } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import { follow } from '../services/userService'
 import auth, { Jwt } from '../auth/authHelper'
 import { findPeople } from '../services/userService'
 import { TUser } from './Profile'
 
-const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
+const baseUrl = 'https://social-media-app-69re.onrender.com'
 
 export default function FindPeople() {
-  const theme = useTheme()
   const [users, setUsers] = useState<TUser[] | []>([])
   const [values, setValues] = useState({
     open: false,
@@ -90,50 +87,76 @@ export default function FindPeople() {
   }
 
   return (
-    <List>
-      <Typography variant="h5" sx={{ mb: theme.spacing(3) }}>
-        Who to follow
-      </Typography>
-      {users.map((item, i) => {
-        return (
-          <span key={i}>
-            <ListItem sx={{ p: 0, mb: theme.spacing(2) }}>
-              <ListItemAvatar>
-                <Avatar src={baseUrl + '/api/users/photo/' + item._id} />
-              </ListItemAvatar>
-              <ListItemText primary={item.name} />
-              <ListItemSecondaryAction sx={{ right: 0 }}>
-                <Link to={'/user/' + item._id}>
-                  <IconButton color="secondary">
-                    <VisibilityIcon />
-                  </IconButton>
-                </Link>
+    <Paper
+      sx={{
+        position: 'sticky',
+        top: 8,
+        maxHeight: 'calc(100vh - 8px)',
+        overflowY: 'auto',
+        '&::-webkit-scrollbar': {
+          width: '6px'
+        },
+        '&::-webkit-scrollbar-track': {
+          background: 'transparent'
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: '#2196F3',
+          borderRadius: '3px'
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+          background: '#21CBF3'
+        }
+      }}
+    >
+      <Box>
+        <Typography sx={{ fontWeight: '500', ml: 2, mb: 0, mt: 2 }} variant="h5" gutterBottom>
+          Who to follow
+        </Typography>
+        <List>
+          {users.map((user: TUser, index: number) => (
+            <ListItem
+              key={user._id}
+              secondaryAction={
                 <Button
-                  sx={{ ml: theme.spacing(2) }}
-                  aria-label="Follow"
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    handleFollow(item, i)
+                  variant="outlined"
+                  size="small"
+                  sx={{
+                    borderRadius: '20px',
+                    textTransform: 'none',
                   }}
+                  onClick={() => handleFollow(user, index)}
                 >
                   Follow
                 </Button>
-              </ListItemSecondaryAction>
+              }
+            >
+              <Link to={`/user/${user._id}`}>
+                <ListItemAvatar>
+                  <Avatar src={baseUrl + '/api/users/photo/' + user._id} alt={user.name} />
+                </ListItemAvatar>
+              </Link>
+              <ListItemText
+                primary={user.name}
+                sx={{ maxWidth: "200px"}}
+                primaryTypographyProps={{
+                  fontWeight: 500,
+                  variant: 'body1'
+                }}
+              />
             </ListItem>
-          </span>
-        )
-      })}
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        open={values.open}
-        onClose={handleClose}
-        autoHideDuration={6000}
-        message={<span>{values.followMessage}</span>}
-      />
-    </List>
+          ))}
+        </List>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          open={values.open}
+          onClose={handleClose}
+          autoHideDuration={6000}
+          message={<span>{values.followMessage}</span>}
+        />
+      </Box>
+    </Paper>
   )
 }
