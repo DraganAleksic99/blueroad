@@ -20,9 +20,11 @@ const create = async (req: Request, res: Response) => {
   }
 }
 
-const list = async (req: Request, res: Response) => {
+const list = async (_req: Request, res: Response) => {
   try {
-    const users = await User.find().select('name email created updated photo')
+    const users = await User.find().select(
+      'name email created updated photo about following followers'
+    )
     res.json(users)
   } catch (err) {
     return res.status(400).json({
