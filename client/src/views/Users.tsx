@@ -1,26 +1,49 @@
 import { useState, useEffect } from 'react'
-import {
-  Paper,
-  Typography,
-  List,
-  ListItemButton,
-  ListItemAvatar,
-  Avatar,
-  ListItemText,
-  ListItemSecondaryAction,
-  IconButton,
-  useTheme
-} from '@mui/material'
-import { Person, ArrowForward } from '@mui/icons-material'
-import { Link } from 'react-router-dom'
+import { Paper } from '@mui/material'
 import { list } from '../services/userService'
 import MainLayout from '../layouts/MainLayout'
+import { Link } from 'react-router-dom'
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Avatar,
+  Typography,
+  Box,
+  Divider,
+  styled
+} from '@mui/material'
+import {
+  Email as EmailIcon,
+  CalendarToday as CalendarIcon,
+  People as PeopleIcon
+} from '@mui/icons-material'
+import { TUser } from '../views/Profile'
 
-const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
+const baseUrl = 'https://social-media-app-69re.onrender.com'
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  transition: 'transform 0.2s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-4px)',
+    boxShadow: theme.shadows[4]
+  }
+}))
+
+const InfoRow = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1),
+  color: theme.palette.text.secondary,
+  marginBottom: theme.spacing(1)
+}))
 
 export default function Users() {
-  const theme = useTheme()
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState<TUser[]>([])
 
   useEffect(() => {
     const abortController = new AbortController()
@@ -33,44 +56,69 @@ export default function Users() {
       }
     })
 
-    return function cleanup() {
-      abortController.abort()
-    }
+    return () => abortController.abort()
   }, [])
 
   return (
-    <Paper elevation={4}>
+    <Paper elevation={2}>
       <MainLayout>
-        <Typography variant="h5" sx={{ mb: theme.spacing(2) }}>
-          All Users
-        </Typography>
-        <List dense>
-          {users.map((user, i) => {
+        <Box sx={{ p: 3, pt: 0, columnCount: 3 }}>
+          {users.map(user => {
+            const photoUrl = user.photo
+              ? `${baseUrl}/api/users/photo/${user._id}?${new Date().getTime()}`
+              : `${baseUrl}/api/defaultPhoto`
+
             return (
-              <Link to={'/user/' + user._id} key={i}>
-                <ListItemButton sx={{ mb: theme.spacing(1) }}>
-                  <ListItemAvatar>
-                    <Avatar
-                      src={
-                        user.photo?.data
-                          ? `${baseUrl}/api/users/photo/${user._id}?${new Date().getTime()}`
-                          : `${baseUrl}/api/defaultPhoto`
-                      }
-                    >
-                      <Person />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary={user.name} />
-                  <ListItemSecondaryAction>
-                    <IconButton>
-                      <ArrowForward />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItemButton>
+              <Link
+                to={`/user/${user._id}`}
+                key={user._id}
+                style={{ display: 'inline-block', width: '100%', marginTop: '24px' }}
+              >
+                <StyledCard>
+                  <CardHeader
+                    sx={{ pb: 0 }}
+                    avatar={<Avatar src={photoUrl}>{user.name.charAt(0)}</Avatar>}
+                    title={
+                      <Typography variant="h6" component="h2">
+                        {user.name}
+                      </Typography>
+                    }
+                    subheader={
+                      <InfoRow>
+                        <EmailIcon fontSize="small" />
+                        <Typography variant="body2">{user.email}</Typography>
+                      </InfoRow>
+                    }
+                  />
+                  <CardContent sx={{ pb: 0 }}>
+                    {user.about && (
+                      <Typography variant="body2" color="text.secondary" paragraph>
+                        {user.about}
+                      </Typography>
+                    )}
+                    <InfoRow>
+                      <CalendarIcon fontSize="small" />
+                      <Typography variant="body2">
+                        {'Joined: ' + new Date(user.created).toDateString()}
+                      </Typography>
+                    </InfoRow>
+                  </CardContent>
+                  <Divider />
+                  <CardActions sx={{ justifyContent: 'space-between', px: 2, pt: 2 }}>
+                    <InfoRow>
+                      <PeopleIcon fontSize="small" />
+                      <Typography variant="body2">{user.followers?.length} followers</Typography>
+                    </InfoRow>
+                    <InfoRow>
+                      <PeopleIcon fontSize="small" />
+                      <Typography variant="body2">{user.following?.length} following</Typography>
+                    </InfoRow>
+                  </CardActions>
+                </StyledCard>
               </Link>
             )
           })}
-        </List>
+        </Box>
       </MainLayout>
     </Paper>
   )
