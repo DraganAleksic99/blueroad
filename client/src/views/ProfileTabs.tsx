@@ -26,11 +26,11 @@ export default function ProfileTabs({ user, posts, onRemove }: Props) {
           onChange={handleTabChange}
           indicatorColor="primary"
           textColor="primary"
-          variant="fullWidth"
+          centered
         >
           <Tab label="Posts" />
-          <Tab label="Following" />
           <Tab label="Followers" />
+          <Tab label="Following" />
         </Tabs>
       </AppBar>
       {tab === 0 && (
@@ -40,12 +40,12 @@ export default function ProfileTabs({ user, posts, onRemove }: Props) {
       )}
       {tab === 1 && (
         <TabContainer>
-          <FollowGrid users={user.following} />
+          <FollowGrid users={user.followers} />
         </TabContainer>
       )}
       {tab === 2 && (
         <TabContainer>
-          <FollowGrid users={user.followers} />
+          <FollowGrid users={user.following} />
         </TabContainer>
       )}
     </div>

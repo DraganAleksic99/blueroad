@@ -2,36 +2,48 @@ import { Button } from '@mui/material'
 import { follow, unfollow } from '../services/userService'
 import auth, { Jwt } from '../auth/authHelper'
 
-type FollowFunction = typeof follow
-type UnfollowFunction = typeof unfollow
+type FollowFn = typeof follow
+type UnfollowFn = typeof unfollow
+
+export type TCallbackFn = FollowFn | UnfollowFn
 
 type Props = {
-  onButtonClick: (cb: FollowFunction | UnfollowFunction, jwt: Jwt) => void
+  onButtonClick: (cb: TCallbackFn, session: Jwt) => void
   following: boolean
 }
 
 export default function FollowProfileButton({ onButtonClick, following }: Props) {
-  const jwt: Jwt = auth.isAuthenticated()
+  const session: Jwt = auth.isAuthenticated()
 
   const followClick = () => {
-    onButtonClick(follow, jwt)
+    onButtonClick(follow, session)
   }
 
   const unfollowClick = () => {
-    onButtonClick(unfollow, jwt)
+    onButtonClick(unfollow, session)
   }
 
   return (
-    <div>
+    <>
       {following ? (
-        <Button variant="contained" color="secondary" onClick={unfollowClick}>
+        <Button
+          variant="outlined"
+          size="small"
+          sx={{ ml: 4, textTransform: 'none', borderRadius: '8px' }}
+          onClick={unfollowClick}
+        >
           Unfollow
         </Button>
       ) : (
-        <Button variant="contained" color="primary" onClick={followClick}>
+        <Button
+          variant="outlined"
+          size="small"
+          sx={{ ml: 4, textTransform: 'none', borderRadius: '8px' }}
+          onClick={followClick}
+        >
           Follow
         </Button>
       )}
-    </div>
+    </>
   )
 }
