@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from 'react'
-import { useMatch, Navigate, useLocation, useNavigate } from 'react-router'
+import { useMatch, useLocation, useNavigate } from 'react-router'
 import auth, { Jwt } from '../auth/authHelper'
 import { update } from '../services/userService'
 import {
@@ -10,152 +10,318 @@ import {
   CardActions,
   Button,
   Avatar,
+  InputAdornment,
+  IconButton,
   useTheme
 } from '@mui/material'
-import { Person } from '@mui/icons-material'
+import {
+  Person as PersonIcon,
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon
+} from '@mui/icons-material'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as Yup from 'yup'
+import { TUser } from './Profile'
 
-const baseUrl = 'https://social-media-app-backend-production-909f.up.railway.app'
+const baseUrl = 'https://social-media-app-69re.onrender.com'
+
+interface IFormValues {
+  name: string
+  about: string
+  email: string
+  password: string
+  photo: File
+}
+
+const schema = Yup.object({
+  name: Yup.string().min(2).max(255).required(),
+  about: Yup.string().max(150),
+  email: Yup.string().email().max(255).required(),
+  password: Yup.string().min(6).max(255).required(),
+}).required()
 
 export default function EditProfile() {
   const theme = useTheme()
   const match = useMatch('/user/edit/:userId')
-  const user = useLocation().state
+  const user: TUser = useLocation().state
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [imagePreview, setImagePreview] = useState(null)
   const navigate = useNavigate()
 
-  const [values, setValues] = useState({
-    name: user?.name || '',
-    about: user?.about || '',
-    photo: null,
-    email: user?.email || '',
-    password: '',
-    error: '',
-    userId: '',
-    redirectToProfile: false
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<IFormValues>({
+    defaultValues: {
+      name: user.name,
+      about: user.about || '',
+      email: user.email,
+      password: ''
+    },
+    // @ts-expect-error email or password can be undefined
+    resolver: yupResolver(schema)
   })
 
-  const handleChange = (name: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    const value = name === 'photo' ? event.target.files[0] : event.target.value
-    setValues({ ...values, [name]: value })
-  }
+  const onSubmit: SubmitHandler<IFormValues> = data => {
+    const session: Jwt = auth.isAuthenticated()
+    const formData = new FormData()
 
-  const clickSubmit = () => {
-    const jwt: Jwt = auth.isAuthenticated()
-    const userData = new FormData()
-    values.name && userData.append('name', values.name)
-    values.email && userData.append('email', values.email)
-    values.password && userData.append('password', values.password)
-    values.about && userData.append('about', values.about)
-    values.photo && userData.append('photo', values.photo)
+    formData.append('photo', data.photo[0])
 
-    update({ userId: match.params.userId }, { t: jwt.token }, userData).then(data => {
+    for (const [k, v] of Object.entries(data)) {
+      if (k === 'photo') continue
+      formData.append(k, v)
+    }
+
+    setIsLoading(true)
+
+    update({ userId: match.params.userId }, { t: session.token }, formData).then(data => {
       if (data && data.error) {
-        setValues({ ...values, error: data.error })
+        setError(data.error)
+        setIsLoading(false)
       } else {
-        setValues({ ...values, userId: data._id, redirectToProfile: true })
+        setIsLoading(false)
+        navigate(`/user/${data._id}`)
       }
     })
   }
 
-  if (values.redirectToProfile) {
-    return <Navigate to={`/user/${values.userId}`} />
-  }
-
   return (
-    <div
-      style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-    >
-      <Card>
-        <CardContent>
-          <Typography variant="h6" sx={{ mb: theme.spacing(3) }}>
-            Edit Profile
-          </Typography>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-around',
-              marginBlockEnd: theme.spacing(3)
+    <div style={{ minHeight: 'calc(100vh - 64px)', display: 'flex', justifyContent: 'center' }}>
+      <Card sx={{ width: '100%' }}>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <CardContent sx={{ maxWidth: '700px', margin: 'auto' }}>
+            <Typography variant="h6" sx={{ my: theme.spacing(3), mb: '32px' }}>
+              Edit Profile
+            </Typography>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBlockEnd: theme.spacing(3),
+                padding: '16px',
+                borderRadius: '20px',
+                backgroundColor: 'rgba(239, 239, 239)'
+              }}
+            >
+              <Avatar
+                component="div"
+                src={
+                  imagePreview ||
+                  (user.photo
+                    ? `${baseUrl}/api/users/photo/${user._id}?${new Date().getTime()}`
+                    : `${baseUrl}/api/defaultPhoto`)
+                }
+                sx={{ height: '56px', width: '56px' }}
+              >
+                <PersonIcon />
+              </Avatar>
+              <div>
+                <input
+                  accept="image/*"
+                  type="file"
+                  onChangeCapture={(e: ChangeEvent<HTMLInputElement>) => {
+                    const file = e.target.files[0]
+                    if (file) {
+                      const reader = new FileReader()
+                      reader.onloadend = () => {
+                        setImagePreview(reader.result)
+                      }
+                      reader.readAsDataURL(file)
+                    }
+                  }}
+                  {...register('photo')}
+                  style={{ display: 'none' }}
+                  id="icon-button-file"
+                />
+                <label htmlFor="icon-button-file">
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    component="span"
+                    sx={{ borderRadius: '20px', textTransform: 'none' }}
+                  >
+                    Change photo
+                  </Button>
+                </label>
+              </div>
+            </div>
+            <TextField
+              sx={{
+                width: '100%',
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '20px',
+                  '& fieldset': {
+                    borderColor: 'rgba(219, 219, 219)'
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(219, 219, 219)'
+                  }
+                }
+              }}
+              id="name"
+              label="Name"
+              type="text"
+              {...register('name', {
+                required: 'Name is required'
+              })}
+              error={!!errors.name}
+              helperText={errors.name?.message}
+              FormHelperTextProps={{
+                sx: {
+                  paddingTop: '8px'
+                }
+              }}
+              autoComplete="about"
+              aria-label="About input"
+              margin="normal"
+            />
+            <br />
+            <TextField
+              sx={{
+                width: '100%',
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '20px',
+                  '& fieldset': {
+                    borderColor: 'rgba(219, 219, 219)'
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(219, 219, 219)'
+                  }
+                }
+              }}
+              id="multiline-flexible"
+              label="About"
+              multiline
+              minRows="2"
+              type="text"
+              {...register('about')}
+              error={!!errors.about}
+              helperText={errors.about?.message}
+              FormHelperTextProps={{
+                sx: {
+                  paddingTop: '8px'
+                }
+              }}
+              autoComplete="about"
+              aria-label="About input"
+              margin="normal"
+            />
+            <br />
+            <TextField
+              sx={{
+                width: '100%',
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '20px',
+                  '& fieldset': {
+                    borderColor: 'rgba(219, 219, 219)'
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(219, 219, 219)'
+                  }
+                }
+              }}
+              id="email"
+              label="Email"
+              type="email"
+              {...register('email', {
+                required: 'Email is required'
+              })}
+              error={!!errors.email}
+              helperText={errors.email?.message}
+              FormHelperTextProps={{
+                sx: {
+                  paddingTop: '8px'
+                }
+              }}
+              autoComplete="email"
+              aria-label="Email input"
+              margin="normal"
+            />
+            <br />
+            <TextField
+              sx={{
+                width: '100%',
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '20px',
+                  '& fieldset': {
+                    borderColor: 'rgba(219, 219, 219)'
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(219, 219, 219)'
+                  }
+                }
+              }}
+              id="password"
+              label="Password"
+              type={showPassword ? 'text' : 'password'}
+              {...register('password', {
+                required: 'Password is required'
+              })}
+              error={!!errors.password}
+              helperText={errors.password?.message}
+              FormHelperTextProps={{
+                sx: {
+                  paddingTop: '8px'
+                }
+              }}
+              autoComplete="current-password"
+              aria-label="Password input"
+              margin="normal"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+            <br />
+            {error && (
+              <Typography component="p" color="error">
+                {error}
+              </Typography>
+            )}
+          </CardContent>
+          <CardActions
+            sx={{
+              ml: theme.spacing(1),
+              pb: 2,
+              pl: theme.spacing(2),
+              maxWidth: '700px',
+              margin: 'auto'
             }}
           >
-            <Avatar
-              component="div"
-              src={
-                user.photo?.data
-                  ? `${baseUrl}/api/users/photo/${user._id}?${new Date().getTime()}`
-                  : `${baseUrl}/api/defaultPhoto`
-              }
+            <Button
+              type="submit"
+              color="primary"
+              variant="outlined"
+              sx={{ borderRadius: '20px', mr: 2, px: 3, textTransform: 'none' }}
+              disabled={isLoading}
             >
-              <Person />
-            </Avatar>
-            <div>
-              <input
-                accept="image/*"
-                type="file"
-                onChange={handleChange('photo')}
-                style={{ display: 'none' }}
-                id="icon-button-file"
-              />
-              <label htmlFor="icon-button-file">
-                <Button variant="contained" color="primary" component="span">
-                  Upload
-                </Button>
-              </label>
-              <span>{values.photo ? values.photo.name : ''}</span>
-            </div>
-          </div>
-          <TextField
-            id="name"
-            label="Name"
-            value={values.name}
-            margin="normal"
-            onChange={handleChange('name')}
-          />
-          <br />
-          <TextField
-            id="multiline-flexible"
-            label="About"
-            multiline
-            value={values.about}
-            margin="normal"
-            onChange={handleChange('about')}
-            minRows="2"
-          />
-          <br />
-          <TextField
-            id="email"
-            label="Email"
-            type="email"
-            value={values.email}
-            margin="normal"
-            onChange={handleChange('email')}
-          />
-          <br />
-          <TextField
-            id="password"
-            label="Password"
-            type="password"
-            value={values.password}
-            margin="normal"
-            onChange={handleChange('password')}
-          />
-          <br />
-          {values.error && (
-            <Typography component="p" color="error">
-              {values.error}
-            </Typography>
-          )}
-        </CardContent>
-        <CardActions sx={{ ml: theme.spacing(1) }}>
-          <Button color="primary" variant="contained" onClick={clickSubmit}>
-            Save
-          </Button>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={() => navigate(`/user/${match.params.userId}`)}
-          >
-            Cancel
-          </Button>
-        </CardActions>
+              Save
+            </Button>
+            <Button
+              color="primary"
+              variant="outlined"
+              sx={{ borderRadius: '20px', px: 3, textTransform: 'none' }}
+              onClick={() => navigate(`/user/${match.params.userId}`)}
+            >
+              Cancel
+            </Button>
+          </CardActions>
+        </form>
       </Card>
     </div>
   )
