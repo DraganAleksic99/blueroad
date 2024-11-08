@@ -1,3 +1,4 @@
+import 'dotenv/config'
 const { env } = process
 
 let dbName: string

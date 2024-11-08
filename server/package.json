@@ -2,7 +2,7 @@
   "name": "social-media-app-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "src/server.js",
+  "main": "src/server.ts",
   "scripts": {
     "test:unit": "cross-env NODE_ENV=test ts-mocha 'test/unit/*.ts' --exit",
     "test:integration": "cross-env NODE_ENV=test ts-mocha 'test/integration/*.ts' --exit --timeout=10000",
