@@ -36,8 +36,8 @@ const list = async (_req: Request, res: Response) => {
 const userById = async (req: Request, res: Response, next: NextFunction, id: string) => {
   try {
     const user = await User.findById(id)
-      .populate('following', '_id name')
-      .populate('followers', '_id name')
+      .populate('following', '_id name email about followers following')
+      .populate('followers', '_id name email about followers following')
       .exec()
 
     if (!user) {
@@ -143,8 +143,8 @@ const addFollower = async (req: Request, res: Response) => {
       { $push: { followers: req.body.userId } },
       { new: true }
     )
-      .populate('following', '_id name')
-      .populate('followers', '_id name')
+      .populate('following', '_id name email about followers following')
+      .populate('followers', '_id name email about followers following')
       .exec()
     result.hashed_password = undefined
     result.salt = undefined
@@ -174,8 +174,8 @@ const removeFollower = async (req: Request, res: Response) => {
       { $pull: { followers: req.body.userId } },
       { new: true }
     )
-      .populate('following', '_id name')
-      .populate('followers', '_id name')
+      .populate('following', '_id name email about followers following')
+      .populate('followers', '_id name email about followers following')
       .exec()
     result.hashed_password = undefined
     result.salt = undefined

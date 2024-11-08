@@ -6,7 +6,11 @@ import config from '../config/config'
 
 const signin = async (req: Request, res: Response) => {
   try {
-    const user = await userModel.findOne({ email: req.body.email })
+    const user = await userModel
+      .findOne({ email: req.body.email })
+      .populate('following', '_id name')
+      .populate('followers', '_id name')
+      .exec()
     if (!user) {
       return res.status(401).json({ error: 'User not found' })
     }
@@ -31,7 +35,6 @@ const signin = async (req: Request, res: Response) => {
     })
   } catch (err) {
     console.log(err)
-
     return res.status(401).json({ error: 'Could not sign in' })
   }
 }
