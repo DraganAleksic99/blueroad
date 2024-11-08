@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
-import { Card, Typography, Divider, useTheme, Grid } from '@mui/material'
+import {
+  Card,
+  Grid,
+} from '@mui/material'
 import { listNewsFeed } from '../../services/postService'
 import auth, { Jwt } from '../../auth/authHelper'
 import PostList from './PostList'
-import NewPost from './NewPost'
 import { TUser } from '../Profile'
 import MainLayout from '../../layouts/MainLayout'
-import FindPeople from '../../views/FindPeople'
+import NewPost from './NewPost'
+import FindPeople from '../FindPeople'
 
 export type TComment = {
   _id?: string
@@ -32,7 +35,6 @@ export type TPost = {
 }
 
 export default function NewsFeed() {
-  const theme = useTheme()
   const [posts, setPosts] = useState<TPost[]>([])
 
   useEffect(() => {
@@ -75,27 +77,17 @@ export default function NewsFeed() {
   }
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={2}>
       <Grid item lg={8}>
         <Card>
           <MainLayout>
-            <Typography variant="h5" sx={{ mb: theme.spacing(3) }}>
-              {' '}
-              Newsfeed{' '}
-            </Typography>
-            <Divider />
             <NewPost addPost={addPost} />
-            <Divider />
             <PostList removePost={removePost} posts={posts} />
           </MainLayout>
         </Card>
       </Grid>
-      <Grid item lg={4}>
-        <Card sx={{ position: 'sticky', inset: 0, top: '64px' }}>
-          <MainLayout>
-            <FindPeople />
-          </MainLayout>
-        </Card>
+      <Grid sx={{ p: 0, backgroundColor: "rgba(246, 247, 248, 0.5)"}} item lg={4}>
+        <FindPeople />
       </Grid>
     </Grid>
   )

@@ -29,7 +29,7 @@ export default function FollowProfileButton({ onButtonClick, following }: Props)
         <Button
           variant="outlined"
           size="small"
-          sx={{ ml: 4, textTransform: 'none', borderRadius: '8px' }}
+          sx={{ ml: 4, px: 2, textTransform: 'none', borderRadius: '20px' }}
           onClick={unfollowClick}
         >
           Unfollow
@@ -38,7 +38,7 @@ export default function FollowProfileButton({ onButtonClick, following }: Props)
         <Button
           variant="outlined"
           size="small"
-          sx={{ ml: 4, textTransform: 'none', borderRadius: '8px' }}
+          sx={{ ml: 4, px: 2, textTransform: 'none', borderRadius: '20px' }}
           onClick={followClick}
         >
           Follow

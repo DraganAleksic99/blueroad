@@ -1,5 +1,6 @@
 .layout {
   min-height: calc(100vh - 64px);
+  background-color: rgba(246, 247, 248, 0.5) ;
 }
 
 a:not([class]) {

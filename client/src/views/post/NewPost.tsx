@@ -122,13 +122,13 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
           </IconButton>
         </Box>
       )}
-      <Stack sx={{ justifyContent: 'space-between' }} direction="row" gap={3}>
+      <Stack sx={{ justifyContent: 'space-between' }} direction="row">
         <PostButton
           role={undefined}
           // @ts-expect-error required prop, ts doesn't recognize
           component="label"
           tabIndex={-1}
-          sx={{ ml: '48px' }}
+          sx={{ ml: '48px', py: 0 }}
           startIcon={<ImageOutlined />}
         >
           Photo
@@ -152,7 +152,8 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
           size="small"
           sx={{
             borderRadius: '20px',
-            textTransform: 'none'
+            textTransform: 'none',
+            px: 2
           }}
           onClick={handleAddPost}
         >

@@ -109,7 +109,7 @@ export default function Profile() {
                     <Button
                       variant="outlined"
                       size="small"
-                      sx={{ ml: 4, textTransform: 'none', borderRadius: '8px' }}
+                      sx={{ ml: 4, px: 2, textTransform: 'none', borderRadius: '20px' }}
                     >
                       Edit Profile
                     </Button>

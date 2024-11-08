@@ -123,6 +123,7 @@ export default function FindPeople() {
                   sx={{
                     borderRadius: '20px',
                     textTransform: 'none',
+                    px: 2
                   }}
                   onClick={() => handleFollow(user, index)}
                 >

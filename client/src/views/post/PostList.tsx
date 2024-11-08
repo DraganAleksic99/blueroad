@@ -8,7 +8,7 @@ type Props = {
 
 export default function PostList({ posts, removePost }: Props) {
   return (
-    <div style={{ marginTop: '4px', maxWidth: "715px", margin: "auto" }}>
+    <div style={{ maxWidth: "715px", margin: "auto", backgroundColor: "rgba(246, 247, 248, 0.5)" }}>
       {posts.map(item => {
         return <Post post={item} key={item._id} onRemove={removePost} />
       })}

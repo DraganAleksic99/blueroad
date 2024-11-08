@@ -200,7 +200,7 @@ export default function Post({ post, onRemove }: Props) {
   }
 
   return (
-    <Card sx={{ mt: '8px', borderRadius: 2 }}>
+    <Card sx={{ mt: '16px', borderRadius: 2 }}>
       <CardHeader
         sx={{ pb: 0 }}
         avatar={
@@ -298,7 +298,7 @@ export default function Post({ post, onRemove }: Props) {
         </Box>
       </CardContent>
 
-      <CardActions sx={{ pl: '64px', py: 1 }}>
+      <CardActions sx={{ pl: '60px', py: 1 }}>
         <Tooltip
           title={isLiked ? 'Unlike' : 'Like'}
           componentsProps={{
@@ -315,7 +315,13 @@ export default function Post({ post, onRemove }: Props) {
           <ActionButton
             startIcon={
               isLiked ? (
-                <FavoriteIcon color="error" />
+                <FavoriteIcon
+                  sx={{
+                    '&': {
+                      color: 'rgb(249, 24, 128)'
+                    }
+                  }}
+                />
               ) : (
                 <FavoriteBorderIcon
                   sx={{
@@ -392,6 +398,7 @@ export default function Post({ post, onRemove }: Props) {
         <CardContent sx={{ pl: '72px', pt: 0 }}>
           <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
             <StyledTextField
+              autoFocus
               fullWidth
               size="small"
               placeholder="Post your reply..."

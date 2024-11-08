@@ -107,11 +107,11 @@ export default function Users() {
                   <CardActions sx={{ justifyContent: 'space-between', px: 2, pt: 2 }}>
                     <InfoRow>
                       <PeopleIcon fontSize="small" />
-                      <Typography variant="body2">{user.followers?.length} followers</Typography>
+                      <Typography variant="body2"><span style={{ fontWeight: 600 }}>{user.followers?.length}</span> followers</Typography>
                     </InfoRow>
                     <InfoRow>
                       <PeopleIcon fontSize="small" />
-                      <Typography variant="body2">{user.following?.length} following</Typography>
+                      <Typography variant="body2"><span style={{ fontWeight: 600 }}>{user.following?.length}</span> following</Typography>
                     </InfoRow>
                   </CardActions>
                 </StyledCard>
