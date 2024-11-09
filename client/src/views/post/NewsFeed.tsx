@@ -18,6 +18,7 @@ export type TComment = {
   postedBy?: {
     _id: string
     name: string
+    email: string
   }
 }
 

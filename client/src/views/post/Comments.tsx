@@ -85,11 +85,12 @@ export default function Comments({
     <div style={{ paddingBlockEnd: '16px' }}>
       {comments.map((comment, i) => {
         return (
-          <Card sx={{ borderTop: '1px solid gray' }} key={i}>
+          <Card sx={{ mb: "2px" }} key={i}>
             <CardHeader
               sx={{ pb: 0, alignItems: 'flex-start' }}
               avatar={<Avatar src={baseUrl + '/api/users/photo/' + comment.postedBy._id} />}
               title={commentBody(comment)}
+              subheader={comment.postedBy.email}
               action={
                 <>
                   <Tooltip
@@ -105,7 +106,7 @@ export default function Comments({
                       }
                     }}
                   >
-                    <IconButton onClick={(e) => handleMenuOpen(e, i)}>
+                    <IconButton onClick={e => handleMenuOpen(e, i)}>
                       <MoreHorizIcon
                         sx={{
                           '&:hover': {
@@ -116,7 +117,7 @@ export default function Comments({
                     </IconButton>
                   </Tooltip>
                   <Menu
-                    elevation={1} 
+                    elevation={1}
                     anchorEl={anchorElements[i]}
                     open={Boolean(anchorElements[i])}
                     onClose={() => setAnchorElements({ ...anchorElements, [i]: null })}
@@ -133,38 +134,44 @@ export default function Comments({
                       }
                     }}
                   >
-                      {comment.postedBy._id === session.user._id ? (
-                        <MenuItem sx={{ color: 'red' }} onClick={() => deleteComment(comment)}>
-                          <DeleteIcon sx={{ mr: 1 }} /> Delete
-                        </MenuItem>
-                      ) : (
-                        <MenuItem
-                          onClick={() => {
-                            if (isFollowing) {
-                              handleFollowOrUnfollow(unfollow, session, comment.postedBy._id)
-                              setAnchorElements({ ...anchorElements, [i]: null })
-                            } else {
-                              handleFollowOrUnfollow(follow, session, comment.postedBy._id)
-                              setAnchorElements({ ...anchorElements, [i]: null })
-                            }
-                          }}
-                        >
-                          {isFollowing ? (
-                            <PersonRemoveIcon sx={{ mr: 1 }} />
-                          ) : (
-                            <PersonAddAlt1Icon sx={{ mr: 1 }} />
-                          )}
-                          {isFollowing ? 'Unfollow' : 'Follow'} {comment.postedBy.name}
-                        </MenuItem>
-                      )}
+                    {comment.postedBy._id === session.user._id ? (
                       <MenuItem
-                        onClick={e => {
-                          e.preventDefault()
+                        sx={{ color: 'red' }}
+                        onClick={() => {
+                          deleteComment(comment)
                           setAnchorElements({ ...anchorElements, [i]: null })
                         }}
                       >
-                        <FlagIcon sx={{ mr: 1 }} /> Report Comment
+                        <DeleteIcon sx={{ mr: 1 }} /> Delete
                       </MenuItem>
+                    ) : (
+                      <MenuItem
+                        onClick={() => {
+                          if (isFollowing) {
+                            handleFollowOrUnfollow(unfollow, session, comment.postedBy._id)
+                            setAnchorElements({ ...anchorElements, [i]: null })
+                          } else {
+                            handleFollowOrUnfollow(follow, session, comment.postedBy._id)
+                            setAnchorElements({ ...anchorElements, [i]: null })
+                          }
+                        }}
+                      >
+                        {isFollowing ? (
+                          <PersonRemoveIcon sx={{ mr: 1 }} />
+                        ) : (
+                          <PersonAddAlt1Icon sx={{ mr: 1 }} />
+                        )}
+                        {isFollowing ? 'Unfollow' : 'Follow'} {comment.postedBy.name}
+                      </MenuItem>
+                    )}
+                    <MenuItem
+                      onClick={e => {
+                        e.preventDefault()
+                        setAnchorElements({ ...anchorElements, [i]: null })
+                      }}
+                    >
+                      <FlagIcon sx={{ mr: 1 }} /> Report Comment
+                    </MenuItem>
                   </Menu>
                 </>
               }
@@ -172,7 +179,7 @@ export default function Comments({
             <CardContent
               sx={{
                 pl: '72px',
-                pt: 0,
+                pt: "4px",
                 '&.MuiCardContent-root:last-child': {
                   paddingBottom: '12px'
                 }

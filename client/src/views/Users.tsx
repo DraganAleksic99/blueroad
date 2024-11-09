@@ -90,18 +90,19 @@ export default function Users() {
                       </InfoRow>
                     }
                   />
-                  <CardContent sx={{ pb: 0 }}>
-                    {user.about && (
-                      <Typography variant="body2" color="text.secondary" paragraph>
-                        {user.about}
-                      </Typography>
-                    )}
-                    <InfoRow>
+                  <CardContent sx={{ pb: 0, pl: "72px", pt: 0 }}>
+                    
+                    <InfoRow style={{ marginBottom: "16px"}}>
                       <CalendarIcon fontSize="small" />
                       <Typography variant="body2">
                         {'Joined: ' + new Date(user.created).toDateString()}
                       </Typography>
                     </InfoRow>
+                    {user.about && (
+                      <Typography variant="body2" color="text.secondary" paragraph>
+                        {user.about}
+                      </Typography>
+                    )}
                   </CardContent>
                   <Divider />
                   <CardActions sx={{ justifyContent: 'space-between', px: 2, pt: 2 }}>

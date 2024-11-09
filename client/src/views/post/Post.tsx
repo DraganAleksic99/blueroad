@@ -185,7 +185,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
   }
 
   return (
-    <Card sx={{ mt: '16px', borderRadius: 2 }}>
+    <Card sx={{ mb: "2px", borderRadius: 2 }}>
       <CardHeader
         sx={{ pb: 0, alignItems: 'flex-start' }}
         avatar={
@@ -284,9 +284,10 @@ export default function Post({ post, onRemove, showComments }: Props) {
             <span>{new Date(post.created).toDateString()}</span>
           </>
         }
+        subheader={post.postedBy.email}
       />
 
-      <CardContent sx={{ p: 0 }}>
+      <CardContent sx={{ p: 0, pt: "4px" }}>
         <Box sx={{ pl: '72px', pr: 2 }}>
           <Typography variant="body1">{post.text}</Typography>
 
@@ -296,7 +297,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
               height="400"
               image={baseUrl + '/api/posts/photo/' + post._id}
               alt="Post content"
-              sx={{ objectFit: 'cover', border: '1px solid #2196F3', borderRadius: '12px', mt: 2 }}
+              sx={{ objectFit: 'cover', border: '1px solid #2196F3', borderRadius: '12px', mt: 1 }}
             />
           )}
         </Box>
@@ -407,6 +408,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
             setComment={setNewComment}
             handleAddComment={handleAddComment}
           />
+          <Box sx={{ borderTop: "1px solid gray"}}>
           <Comments
             updateComments={setComments}
             postId={post._id}
@@ -414,6 +416,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
             isFollowing={isFollowing}
             handleFollowOrUnfollow={handleFollowOrUnfollow}
           />
+          </Box>
         </>
       )}
       {!showComments && (
