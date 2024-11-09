@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Card,
@@ -10,7 +10,6 @@ import {
   Typography,
   IconButton,
   Button,
-  TextField,
   Collapse,
   Menu,
   MenuItem,
@@ -24,18 +23,20 @@ import {
   FavoriteBorder as FavoriteBorderIcon,
   Favorite as FavoriteIcon,
   ChatBubbleOutline as ChatBubbleOutlineIcon,
-  Send as SendIcon,
   BookmarkBorder as BookmarkBorderIcon,
   Bookmark as BookmarkIcon,
-  Flag as FlagIcon,
-  Delete as DeleteIcon,
-  PersonRemove as PersonRemoveIcon,
-  PersonAddAlt1 as PersonAddAlt1Icon
+  FlagOutlined as FlagIcon,
+  DeleteOutlined as DeleteIcon,
+  PersonRemoveOutlined as PersonRemoveIcon,
+  PersonAddAlt1Outlined as PersonAddAlt1Icon
 } from '@mui/icons-material'
 import { TPost } from './NewsFeed'
+import Reply from '../../components/Reply'
 import auth, { Jwt } from '../../auth/authHelper'
 import { follow, unfollow } from '../../services/userService'
 import { removePost, comment, like, unlike } from '../../services/postService'
+import Comments from './Comments'
+import { TCallbackFn } from '../../components/FollowProfileButton'
 
 const baseUrl = 'https://social-media-app-69re.onrender.com'
 
@@ -47,30 +48,18 @@ const ActionButton = styled(Button)(({ theme }) => ({
   }
 }))
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    borderRadius: 20,
-    backgroundColor: theme.palette.action.hover,
-    '&:hover': {
-      backgroundColor: theme.palette.action.selected
-    }
-  }
-}))
-
 type Props = {
   post: TPost
-  onRemove: (post: TPost) => void
+  onRemove?: (post: TPost) => void
+  showComments?: boolean
 }
 
-type FollowCallback = typeof follow
-type UnfollowCallback = typeof unfollow
-
-export default function Post({ post, onRemove }: Props) {
+export default function Post({ post, onRemove, showComments }: Props) {
   const [isLiked, setIsLiked] = useState(false)
   const [saved, setSaved] = useState(false)
   const [likesCount, setLikesCount] = useState(post.likes.length)
-  const [commentsCount, setCommentsCount] = useState(post.comments.length)
-  const [showComments, setShowComments] = useState(false)
+  const [comments, setComments] = useState(post.comments)
+  const [showReplyButton, setShowReplyButton] = useState(false)
   const [newComment, setNewComment] = useState('')
   const [isFollowing, setIsFollowing] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -87,15 +76,11 @@ export default function Post({ post, onRemove }: Props) {
   }, [])
 
   const checkIsFollowing = (postUserId: string) => {
-    const match = session.user.following?.some(f => f._id === postUserId)
+    const match = session.user?.following?.some(f => f._id === postUserId)
     setIsFollowing(match)
   }
 
-  const handleFollowOrUnfollow = (
-    callbackFn: FollowCallback | UnfollowCallback,
-    session: Jwt,
-    postUserId: string
-  ) => {
+  const handleFollowOrUnfollow = (callbackFn: TCallbackFn, session: Jwt, postUserId: string) => {
     callbackFn({ userId: session.user._id }, { t: session.token }, postUserId).then(data => {
       if (data.error) {
         setSnackbarInfo({ open: true, message: data.error })
@@ -103,16 +88,16 @@ export default function Post({ post, onRemove }: Props) {
         session.user.following = data.following
         setIsFollowing(!isFollowing)
 
-        if (isFollowing) {
-          setSnackbarInfo({ open: true, message: `You unfollowed ${data.name}` })
-        } else {
-          setSnackbarInfo({ open: true, message: `You followed ${data.name}` })
-        }
+        setSnackbarInfo({
+          open: true,
+          message: `You ${isFollowing ? 'unfollowed' : 'followed'} ${data.name}`
+        })
       }
     })
   }
 
-  const handleLike = () => {
+  const handleLike = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
     const callApi = isLiked ? unlike : like
 
     callApi(
@@ -133,7 +118,8 @@ export default function Post({ post, onRemove }: Props) {
     })
   }
 
-  const handleSave = () => {
+  const handleSave = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
     setSaved(!saved)
   }
 
@@ -143,10 +129,13 @@ export default function Post({ post, onRemove }: Props) {
   }
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault()
     setAnchorEl(event.currentTarget)
   }
 
-  const deletePost = () => {
+  const deletePost = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    e.preventDefault()
+
     removePost(
       {
         postId: post._id
@@ -168,41 +157,37 @@ export default function Post({ post, onRemove }: Props) {
     })
   }
 
-  const handleAddComment = event => {
-    if (event.code === 'Enter') {
-      event.preventDefault()
-
-      comment(
-        {
-          userId: session.user._id
-        },
-        {
-          t: session.token
-        },
-        post._id,
-        { text: newComment }
-      ).then(data => {
-        if (data.error) {
-          setSnackbarInfo({
-            open: true,
-            message: data.error
-          })
-        } else {
-          setNewComment('')
-          setSnackbarInfo({
-            open: true,
-            message: 'Reply succesfully sent!'
-          })
-          setCommentsCount(commentsCount + 1)
-        }
-      })
-    }
+  const handleAddComment = () => {
+    comment(
+      {
+        userId: session.user._id
+      },
+      {
+        t: session.token
+      },
+      post._id,
+      { text: newComment }
+    ).then(data => {
+      if (data.error) {
+        setSnackbarInfo({
+          open: true,
+          message: data.error
+        })
+      } else {
+        setNewComment('')
+        setSnackbarInfo({
+          open: true,
+          message: 'Reply succesfully sent!'
+        })
+        setComments(data.comments)
+      }
+    })
   }
 
   return (
     <Card sx={{ mt: '16px', borderRadius: 2 }}>
       <CardHeader
-        sx={{ pb: 0 }}
+        sx={{ pb: 0, alignItems: 'flex-start' }}
         avatar={
           <Link to={`/user/${post.postedBy._id}`}>
             <Avatar
@@ -239,9 +224,21 @@ export default function Post({ post, onRemove }: Props) {
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
-              onClose={() => setAnchorEl(null)}
+              onClose={(e: SyntheticEvent) => {
+                e.preventDefault()
+                setAnchorEl(null)
+              }}
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              PaperProps={{
+                sx: {
+                  borderRadius: '12px',
+                  minWidth: '200px',
+                  '& .MuiList-root': {
+                    padding: '8px 0'
+                  }
+                }
+              }}
             >
               {post.postedBy._id === session.user._id ? (
                 <MenuItem sx={{ color: 'red' }} onClick={deletePost}>
@@ -249,7 +246,9 @@ export default function Post({ post, onRemove }: Props) {
                 </MenuItem>
               ) : (
                 <MenuItem
-                  onClick={() => {
+                  onClick={e => {
+                    e.preventDefault()
+
                     if (isFollowing) {
                       handleFollowOrUnfollow(unfollow, session, post.postedBy._id)
                       setAnchorEl(null)
@@ -267,7 +266,12 @@ export default function Post({ post, onRemove }: Props) {
                   {isFollowing ? 'Unfollow' : 'Follow'} {post.postedBy.name}
                 </MenuItem>
               )}
-              <MenuItem>
+              <MenuItem
+                onClick={e => {
+                  e.preventDefault()
+                  setAnchorEl(null)
+                }}
+              >
                 <FlagIcon sx={{ mr: 1 }} /> Report post
               </MenuItem>
             </Menu>
@@ -360,9 +364,12 @@ export default function Post({ post, onRemove }: Props) {
                 }}
               />
             }
-            onClick={() => setShowComments(!showComments)}
+            onClick={e => {
+              e.preventDefault()
+              setShowReplyButton(!showReplyButton)
+            }}
           >
-            {commentsCount}
+            {comments.length}
           </ActionButton>
         </Tooltip>
         <Tooltip
@@ -393,39 +400,31 @@ export default function Post({ post, onRemove }: Props) {
           </IconButton>
         </Tooltip>
       </CardActions>
-
-      <Collapse in={showComments} timeout="auto" unmountOnExit>
-        <CardContent sx={{ pl: '72px', pt: 0 }}>
-          <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-            <StyledTextField
-              autoFocus
-              fullWidth
-              size="small"
-              placeholder="Post your reply..."
-              onKeyDown={handleAddComment}
-              value={newComment}
-              onChange={e => setNewComment(e.target.value)}
-            />
-            <Tooltip
-              title="Reply"
-              componentsProps={{
-                tooltip: {
-                  sx: {
-                    bgcolor: 'rgba(191, 191, 191, 0.2)',
-                    fontSize: '14px',
-                    color: '#2196F3',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                  }
-                }
-              }}
-            >
-              <IconButton color="primary" onClick={handleAddComment} disabled={!newComment.trim()}>
-                <SendIcon />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        </CardContent>
-      </Collapse>
+      {showComments && (
+        <>
+          <Reply
+            comment={newComment}
+            setComment={setNewComment}
+            handleAddComment={handleAddComment}
+          />
+          <Comments
+            updateComments={setComments}
+            postId={post._id}
+            comments={comments}
+            isFollowing={isFollowing}
+            handleFollowOrUnfollow={handleFollowOrUnfollow}
+          />
+        </>
+      )}
+      {!showComments && (
+        <Collapse in={showReplyButton} timeout="auto" unmountOnExit>
+          <Reply
+            comment={newComment}
+            setComment={setNewComment}
+            handleAddComment={handleAddComment}
+          />
+        </Collapse>
+      )}
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',

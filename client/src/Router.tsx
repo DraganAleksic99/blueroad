@@ -5,6 +5,7 @@ import Signup from './views/Signup'
 import Profile from './views/Profile'
 import EditProfile from './views/EditProfile'
 import NewsFeed from './views/post/NewsFeed'
+import PostFeed from './views/post/PostFeed'
 import ProtectedRoute from './components/ProtectedRoute'
 
 const MainRouter = () => {
@@ -12,11 +13,12 @@ const MainRouter = () => {
     <Routes>
       <Route path="/">
         <Route index element={<ProtectedRoute><NewsFeed /></ProtectedRoute>} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Signin />} />
-        <Route path="/user/edit/:userId" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-        <Route path="/user/:userId" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="users" element={<Users />} />
+        <Route path="signup" element={<Signup />} />
+        <Route path="login" element={<Signin />} />
+        <Route path="user/edit/:userId" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+        <Route path="user/:userId" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="user/:userId/post/:postId" element={<ProtectedRoute><PostFeed /></ProtectedRoute>} />
       </Route>
     </Routes>
   )
