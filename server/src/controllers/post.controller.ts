@@ -7,10 +7,11 @@ import formidable from 'formidable'
 const listNewsFeed = async (req: Request, res: Response) => {
   const following = req.profile.following
   following.push(req.profile._id)
+
   try {
     const posts = await Post.find({ postedBy: { $in: req.profile.following } })
-      .populate('comments.postedBy', '_id name')
-      .populate('postedBy', '_id name')
+      .populate('comments.postedBy', '_id name email')
+      .populate('postedBy', '_id name email')
       .sort('-created')
       .exec()
     res.json(posts)
@@ -24,8 +25,8 @@ const listNewsFeed = async (req: Request, res: Response) => {
 const listByUser = async (req: Request, res: Response) => {
   try {
     const posts = await Post.find({ postedBy: req.profile._id })
-      .populate('comments.postedBy', '_id name')
-      .populate('postedBy', '_id name')
+      .populate('comments.postedBy', '_id name email')
+      .populate('postedBy', '_id name email')
       .sort('-created')
       .exec()
     res.json(posts)
@@ -69,7 +70,7 @@ const photo = (req: Request, res: Response) => {
 
 const postById = async (req: Request, res: Response, next: NextFunction, id: string) => {
   try {
-    const post = await Post.findById(id).populate('postedBy', '_id name').exec()
+    const post = await Post.findById(id).populate('postedBy', '_id name email').exec()
     if (!post)
       return res.status(400).json({
         error: 'Post not found'
@@ -145,8 +146,8 @@ const comment = async (req: Request, res: Response) => {
       { $push: { comments: comment } },
       { new: true }
     )
-      .populate('comments.postedBy', '_id name')
-      .populate('postedBy', '_id name')
+      .populate('comments.postedBy', '_id name email')
+      .populate('postedBy', '_id name email')
       .exec()
     res.json(result)
   } catch (err) {
@@ -164,8 +165,8 @@ const uncomment = async (req: Request, res: Response) => {
       { $pull: { comments: { _id: comment._id } } },
       { new: true }
     )
-      .populate('comments.postedBy', '_id name')
-      .populate('postedBy', '_id name')
+      .populate('comments.postedBy', '_id name email')
+      .populate('postedBy', '_id name email')
       .exec()
     res.json(result)
   } catch (err) {
