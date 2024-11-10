@@ -15,6 +15,7 @@
     "@hookform/resolvers": "^3.9.1",
     "@mui/icons-material": "^5.15.2",
     "@mui/material": "^6.1.6",
+    "@tanstack/react-query": "^5.59.20",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.53.1",
@@ -22,6 +23,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.60.1",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
