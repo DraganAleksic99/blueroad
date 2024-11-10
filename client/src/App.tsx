@@ -1,6 +1,6 @@
 import './App.css'
+import { Outlet } from 'react-router-dom'
 import Navigation from './components/Navigation'
-import MainRouter from './Router'
 import { CssBaseline } from '@mui/material'
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <div className="app">
       <CssBaseline />
       <Navigation />
-      <MainRouter />
+      <Outlet />
     </div>
   )
 }

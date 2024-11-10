@@ -1,4 +1,5 @@
-import { Route, Routes } from 'react-router'
+import { Route, createRoutesFromElements, createBrowserRouter } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Users from './views/Users'
 import Signin from './views/Signin'
 import Signup from './views/Signup'
@@ -7,21 +8,58 @@ import EditProfile from './views/EditProfile'
 import NewsFeed from './views/post/NewsFeed'
 import PostFeed from './views/post/PostFeed'
 import ProtectedRoute from './components/ProtectedRoute'
+import Layout from './App'
 
-const MainRouter = () => {
-  return (
-    <Routes>
+const queryClient = new QueryClient()
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route
+      element={
+        <QueryClientProvider client={queryClient}>
+          <Layout />
+        </QueryClientProvider>
+      }
+    >
       <Route path="/">
-        <Route index element={<ProtectedRoute><NewsFeed /></ProtectedRoute>} />
+        <Route
+          index
+          element={
+            <ProtectedRoute>
+              <NewsFeed />
+            </ProtectedRoute>
+          }
+        />
         <Route path="users" element={<Users />} />
         <Route path="signup" element={<Signup />} />
         <Route path="login" element={<Signin />} />
-        <Route path="user/edit/:userId" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-        <Route path="user/:userId" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="user/:userId/post/:postId" element={<ProtectedRoute><PostFeed /></ProtectedRoute>} />
+        <Route
+          path="user/edit/:userId"
+          element={
+            <ProtectedRoute>
+              <EditProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="user/:userId"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="user/:userId/post/:postId"
+          element={
+            <ProtectedRoute>
+              <PostFeed />
+            </ProtectedRoute>
+          }
+        />
       </Route>
-    </Routes>
+    </Route>
   )
-}
+)
 
-export default MainRouter
+export default router
