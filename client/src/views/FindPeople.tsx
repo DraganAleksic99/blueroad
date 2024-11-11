@@ -1,4 +1,6 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
 import {
   List,
   ListItem,
@@ -9,111 +11,123 @@ import {
   Snackbar,
   Typography,
   Paper,
-  Box
+  Box,
+  Skeleton,
+  styled
 } from '@mui/material'
-import { Link } from 'react-router-dom'
-import { follow } from '../services/userService'
+import { followUser } from '../services/userService'
+import { getUsersToFollow } from '../services/userService'
 import auth, { Jwt } from '../auth/authHelper'
-import { findPeople } from '../services/userService'
 import { TUser } from './Profile'
 
 const baseUrl = 'https://social-media-app-69re.onrender.com'
 
+const WhoToFollowPaper = styled(Paper)({
+  position: 'sticky',
+  top: 8,
+  maxHeight: 'calc(100vh - 8px)',
+  overflowY: 'auto',
+  '&::-webkit-scrollbar': {
+    width: '6px'
+  },
+  '&::-webkit-scrollbar-track': {
+    background: 'transparent'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: '#2196F3',
+    borderRadius: '3px'
+  },
+  '&::-webkit-scrollbar-thumb:hover': {
+    background: '#21CBF3'
+  }
+})
+
+const usersToFollowQuery = (userId: string, token: string) => ({
+  queryKey: ['usersToFollow', userId, token],
+  queryFn: async () => getUsersToFollow(userId, token)
+})
+
 export default function FindPeople() {
-  const [users, setUsers] = useState<TUser[] | []>([])
-  const [values, setValues] = useState({
+  const { user, token }: Jwt = auth.isAuthenticated()
+  const { data, isPending } = useQuery(usersToFollowQuery(user._id, token))
+
+  const queryClient = useQueryClient()
+  const [followedUserName, setFollowedUserName] = useState('')
+  const [snackbarInfo, setSnackbarInfo] = useState({
     open: false,
-    followMessage: ''
+    message: ''
   })
 
-  const jwt: Jwt = useMemo(() => auth.isAuthenticated(), [])
-
-  useEffect(() => {
-    const abortController = new AbortController()
-    const signal = abortController.signal
-
-    findPeople(
-      {
-        userId: jwt.user._id
-      },
-      {
-        t: jwt.token
-      },
-      signal
-    ).then(data => {
-      if (data && data.error) {
-        console.log(data.error)
-      } else {
-        setUsers(data)
-      }
-    })
-
-    return function cleanup() {
-      abortController.abort()
+  const { mutate } = useMutation({
+    mutationFn: (userToFollow: TUser) => {
+      return followUser(user._id, token, userToFollow._id)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['usersToFollow'] })
+      setSnackbarInfo({
+        open: true,
+        message: `You followed ${followedUserName}`
+      })
     }
-  }, [jwt])
+  })
 
-  const handleFollow = (user: TUser, index: number) => {
-    follow(
-      {
-        userId: jwt.user._id
-      },
-      {
-        t: jwt.token
-      },
-      user._id
-    ).then(data => {
-      if (data.error) {
-        console.log(data.error)
-      } else {
-        const toFollow = users
-        toFollow.splice(index, 1)
-
-        setValues({
-          ...values,
-          open: true,
-          followMessage: `Following ${user.name}!`
-        })
-        setUsers(toFollow)
-      }
-    })
+  const handleFollow = (userToFollow: TUser) => {
+    setFollowedUserName(userToFollow.name)
+    mutate(userToFollow)
   }
 
-  const handleClose = () => {
-    setValues({
-      ...values,
-      open: false
-    })
+  if (isPending) {
+    return (
+      <WhoToFollowPaper>
+        <Box>
+          <Typography sx={{ fontWeight: '500', ml: 2, mb: 0, mt: 2 }} variant="h5" gutterBottom>
+            Who to follow
+          </Typography>
+          <List>
+            {Array.from({ length: 12 }).map((_, index: number) => (
+              <ListItem
+                key={index}
+                secondaryAction={
+                  <Skeleton
+                    variant="rectangular"
+                    animation="wave"
+                    sx={{
+                      borderRadius: '20px',
+                      px: '12px',
+                      py: '4px',
+                      color: 'transparent'
+                    }}
+                  >
+                    xxxxxx
+                  </Skeleton>
+                }
+              >
+                <Skeleton animation="wave" variant="circular" width={40} height={40} />
+                <Skeleton
+                  sx={{
+                    maxWidth: '182px',
+                    width: '100%',
+                    color: 'transparent',
+                    ml: 1,
+                    fontSize: '24px'
+                  }}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </WhoToFollowPaper>
+    )
   }
 
   return (
-    <Paper
-      sx={{
-        position: 'sticky',
-        top: 8,
-        maxHeight: 'calc(100vh - 8px)',
-        overflowY: 'auto',
-        '&::-webkit-scrollbar': {
-          width: '6px'
-        },
-        '&::-webkit-scrollbar-track': {
-          background: 'transparent'
-        },
-        '&::-webkit-scrollbar-thumb': {
-          background: '#2196F3',
-          borderRadius: '3px'
-        },
-        '&::-webkit-scrollbar-thumb:hover': {
-          background: '#21CBF3'
-        }
-      }}
-    >
+    <WhoToFollowPaper>
       <Box>
         <Typography sx={{ fontWeight: '500', ml: 2, mb: 0, mt: 2 }} variant="h5" gutterBottom>
           Who to follow
         </Typography>
         <List>
-          {users.map((user: TUser, index: number) => (
+          {data.map(user => (
             <ListItem
               key={user._id}
               secondaryAction={
@@ -125,7 +139,7 @@ export default function FindPeople() {
                     textTransform: 'none',
                     px: 2
                   }}
-                  onClick={() => handleFollow(user, index)}
+                  onClick={() => handleFollow(user)}
                 >
                   Follow
                 </Button>
@@ -138,7 +152,7 @@ export default function FindPeople() {
               </Link>
               <ListItemText
                 primary={user.name}
-                sx={{ maxWidth: "200px"}}
+                sx={{ maxWidth: '200px' }}
                 primaryTypographyProps={{
                   fontWeight: 500,
                   variant: 'body1'
@@ -152,12 +166,23 @@ export default function FindPeople() {
             vertical: 'bottom',
             horizontal: 'right'
           }}
-          open={values.open}
-          onClose={handleClose}
+          sx={{
+            '& .MuiPaper-root': {
+              color: '#2196F3',
+              bgcolor: 'rgba(191, 191, 191, 0.2)'
+            }
+          }}
+          open={snackbarInfo.open}
+          onClose={() =>
+            setSnackbarInfo({
+              open: false,
+              message: ''
+            })
+          }
           autoHideDuration={6000}
-          message={<span>{values.followMessage}</span>}
+          message={<span>{snackbarInfo.message}</span>}
         />
       </Box>
-    </Paper>
+    </WhoToFollowPaper>
   )
 }
