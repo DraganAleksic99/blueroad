@@ -1,26 +1,19 @@
-import { Avatar, Typography, ImageList, ImageListItem } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Box } from '@mui/material'
 import { TUser } from '../views/Profile'
-
-const baseUrl = 'https://social-media-app-69re.onrender.com'
+import GridCard from './GridCard'
 
 export default function FollowGrid({ users }: { users: TUser[] }) {
   return (
     <div>
-      <ImageList rowHeight={160} cols={4}>
-        {users.map((user, i: number) => {
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+        {users.map((user, i) => {
           return (
-            <ImageListItem style={{ height: 120 }} key={i}>
-              <Link to={'/user/' + user._id}>
-                <Avatar src={baseUrl + '/api/users/photo/' + user._id} sx={{ margin: 'auto' }} />
-                <Typography sx={{ margin: 'auto', mt: '8px', width: 'fit-content' }}>
-                  {user.name}
-                </Typography>
-              </Link>
-            </ImageListItem>
+            <Box sx={{ position: 'relative', flex: '0 0 32.31%' }} key={i}>
+              <GridCard user={user} />
+            </Box>
           )
         })}
-      </ImageList>
+      </Box>
     </div>
   )
 }
