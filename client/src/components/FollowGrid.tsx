@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { TUser } from '../views/Profile'
 import GridCard from './GridCard'
 
-export default function FollowGrid({ users }: { users: TUser[] }) {
+export default function FollowGrid({ users = [] }: { users: TUser[] }) {
   return (
     <div>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>

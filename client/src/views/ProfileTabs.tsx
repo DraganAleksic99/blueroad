@@ -1,4 +1,5 @@
-import { SyntheticEvent, useState } from 'react'
+import { SyntheticEvent, useState, PropsWithChildren, useEffect } from 'react'
+import { useMatch } from 'react-router-dom'
 import { AppBar, Typography, Tabs, Tab } from '@mui/material'
 import FollowGrid from '../components/FollowGrid'
 import PostList from './post/PostList'
@@ -11,18 +12,23 @@ type Props = {
   onRemove: (post: TPost) => void
 }
 
-export default function ProfileTabs({ user, posts, onRemove }: Props) {
-  const [tab, setTab] = useState(0)
+export default function ProfileTabs({ user = {}, posts = [], onRemove }: Props) {
+  const [currentTab, setCurrentTab] = useState(0)
+  const {
+    params: { userId }
+  } = useMatch('/user/:userId')
 
   const handleTabChange = (_event: SyntheticEvent, value: number) => {
-    setTab(value)
+    setCurrentTab(value)
   }
+
+  useEffect(() => setCurrentTab(0), [userId])
 
   return (
     <div>
       <AppBar position="static" color="default">
         <Tabs
-          value={tab}
+          value={currentTab}
           onChange={handleTabChange}
           indicatorColor="primary"
           textColor="primary"
@@ -33,17 +39,17 @@ export default function ProfileTabs({ user, posts, onRemove }: Props) {
           <Tab label="Following" />
         </Tabs>
       </AppBar>
-      {tab === 0 && (
+      {currentTab === 0 && (
         <TabContainer>
           <PostList removePost={onRemove} posts={posts} />
         </TabContainer>
       )}
-      {tab === 1 && (
+      {currentTab === 1 && (
         <TabContainer>
           <FollowGrid users={user.followers} />
         </TabContainer>
       )}
-      {tab === 2 && (
+      {currentTab === 2 && (
         <TabContainer>
           <FollowGrid users={user.following} />
         </TabContainer>
@@ -52,7 +58,7 @@ export default function ProfileTabs({ user, posts, onRemove }: Props) {
   )
 }
 
-const TabContainer = ({ children }) => {
+const TabContainer = ({ children } : PropsWithChildren) => {
   return (
     <Typography component="div" style={{ padding: 8 * 2 }}>
       {children}
