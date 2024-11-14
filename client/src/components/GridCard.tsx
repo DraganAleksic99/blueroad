@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
 import { Avatar, Card, CardHeader, Button, Typography, Box } from '@mui/material'
 import { followUser, unfollowUser } from '../services/userService'
 import { TUser } from '../views/Profile'
@@ -14,24 +15,22 @@ export default function GridCard({ user }: { user: TUser }) {
     // @ts-expect-error todo: fix on backend
     user.followers?.some(id => id === session.user._id)
   )
-  const [isLoading, setIsLoading] = useState(false)
 
-  const handleButtonClick = (callbackFn: TCallbackFn, userId: string) => {
-    setIsLoading(true)
+  const { mutate, isPending } = useMutation({
+    mutationFn: (callbackFn: TCallbackFn) => {
+      return callbackFn(session.user._id, session.token, user._id)
+    },
+    onSuccess: () => {
+      setIsFollowing(!isFollowing)
+    }
+  })
 
-    callbackFn(session.user._id, session.token, userId).then(data => {
-      if (data.error) {
-        console.log(data.error)
-        setIsLoading(false)
-      } else {
-        setIsFollowing(!isFollowing)
-        setIsLoading(false)
-      }
-    })
+  const handleButtonClick = (callbackFn: TCallbackFn) => {
+    mutate(callbackFn)
   }
 
   // @ts-expect-error todo: fix on backend
-  const isFollower = user.following?.some(id => id === session.user._id)
+  const isFollower = user.following?.some(id => id === session.user?._id)
 
   return (
     <Link to={`/user/${user._id}`}>
@@ -50,10 +49,10 @@ export default function GridCard({ user }: { user: TUser }) {
             <Button
               variant="outlined"
               size="small"
-              disabled={isLoading}
+              disabled={isPending}
               onClick={(e) => {
                 e.preventDefault()
-                handleButtonClick(unfollowUser, user._id)
+                handleButtonClick(unfollowUser)
               }}
               data-following="Following"
               data-unfollow="Unfollow"
@@ -84,10 +83,10 @@ export default function GridCard({ user }: { user: TUser }) {
             <Button
               variant="outlined"
               size="small"
-              disabled={isLoading}
+              disabled={isPending}
               onClick={(e) => {
                 e.preventDefault()
-                handleButtonClick(followUser, user._id)
+                handleButtonClick(followUser)
               }}
               sx={{
                 px: 2,
