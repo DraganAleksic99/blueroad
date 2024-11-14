@@ -1,8 +1,6 @@
-import { useState, useEffect } from 'react'
-import {
-  Card,
-  Grid,
-} from '@mui/material'
+import { useEffect, useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Card, Grid } from '@mui/material'
 import { listNewsFeed } from '../../services/postService'
 import auth, { Jwt } from '../../auth/authHelper'
 import PostList from './PostList'
@@ -36,38 +34,26 @@ export type TPost = {
 }
 
 export default function NewsFeed() {
+  const queryClient = useQueryClient()
+  const session: Jwt = auth.isAuthenticated()
   const [posts, setPosts] = useState<TPost[]>([])
+  const { data, isPending, isSuccess } = useQuery({
+    queryKey: ['newsfeed', session],
+    queryFn: async () => {
+      return listNewsFeed(session.user._id, session.token)
+    },
+  })
 
   useEffect(() => {
-    const abortController = new AbortController()
-    const signal = abortController.signal
-    const jwt: Jwt = auth.isAuthenticated()
-
-    listNewsFeed(
-      {
-        userId: jwt.user._id
-      },
-      {
-        t: jwt.token
-      },
-      signal
-    ).then(data => {
-      if (data.error) {
-        console.log(data.error)
-      } else {
-        setPosts(data)
-      }
-    })
-
-    return function cleanup() {
-      abortController.abort()
-    }
-  }, [])
+    if (!isSuccess) return
+    setPosts(data)
+  }, [isSuccess, data])
 
   const addPost = (post: TPost) => {
     const updatedPosts = [...posts]
     updatedPosts.unshift(post)
     setPosts(updatedPosts)
+    queryClient.invalidateQueries({ queryKey: ["newsfeed"]})
   }
 
   const removePost = (post: TPost) => {
@@ -75,6 +61,7 @@ export default function NewsFeed() {
     const index = updatedPosts.indexOf(post)
     updatedPosts.splice(index, 1)
     setPosts(updatedPosts)
+    queryClient.invalidateQueries({ queryKey: ["newsfeed"]})
   }
 
   return (
@@ -83,11 +70,11 @@ export default function NewsFeed() {
         <Card>
           <MainLayout>
             <NewPost addPost={addPost} />
-            <PostList removePost={removePost} posts={posts} />
+            <PostList arePostsPending={isPending} removePost={removePost} posts={posts} />
           </MainLayout>
         </Card>
       </Grid>
-      <Grid sx={{ p: 0, backgroundColor: "rgba(246, 247, 248, 0.5)"}} item lg={4}>
+      <Grid sx={{ p: 0, backgroundColor: 'rgba(246, 247, 248, 0.5)' }} item lg={4}>
         <FindPeople />
       </Grid>
     </Grid>

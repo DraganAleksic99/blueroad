@@ -46,6 +46,7 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
   const [imagePreview, setImagePreview] = useState(null)
   const [error, setError] = useState('')
   const [user, setUser] = useState<TUser | Record<string, unknown>>({})
+  const [isPending, setIsPending] = useState(false)
 
   useEffect(() => {
     setUser(auth.isAuthenticated().user)
@@ -58,6 +59,8 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
     values.text && postData.append('text', values.text)
     values.photo && postData.append('photo', values.photo)
 
+    setIsPending(true)
+
     createPost(
       {
         userId: jwt.user._id
@@ -69,9 +72,11 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
     ).then(data => {
       if (data.error) {
         setError(data.error)
+        setIsPending(false)
       } else {
         setValues({ ...values, text: '', photo: null })
         addPost(data)
+        setIsPending(false)
       }
     })
   }
@@ -147,6 +152,7 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
           />
         </PostButton>
         <Button
+        disabled={!values.text || isPending}
           variant="outlined"
           size="small"
           sx={{
