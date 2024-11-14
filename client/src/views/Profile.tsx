@@ -41,7 +41,7 @@ export default function Profile() {
     queryFn: async () => getUser(userId, session.token)
   })
 
-  const { data: posts } = useQuery({
+  const { data: posts, isPending: arePostsPending } = useQuery({
     queryKey: ['posts', userId, session],
     queryFn: async () => loadPosts(userId, session.token)
   })
@@ -90,7 +90,7 @@ export default function Profile() {
           />
         )}
 
-        <ProfileTabs onRemove={removePost} posts={posts} user={user} />
+        <ProfileTabs arePostsPending={arePostsPending} onRemove={removePost} posts={posts} user={user} />
       </MainLayout>
     </Paper>
   )

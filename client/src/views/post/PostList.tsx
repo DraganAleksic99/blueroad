@@ -5,12 +5,39 @@ import Post from './Post'
 type Props = {
   posts: TPost[]
   removePost?: (post: TPost) => void
+  arePostsPending: boolean
 }
 
-export default function PostList({ posts, removePost }: Props) {
+export default function PostList({ posts, removePost, arePostsPending }: Props) {
+  if (arePostsPending) {
+    return (
+      <div
+        style={{
+          maxWidth: '715px',
+          margin: 'auto',
+          backgroundColor: 'rgba(246, 247, 248, 0.5)',
+          display: 'flex',
+          justifyContent: 'center'
+        }}
+      >
+        <svg
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          viewBox="0 0 24 24"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          xmlns="http://www.w3.org/2000/svg"
+          className="spinner"
+        >
+          <path d="M12 3v3m6.366-.366-2.12 2.12M21 12h-3m.366 6.366-2.12-2.12M12 21v-3m-6.366.366 2.12-2.12M3 12h3m-.366-6.366 2.12 2.12"></path>
+        </svg>
+      </div>
+    )
+  }
   return (
     <div style={{ maxWidth: '715px', margin: 'auto', backgroundColor: 'rgba(246, 247, 248, 0.5)' }}>
-      {posts.map(post => (
+      {posts?.map(post => (
         <Link to={`/user/${post.postedBy._id}/post/${post._id}`} state={post} key={post._id}>
           <Post post={post} onRemove={removePost} />
         </Link>

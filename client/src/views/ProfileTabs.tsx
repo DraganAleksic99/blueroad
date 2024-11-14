@@ -10,9 +10,10 @@ type Props = {
   user: TUser | Record<string, never>
   posts: TPost[]
   onRemove: (post: TPost) => void
+  arePostsPending: boolean
 }
 
-export default function ProfileTabs({ user = {}, posts = [], onRemove }: Props) {
+export default function ProfileTabs({ user = {}, posts = [], onRemove, arePostsPending }: Props) {
   const [currentTab, setCurrentTab] = useState(0)
   const {
     params: { userId }
@@ -41,7 +42,7 @@ export default function ProfileTabs({ user = {}, posts = [], onRemove }: Props) 
       </AppBar>
       {currentTab === 0 && (
         <TabContainer>
-          <PostList removePost={onRemove} posts={posts} />
+          <PostList arePostsPending={arePostsPending} removePost={onRemove} posts={posts} />
         </TabContainer>
       )}
       {currentTab === 1 && (

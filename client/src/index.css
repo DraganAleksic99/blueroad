@@ -8,3 +8,19 @@ a:not([class]) {
   text-decoration: none;
   color: black;
 }
+
+.spinner {
+  height: 3rem;  /* h-5 */
+  width: 3rem;   /* w-5 */
+  animation: spin 1s linear infinite;  /* animate-spin */
+  stroke: #a1a1aa;  /* stroke-zinc-400 */
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
