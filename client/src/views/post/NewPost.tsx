@@ -1,3 +1,4 @@
+import { baseUrl } from '../../config/config'
 import { useState, useEffect, ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -36,8 +37,6 @@ const VisuallyHiddenInput = styled('input')({
   whiteSpace: 'nowrap',
   width: 1
 })
-
-const baseUrl = 'https://social-media-app-69re.onrender.com'
 
 export default function NewPost({ addPost }: { addPost: (post: TPost) => void }) {
   const [values, setValues] = useState({

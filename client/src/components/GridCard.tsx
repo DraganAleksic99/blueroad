@@ -1,15 +1,15 @@
+import { baseUrl } from '../config/config'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Avatar, Card, CardHeader, Button, Typography, Box } from '@mui/material'
 import { followUser, unfollowUser } from '../services/userService'
 import { TUser } from '../views/Profile'
 import auth, { Jwt } from '../auth/authHelper'
 import { TCallbackFn } from './FollowProfileButton'
 
-const baseUrl = 'https://social-media-app-69re.onrender.com'
-
 export default function GridCard({ user }: { user: TUser }) {
+  const queryClient = useQueryClient()
   const session: Jwt = auth.isAuthenticated()
   const [isFollowing, setIsFollowing] = useState(
     // @ts-expect-error todo: fix on backend
@@ -22,6 +22,7 @@ export default function GridCard({ user }: { user: TUser }) {
     },
     onSuccess: () => {
       setIsFollowing(!isFollowing)
+      queryClient.invalidateQueries({ queryKey: ["profile"]})
     }
   })
 

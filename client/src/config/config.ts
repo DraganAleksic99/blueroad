@@ -1,3 +1,3 @@
-const baseUrl = 'https://social-media-app-69re.onrender.com'
+const baseUrl = 'https://social-media-app-production-43ee.up.railway.app'
 
 export { baseUrl }

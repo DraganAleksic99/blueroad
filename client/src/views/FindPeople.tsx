@@ -1,3 +1,4 @@
+import { baseUrl } from '../config/config'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
@@ -19,8 +20,6 @@ import { followUser } from '../services/userService'
 import { getUsersToFollow } from '../services/userService'
 import auth, { Jwt } from '../auth/authHelper'
 import { TUser } from './Profile'
-
-const baseUrl = 'https://social-media-app-69re.onrender.com'
 
 const WhoToFollowPaper = styled(Paper)({
   position: 'sticky',

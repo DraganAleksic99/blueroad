@@ -1,4 +1,4 @@
-const baseUrl = 'https://social-media-app-69re.onrender.com'
+import { baseUrl } from "../config/config";
 
 const signin = async (user: { email: string; password: string }) => {
   try {

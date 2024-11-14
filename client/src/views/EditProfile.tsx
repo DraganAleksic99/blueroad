@@ -1,3 +1,4 @@
+import { baseUrl } from '../config/config'
 import { ChangeEvent, useState } from 'react'
 import { useMatch, useLocation, useNavigate } from 'react-router'
 import auth, { Jwt } from '../auth/authHelper'
@@ -23,8 +24,6 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
 import { TUser } from './Profile'
-
-const baseUrl = 'https://social-media-app-69re.onrender.com'
 
 interface IFormValues {
   name: string
@@ -317,6 +316,7 @@ export default function EditProfile() {
               variant="outlined"
               sx={{ borderRadius: '20px', px: 3, textTransform: 'none' }}
               onClick={() => navigate(`/user/${match.params.userId}`)}
+              disabled={isLoading}
             >
               Cancel
             </Button>

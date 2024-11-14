@@ -1,3 +1,4 @@
+import { baseUrl } from '../config/config'
 import {
   Card,
   CardHeader,
@@ -15,8 +16,6 @@ import {
   CalendarToday as CalendarIcon
 } from '@mui/icons-material'
 import { TUser } from '../views/Profile'
-
-const baseUrl = 'https://social-media-app-69re.onrender.com'
 
 export const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',

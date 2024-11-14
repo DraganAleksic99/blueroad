@@ -1,4 +1,6 @@
+import { baseUrl } from '../../config/config'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Card,
   CardHeader,
@@ -16,21 +18,18 @@ import {
   PersonRemoveOutlined as PersonRemoveIcon,
   PersonAddAlt1Outlined as PersonAddAlt1Icon
 } from '@mui/icons-material'
-import { Link } from 'react-router-dom'
 import { uncomment } from '../../services/postService'
-import { follow, unfollow } from '../../services/userService'
+import { followUser, unfollowUser } from '../../services/userService'
 import auth, { Jwt } from '../../auth/authHelper'
 import { TComment } from './NewsFeed'
 import { TCallbackFn } from '../../components/FollowProfileButton'
-
-const baseUrl = 'https://social-media-app-69re.onrender.com'
 
 type Props = {
   postId: string
   updateComments: (comments: TComment[]) => void
   comments: TComment[]
   isFollowing: boolean
-  handleFollowOrUnfollow: (callbackFn: TCallbackFn, session: Jwt, postUserId: string) => void
+  handleFollowOrUnfollow: (callbackFn: TCallbackFn, postUserId: string) => void
 }
 
 export default function Comments({
@@ -82,7 +81,7 @@ export default function Comments({
   }
 
   return (
-    <div style={{ paddingBlockEnd: '16px' }}>
+    <div>
       {comments.map((comment, i) => {
         return (
           <Card sx={{ mb: "2px" }} key={i}>
@@ -148,10 +147,10 @@ export default function Comments({
                       <MenuItem
                         onClick={() => {
                           if (isFollowing) {
-                            handleFollowOrUnfollow(unfollow, session, comment.postedBy._id)
+                            handleFollowOrUnfollow(unfollowUser, comment.postedBy._id)
                             setAnchorElements({ ...anchorElements, [i]: null })
                           } else {
-                            handleFollowOrUnfollow(follow, session, comment.postedBy._id)
+                            handleFollowOrUnfollow(followUser, comment.postedBy._id)
                             setAnchorElements({ ...anchorElements, [i]: null })
                           }
                         }}
