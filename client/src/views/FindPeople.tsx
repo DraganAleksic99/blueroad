@@ -50,6 +50,7 @@ const usersToFollowQuery = (userId: string, token: string) => ({
 export default function FindPeople() {
   const { user, token }: Jwt = auth.isAuthenticated()
   const { data, isPending } = useQuery(usersToFollowQuery(user._id, token))
+  const [buttonIndex, setButtonIndex] = useState(-1)
 
   const queryClient = useQueryClient()
   const [followedUserName, setFollowedUserName] = useState('')
@@ -58,7 +59,7 @@ export default function FindPeople() {
     message: ''
   })
 
-  const { mutate } = useMutation({
+  const { mutate, isPending: isMutationPending } = useMutation({
     mutationFn: (userToFollow: TUser) => {
       return followUser(user._id, token, userToFollow._id)
     },
@@ -127,11 +128,12 @@ export default function FindPeople() {
           Who to follow
         </Typography>
         <List>
-          {data.map(user => (
+          {data.map((user, index) => (
             <ListItem
               key={user._id}
               secondaryAction={
                 <Button
+                disabled={isMutationPending && (buttonIndex === index)}
                   variant="outlined"
                   size="small"
                   sx={{
@@ -139,7 +141,11 @@ export default function FindPeople() {
                     textTransform: 'none',
                     px: 2
                   }}
-                  onClick={() => handleFollow(user)}
+                  onClick={() => {
+                    handleFollow(user)
+                    setButtonIndex(index)
+                  }
+                  }
                 >
                   Follow
                 </Button>
