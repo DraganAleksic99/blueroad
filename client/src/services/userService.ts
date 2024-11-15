@@ -1,12 +1,5 @@
-const baseUrl = 'https://social-media-app-69re.onrender.com'
-
-export type Params = {
-  userId: string
-}
-
-export type Credentials = {
-  t: string
-}
+import { baseUrl } from "../config/config"
+import { TUser } from "../views/Profile"
 
 const create = async (user: { name: string; email: string; password: string }) => {
   try {
@@ -25,16 +18,19 @@ const create = async (user: { name: string; email: string; password: string }) =
   }
 }
 
-const list = async (signal: AbortSignal) => {
+const getUsers = async (): Promise<TUser[]> => {
   try {
     const response = await fetch(baseUrl + '/api/users/', {
       method: 'GET',
-      signal: signal,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       }
     })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
 
     return await response.json()
   } catch (err) {
@@ -42,17 +38,20 @@ const list = async (signal: AbortSignal) => {
   }
 }
 
-const read = async (params: Params, credentials: Credentials, signal: AbortSignal) => {
+const getUser = async (userId: string, token: string): Promise<TUser> => {
   try {
-    const response = await fetch(baseUrl + '/api/users/' + params.userId, {
+    const response = await fetch(baseUrl + '/api/users/' + userId, {
       method: 'GET',
-      signal: signal,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + credentials.t
+        Authorization: 'Bearer ' + token
       }
     })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
 
     return await response.json()
   } catch (err) {
@@ -60,13 +59,13 @@ const read = async (params: Params, credentials: Credentials, signal: AbortSigna
   }
 }
 
-const update = async (params: Params, credentials: Credentials, user: FormData) => {
+const update = async (userId: string, token: string, user: FormData) => {
   try {
-    const response = await fetch(baseUrl + '/api/users/' + params.userId, {
+    const response = await fetch(baseUrl + '/api/users/' + userId, {
       method: 'PUT',
       headers: {
         Accept: 'application/json',
-        Authorization: 'Bearer ' + credentials.t
+        Authorization: 'Bearer ' + token
       },
       body: user
     })
@@ -77,16 +76,20 @@ const update = async (params: Params, credentials: Credentials, user: FormData) 
   }
 }
 
-const remove = async (params: Params, credentials: Credentials) => {
+const remove = async (userId: string, token: string) => {
   try {
-    const response = await fetch(baseUrl + '/api/users/' + params.userId, {
+    const response = await fetch(baseUrl + '/api/users/' + userId, {
       method: 'DELETE',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + credentials.t
+        Authorization: 'Bearer ' + token
       }
     })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
 
     return await response.json()
   } catch (err) {
@@ -94,53 +97,64 @@ const remove = async (params: Params, credentials: Credentials) => {
   }
 }
 
-const follow = async (params: Params, credentials: Credentials, followId: string) => {
+const followUser = async (userId: string, token: string, followId: string): Promise<TUser> => {
   try {
     const response = await fetch(baseUrl + '/api/follow', {
       method: 'PUT',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + credentials.t
+        Authorization: 'Bearer ' + token
       },
-      body: JSON.stringify({ userId: params.userId, followId: followId })
+      body: JSON.stringify({ userId, followId})
     })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
 
     return await response.json()
   } catch (err) {
-    throw new Error("Something went wrong. Try again.")
+    throw new Error("Something went wrong. Please try again.")
   }
 }
 
-const unfollow = async (params: Params, credentials: Credentials, unfollowId: string) => {
+const unfollowUser = async (userId: string, token: string, unfollowId: string): Promise<TUser> => {
   try {
     const response = await fetch(baseUrl + '/api/unfollow', {
       method: 'PUT',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + credentials.t
+        Authorization: 'Bearer ' + token
       },
-      body: JSON.stringify({ userId: params.userId, unfollowId: unfollowId })
+      body: JSON.stringify({ userId, unfollowId })
     })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
 
     return await response.json()
   } catch (err) {
-    throw new Error("Something went wrong. Try again.")
+    throw new Error(`Something went wrong. Please try again.`)
   }
 }
 
-const findPeople = async (params: Params, credentials: Credentials, signal: AbortSignal) => {
+const getUsersToFollow = async (userId: string, token: string): Promise<TUser[]> => {
   try {
-    const response = await fetch(baseUrl + '/api/users/findpeople/' + params.userId, {
+    const response = await fetch(baseUrl + '/api/users/findpeople/' + userId, {
       method: 'GET',
-      signal: signal,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + credentials.t
+        Authorization: 'Bearer ' + token
       }
     })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
 
     return await response.json()
   } catch (err) {
@@ -148,4 +162,4 @@ const findPeople = async (params: Params, credentials: Credentials, signal: Abor
   }
 }
 
-export { create, list, read, update, remove, follow, unfollow, findPeople }
+export { create, getUsers, getUser, update, remove, followUser, unfollowUser, getUsersToFollow }
