@@ -62,13 +62,7 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
     setIsPending(true)
 
     createPost(
-      {
-        userId: jwt.user._id
-      },
-      {
-        t: jwt.token
-      },
-      postData
+      jwt.user._id, jwt.token, postData
     ).then(data => {
       if (data.error) {
         setError(data.error)

@@ -6,7 +6,7 @@ import { Avatar, Card, CardHeader, Button, Typography, Box } from '@mui/material
 import { followUser, unfollowUser } from '../services/userService'
 import { TUser } from '../views/Profile'
 import auth, { Jwt } from '../auth/authHelper'
-import { TCallbackFn } from './FollowProfileButton'
+import { TFollowCallbackFn } from './FollowProfileButton'
 
 export default function GridCard({ user }: { user: TUser }) {
   const queryClient = useQueryClient()
@@ -17,7 +17,7 @@ export default function GridCard({ user }: { user: TUser }) {
   )
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (callbackFn: TCallbackFn) => {
+    mutationFn: (callbackFn: TFollowCallbackFn) => {
       return callbackFn(session.user._id, session.token, user._id)
     },
     onSuccess: () => {
@@ -26,7 +26,7 @@ export default function GridCard({ user }: { user: TUser }) {
     }
   })
 
-  const handleButtonClick = (callbackFn: TCallbackFn) => {
+  const handleButtonClick = (callbackFn: TFollowCallbackFn) => {
     mutate(callbackFn)
   }
 
@@ -81,7 +81,8 @@ export default function GridCard({ user }: { user: TUser }) {
               }}
             />
           ) : (
-            <Button
+            session.user._id === user._id ? null : (
+              <Button
               variant="outlined"
               size="small"
               disabled={isPending}
@@ -100,6 +101,7 @@ export default function GridCard({ user }: { user: TUser }) {
             >
               Follow
             </Button>
+            )
           )
         }
         title={<Typography sx={{ fontWeight: 600, maxWidth: '200px' }}>{user.name}</Typography>}

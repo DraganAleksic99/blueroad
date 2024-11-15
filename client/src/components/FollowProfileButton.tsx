@@ -5,10 +5,10 @@ import auth, { Jwt } from '../auth/authHelper'
 type FollowFn = typeof followUser
 type UnfollowFn = typeof unfollowUser
 
-export type TCallbackFn = FollowFn | UnfollowFn
+export type TFollowCallbackFn = FollowFn | UnfollowFn
 
 type Props = {
-  onButtonClick: (cb: TCallbackFn, session: Jwt) => void
+  onButtonClick: (cb: TFollowCallbackFn, session: Jwt) => void
   following: boolean
   isPending: boolean
 }
