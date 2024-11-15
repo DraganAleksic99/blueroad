@@ -78,7 +78,7 @@ export default function EditProfile() {
 
     setIsLoading(true)
 
-    update({ userId: match.params.userId }, { t: session.token }, formData).then(data => {
+    update(match.params.userId, session.token, formData).then(data => {
       if (data && data.error) {
         setError(data.error)
         setIsLoading(false)

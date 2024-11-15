@@ -27,7 +27,7 @@ export default function DeleteUser({ userId }: { userId: string }) {
 
   const deleteAccount = () => {
     const jwt: Jwt = auth.isAuthenticated()
-    remove({ userId: userId }, { t: jwt.token }).then(data => {
+    remove(userId, jwt.token).then(data => {
       if (data && data.error) {
         console.log(data.error)
       } else {

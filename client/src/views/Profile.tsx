@@ -12,7 +12,7 @@ import { getUser } from '../services/userService'
 import { loadPosts } from '../services/postService'
 import auth, { Jwt } from '../auth/authHelper'
 import { TPost } from './post/NewsFeed'
-import { TCallbackFn } from '../components/FollowProfileButton'
+import { TFollowCallbackFn } from '../components/FollowProfileButton'
 
 export type TUser = {
   _id: string
@@ -47,7 +47,7 @@ export default function Profile() {
   })
 
   const profileMutation = useMutation({
-    mutationFn: (callbackFn: TCallbackFn) => {
+    mutationFn: (callbackFn: TFollowCallbackFn) => {
       return callbackFn(session.user._id, session.token, userId)
     },
     onSuccess: () => {
@@ -55,7 +55,7 @@ export default function Profile() {
     }
   })
 
-  const clickFollowButton = async (callbackFn: TCallbackFn) => {
+  const clickFollowButton = async (callbackFn: TFollowCallbackFn) => {
     profileMutation.mutate(callbackFn)
   }
 

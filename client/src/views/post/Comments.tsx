@@ -22,14 +22,14 @@ import { uncomment } from '../../services/postService'
 import { followUser, unfollowUser } from '../../services/userService'
 import auth, { Jwt } from '../../auth/authHelper'
 import { TComment } from './NewsFeed'
-import { TCallbackFn } from '../../components/FollowProfileButton'
+import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 
 type Props = {
   postId: string
   updateComments: (comments: TComment[]) => void
   comments: TComment[]
   isFollowing: boolean
-  handleFollowOrUnfollow: (callbackFn: TCallbackFn, postUserId: string) => void
+  handleFollowOrUnfollow: (callbackFn: TFollowCallbackFn, postUserId: string) => void
 }
 
 export default function Comments({
@@ -50,16 +50,7 @@ export default function Comments({
   }
 
   const deleteComment = (comment: TComment) => {
-    uncomment(
-      {
-        userId: session.user._id
-      },
-      {
-        t: session.token
-      },
-      postId,
-      comment
-    ).then(data => {
+    uncomment(session.user._id, session.token, postId, comment).then(data => {
       if (data.error) {
         console.log(data.error)
       } else {
@@ -84,7 +75,7 @@ export default function Comments({
     <div>
       {comments.map((comment, i) => {
         return (
-          <Card sx={{ mb: "2px" }} key={i}>
+          <Card sx={{ mb: '2px' }} key={i}>
             <CardHeader
               sx={{ pb: 0, alignItems: 'flex-start' }}
               avatar={<Avatar src={baseUrl + '/api/users/photo/' + comment.postedBy._id} />}
@@ -178,7 +169,7 @@ export default function Comments({
             <CardContent
               sx={{
                 pl: '72px',
-                pt: "4px",
+                pt: '4px',
                 '&.MuiCardContent-root:last-child': {
                   paddingBottom: '12px'
                 }

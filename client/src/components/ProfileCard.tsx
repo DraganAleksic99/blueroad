@@ -6,14 +6,14 @@ import FollowProfileButton from '../components/FollowProfileButton'
 import auth, { Jwt } from '../auth/authHelper'
 import { TUser } from '../views/Profile'
 import { TPost } from '../views/post/NewsFeed'
-import { TCallbackFn } from '../components/FollowProfileButton'
+import { TFollowCallbackFn } from '../components/FollowProfileButton'
 
 type Props = {
   user: TUser
   posts: TPost[]
   isFollowing: boolean
   isPending: boolean
-  clickFollowButton: (callbackFn: TCallbackFn) => Promise<void>
+  clickFollowButton: (callbackFn: TFollowCallbackFn) => Promise<void>
 }
 
 export default function ProfileCard({
