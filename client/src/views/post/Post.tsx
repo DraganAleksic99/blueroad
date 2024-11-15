@@ -1,5 +1,7 @@
+import { baseUrl } from '../../config/config'
 import { SyntheticEvent, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useMatch } from 'react-router-dom'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
 import {
   Card,
   CardHeader,
@@ -33,12 +35,11 @@ import {
 import { TPost } from './NewsFeed'
 import Reply from '../../components/Reply'
 import auth, { Jwt } from '../../auth/authHelper'
-import { follow, unfollow } from '../../services/userService'
-import { removePost, comment, like, unlike } from '../../services/postService'
+import { followUser, unfollowUser } from '../../services/userService'
+import { removePost, comment, likePost, unlikePost } from '../../services/postService'
 import Comments from './Comments'
-import { TCallbackFn } from '../../components/FollowProfileButton'
-
-const baseUrl = 'https://social-media-app-69re.onrender.com'
+import { TUser } from '../Profile'
+import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 
 const ActionButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
@@ -48,6 +49,11 @@ const ActionButton = styled(Button)(({ theme }) => ({
   }
 }))
 
+type likeFn = typeof likePost
+type unlikeFn = typeof unlikePost
+
+type TLikeCallbackFn = likeFn | unlikeFn
+
 type Props = {
   post: TPost
   onRemove?: (post: TPost) => void
@@ -55,67 +61,93 @@ type Props = {
 }
 
 export default function Post({ post, onRemove, showComments }: Props) {
+  const queryClient = useQueryClient()
+  const session: Jwt = auth.isAuthenticated()
+  const match = useMatch('/user/:userId')
+
   const [isLiked, setIsLiked] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [isFollowing, setIsFollowing] = useState<boolean>()
+  const [showReplyButton, setShowReplyButton] = useState(false)
+
   const [likesCount, setLikesCount] = useState(post.likes.length)
   const [comments, setComments] = useState(post.comments)
-  const [showReplyButton, setShowReplyButton] = useState(false)
   const [newComment, setNewComment] = useState('')
-  const [isFollowing, setIsFollowing] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+
   const [snackbarInfo, setSnackbarInfo] = useState({
     open: false,
     message: ''
   })
-  const session: Jwt = auth.isAuthenticated()
+
+  const removePostMutation = useMutation({
+    mutationFn: async () => {
+      return removePost(post._id, session.token)
+    },
+    onSuccess: () => {
+      setSnackbarInfo({
+        open: true,
+        message: 'Post succesfully deleted!'
+      })
+      setAnchorEl(null)
+      onRemove(post)
+      if (match.params.userId && match.params.userId === session.user._id) {
+        queryClient.invalidateQueries({ queryKey: ['posts'] })
+      }
+    }
+  })
+
+  const likeMutation = useMutation({
+    mutationFn: async (callbackFn: TLikeCallbackFn) => {
+      return callbackFn(session.user._id, session.token, post._id)
+    },
+    onSuccess: data => {
+      setLikesCount(data.length)
+      setIsLiked(!isLiked)
+    }
+  })
 
   useEffect(() => {
-    checkIsFollowing(post.postedBy._id)
+    checkIsFollowing(post.postedBy)
     checkLike(post.likes)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const checkIsFollowing = (postUserId: string) => {
-    const match = session.user?.following?.some(f => f._id === postUserId)
+  const checkIsFollowing = (postUser: TUser) => {
+    // @ts-expect-error todo: fix on backend
+    const match = postUser?.followers?.some(id => id === session.user._id)
     setIsFollowing(match)
   }
 
-  const handleFollowOrUnfollow = (callbackFn: TCallbackFn, session: Jwt, postUserId: string) => {
-    callbackFn({ userId: session.user._id }, { t: session.token }, postUserId).then(data => {
-      if (data.error) {
-        setSnackbarInfo({ open: true, message: data.error })
-      } else {
-        session.user.following = data.following
-        setIsFollowing(!isFollowing)
+  const followMutation = useMutation({
+    mutationFn: async ({
+      callbackFn,
+      postUserId
+    }: {
+      callbackFn: TFollowCallbackFn
+      postUserId: string
+    }) => {
+      return callbackFn(session.user._id, session.token, postUserId)
+    },
+    onSuccess: data => {
+      setIsFollowing(!isFollowing)
+      setSnackbarInfo({
+        open: true,
+        message: `You ${isFollowing ? 'unfollowed' : 'followed'} ${data.name}`
+      })
+    }
+  })
 
-        setSnackbarInfo({
-          open: true,
-          message: `You ${isFollowing ? 'unfollowed' : 'followed'} ${data.name}`
-        })
-      }
-    })
+  const handleFollowOrUnfollow = (callbackFn: TFollowCallbackFn, postUserId: string) => {
+    followMutation.mutate({ callbackFn, postUserId })
+    
   }
 
   const handleLike = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
-    const callApi = isLiked ? unlike : like
+    const callbackFn = isLiked ? unlikePost : likePost
 
-    callApi(
-      {
-        userId: session.user._id
-      },
-      {
-        t: session.token
-      },
-      post._id
-    ).then(data => {
-      if (data.error) {
-        setSnackbarInfo({ open: true, message: data.error })
-      } else {
-        setLikesCount(data.likes.length)
-        setIsLiked(!isLiked)
-      }
-    })
+    likeMutation.mutate(callbackFn)
   }
 
   const handleSave = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -135,39 +167,11 @@ export default function Post({ post, onRemove, showComments }: Props) {
 
   const deletePost = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     e.preventDefault()
-
-    removePost(
-      {
-        postId: post._id
-      },
-      {
-        t: session.token
-      }
-    ).then(data => {
-      if (data.error) {
-        setSnackbarInfo({ open: true, message: data.error })
-      } else {
-        setSnackbarInfo({
-          open: true,
-          message: 'Post succesfully deleted!'
-        })
-        setAnchorEl(null)
-        onRemove(post)
-      }
-    })
+    removePostMutation.mutate()
   }
 
   const handleAddComment = () => {
-    comment(
-      {
-        userId: session.user._id
-      },
-      {
-        t: session.token
-      },
-      post._id,
-      { text: newComment }
-    ).then(data => {
+    comment(session.user._id, session.token, post._id, { text: newComment }).then(data => {
       if (data.error) {
         setSnackbarInfo({
           open: true,
@@ -185,7 +189,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
   }
 
   return (
-    <Card sx={{ mb: "2px", borderRadius: 2 }}>
+    <Card sx={{ mb: '2px', borderRadius: 2 }}>
       <CardHeader
         sx={{ pb: 0, alignItems: 'flex-start' }}
         avatar={
@@ -250,10 +254,10 @@ export default function Post({ post, onRemove, showComments }: Props) {
                     e.preventDefault()
 
                     if (isFollowing) {
-                      handleFollowOrUnfollow(unfollow, session, post.postedBy._id)
+                      handleFollowOrUnfollow(unfollowUser, post.postedBy._id)
                       setAnchorEl(null)
                     } else {
-                      handleFollowOrUnfollow(follow, session, post.postedBy._id)
+                      handleFollowOrUnfollow(followUser, post.postedBy._id)
                       setAnchorEl(null)
                     }
                   }}
@@ -287,7 +291,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
         subheader={post.postedBy.email}
       />
 
-      <CardContent sx={{ p: 0, pt: "4px" }}>
+      <CardContent sx={{ p: 0, pt: '4px' }}>
         <Box sx={{ pl: '72px', pr: 2 }}>
           <Typography variant="body1">{post.text}</Typography>
 
@@ -318,6 +322,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
           }}
         >
           <ActionButton
+            disabled={likeMutation.isPending}
             startIcon={
               isLiked ? (
                 <FavoriteIcon
@@ -408,14 +413,14 @@ export default function Post({ post, onRemove, showComments }: Props) {
             setComment={setNewComment}
             handleAddComment={handleAddComment}
           />
-          <Box sx={{ borderTop: "1px solid gray"}}>
-          <Comments
-            updateComments={setComments}
-            postId={post._id}
-            comments={comments}
-            isFollowing={isFollowing}
-            handleFollowOrUnfollow={handleFollowOrUnfollow}
-          />
+          <Box sx={{ borderTop: '1px solid gray' }}>
+            <Comments
+              updateComments={setComments}
+              postId={post._id}
+              comments={comments}
+              isFollowing={isFollowing}
+              handleFollowOrUnfollow={handleFollowOrUnfollow}
+            />
           </Box>
         </>
       )}
