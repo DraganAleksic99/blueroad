@@ -11,7 +11,7 @@ const listNewsFeed = async (req: Request, res: Response) => {
   try {
     const posts = await Post.find({ postedBy: { $in: req.profile.following } })
       .populate('comments.postedBy', '_id name email')
-      .populate('postedBy', '_id name email')
+      .populate('postedBy', '_id name email followers')
       .sort('-created')
       .exec()
     res.json(posts)
@@ -113,7 +113,7 @@ const like = async (req: Request, res: Response) => {
       { $push: { likes: req.body.userId } },
       { new: true }
     )
-    res.json(result)
+    res.json(result.likes)
   } catch (err) {
     return res.status(400).json({
       error: dbErrorHandler.getErrorMessage(err)
@@ -128,7 +128,7 @@ const unlike = async (req: Request, res: Response) => {
       { $pull: { likes: req.body.userId } },
       { new: true }
     )
-    res.json(result)
+    res.json(result.likes)
   } catch (err) {
     return res.status(400).json({
       error: dbErrorHandler.getErrorMessage(err)
