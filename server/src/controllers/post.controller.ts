@@ -10,10 +10,11 @@ const listNewsFeed = async (req: Request, res: Response) => {
 
   try {
     const posts = await Post.find({ postedBy: { $in: req.profile.following } })
-      .populate('comments.postedBy', '_id name email')
       .populate('postedBy', '_id name email followers')
+      .select('-photo.data')
       .sort('-created')
       .exec()
+
     res.json(posts)
   } catch (err) {
     return res.status(400).json({
@@ -26,6 +27,7 @@ const listByUser = async (req: Request, res: Response) => {
   try {
     const posts = await Post.find({ postedBy: req.profile._id })
       .populate('comments.postedBy', '_id name email')
+      .select('-photo.data')
       .populate('postedBy', '_id name email')
       .sort('-created')
       .exec()
@@ -112,7 +114,8 @@ const like = async (req: Request, res: Response) => {
       req.body.postId,
       { $push: { likes: req.body.userId } },
       { new: true }
-    )
+    ).select('likes')
+
     res.json(result.likes)
   } catch (err) {
     return res.status(400).json({
@@ -127,7 +130,8 @@ const unlike = async (req: Request, res: Response) => {
       req.body.postId,
       { $pull: { likes: req.body.userId } },
       { new: true }
-    )
+    ).select('likes')
+
     res.json(result.likes)
   } catch (err) {
     return res.status(400).json({

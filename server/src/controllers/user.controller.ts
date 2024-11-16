@@ -136,6 +136,7 @@ const addFollowing = async (req: Request, res: Response, next: NextFunction) => 
   }
 }
 
+// modified
 const addFollower = async (req: Request, res: Response) => {
   try {
     const result = await User.findByIdAndUpdate(
@@ -143,11 +144,11 @@ const addFollower = async (req: Request, res: Response) => {
       { $push: { followers: req.body.userId } },
       { new: true }
     )
-      .populate('following', '_id name email about followers following')
-      .populate('followers', '_id name email about followers following')
+      .select('-photo.data -salt -hashed_password')
+      .populate('following', '_id')
+      .populate('followers', '_id')
       .exec()
-    result.hashed_password = undefined
-    result.salt = undefined
+
     res.json(result)
   } catch (err) {
     return res.status(400).json({
@@ -174,11 +175,11 @@ const removeFollower = async (req: Request, res: Response) => {
       { $pull: { followers: req.body.userId } },
       { new: true }
     )
-      .populate('following', '_id name email about followers following')
-      .populate('followers', '_id name email about followers following')
+      .select('-photo.data -salt -hashed_password')
+      .populate('following', '_id')
+      .populate('followers', '_id')
       .exec()
-    result.hashed_password = undefined
-    result.salt = undefined
+
     res.json(result)
   } catch (err) {
     return res.status(400).json({
