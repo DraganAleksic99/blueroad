@@ -114,7 +114,9 @@ const like = async (req: Request, res: Response) => {
       req.body.postId,
       { $push: { likes: req.body.userId } },
       { new: true }
-    ).select('likes')
+    )
+      .select('likes')
+      .lean()
 
     res.json(result.likes)
   } catch (err) {
@@ -130,7 +132,9 @@ const unlike = async (req: Request, res: Response) => {
       req.body.postId,
       { $pull: { likes: req.body.userId } },
       { new: true }
-    ).select('likes')
+    )
+      .select('likes')
+      .lean()
 
     res.json(result.likes)
   } catch (err) {
