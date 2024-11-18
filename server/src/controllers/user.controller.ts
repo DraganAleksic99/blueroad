@@ -8,8 +8,10 @@ import errorHandler from '../utils/dbErrorHandler'
 
 const create = async (req: Request, res: Response) => {
   const user = new User(req.body)
+
   try {
     await user.save()
+
     return res.status(201).json({
       message: 'Succesfully signed up'
     })
@@ -23,7 +25,7 @@ const create = async (req: Request, res: Response) => {
 const list = async (_req: Request, res: Response) => {
   try {
     const users = await User.find()
-      .select('name email created updated photo about following followers')
+      .select('name email created updated photo.contentType about following followers')
       .lean()
 
     res.json(users)
@@ -37,6 +39,7 @@ const list = async (_req: Request, res: Response) => {
 const userById = async (req: Request, res: Response, next: NextFunction, id: string) => {
   try {
     const user = await User.findById(id)
+      .select('-salt -hashed_password')
       .populate('following', '_id name email about followers following')
       .populate('followers', '_id name email about followers following')
       .exec()
@@ -46,6 +49,7 @@ const userById = async (req: Request, res: Response, next: NextFunction, id: str
         error: 'User not found'
       })
     }
+
     req.profile = user
     next()
   } catch (err) {
@@ -56,27 +60,30 @@ const userById = async (req: Request, res: Response, next: NextFunction, id: str
 }
 
 const read = (req: Request, res: Response) => {
-  req.profile.hashed_password = undefined
-  req.profile.salt = undefined
   return res.json(req.profile)
 }
 
 const update = async (req: Request, res: Response) => {
   const form = formidable({ keepExtensions: true })
+
   form.parse(req, async (err, fields, files) => {
     if (err) {
       return res.status(400).json({
         error: 'Photo could not be uploaded'
       })
     }
+
     let user = req.profile
+
     user = extend(user, {
       name: fields.name?.toString() || '',
       email: fields.email?.toString() || '',
       password: fields.password?.toString() || '',
       about: fields.about?.toString() || ''
     })
+
     user.updated = Date.now()
+
     if (files.photo) {
       user = extend(user, {
         photo: {
@@ -85,10 +92,13 @@ const update = async (req: Request, res: Response) => {
         }
       })
     }
+
     try {
       await user.save()
+
       user.hashed_password = undefined
       user.salt = undefined
+
       res.json(user)
     } catch (err) {
       return res.status(400).json({
@@ -116,6 +126,7 @@ const photo = async (req: Request, res: Response, next: NextFunction) => {
   if (req.profile.photo.data) {
     res.set('Cross-Origin-Resource-Policy', 'false')
     res.set('Content-Type', req.profile.photo.contentType)
+
     return res.send(req.profile.photo.data)
   }
   next()
@@ -123,12 +134,16 @@ const photo = async (req: Request, res: Response, next: NextFunction) => {
 
 const defaultPhoto = (req: Request, res: Response) => {
   res.set('Cross-Origin-Resource-Policy', 'false')
+
   return res.sendFile(path.join(__dirname, '../images/user-profile-default.png'))
 }
 
 const addFollowing = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await User.findByIdAndUpdate(req.body.userId, { $push: { following: req.body.followId } })
+    await User.findByIdAndUpdate(req.body.userId, {
+      $push: { following: req.body.followId }
+    }).select('_id')
+
     next()
   } catch (err) {
     return res.status(400).json({
@@ -137,18 +152,13 @@ const addFollowing = async (req: Request, res: Response, next: NextFunction) => 
   }
 }
 
-// modified
 const addFollower = async (req: Request, res: Response) => {
   try {
     const result = await User.findByIdAndUpdate(
       req.body.followId,
       { $push: { followers: req.body.userId } },
       { new: true }
-    )
-      .select('-photo.data -salt -hashed_password')
-      .populate('following', '_id')
-      .populate('followers', '_id')
-      .exec()
+    ).select('_id')
 
     res.json(result)
   } catch (err) {
@@ -160,7 +170,10 @@ const addFollower = async (req: Request, res: Response) => {
 
 const removeFollowing = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await User.findByIdAndUpdate(req.body.userId, { $pull: { following: req.body.unfollowId } })
+    await User.findByIdAndUpdate(req.body.userId, {
+      $pull: { following: req.body.unfollowId }
+    }).select('_id')
+
     next()
   } catch (err) {
     return res.status(400).json({
@@ -175,11 +188,7 @@ const removeFollower = async (req: Request, res: Response) => {
       req.body.unfollowId,
       { $pull: { followers: req.body.userId } },
       { new: true }
-    )
-      .select('-photo.data -salt -hashed_password')
-      .populate('following', '_id')
-      .populate('followers', '_id')
-      .exec()
+    ).select('_id')
 
     res.json(result)
   } catch (err) {
@@ -191,6 +200,7 @@ const removeFollower = async (req: Request, res: Response) => {
 
 const findPeople = async (req: Request, res: Response) => {
   const following = [...req.profile.following, req.profile._id]
+
   try {
     const users = await User.find({ _id: { $nin: following } })
       .select('name')
