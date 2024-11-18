@@ -13,6 +13,7 @@ const listNewsFeed = async (req: Request, res: Response) => {
       .populate('postedBy', '_id name email followers')
       .select('-photo.data')
       .sort('-created')
+      .lean()
       .exec()
 
     res.json(posts)
@@ -30,7 +31,9 @@ const listByUser = async (req: Request, res: Response) => {
       .select('-photo.data')
       .populate('postedBy', '_id name email')
       .sort('-created')
+      .lean()
       .exec()
+
     res.json(posts)
   } catch (err) {
     return res.status(400).json({

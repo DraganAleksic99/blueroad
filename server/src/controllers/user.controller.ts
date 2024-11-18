@@ -22,9 +22,10 @@ const create = async (req: Request, res: Response) => {
 
 const list = async (_req: Request, res: Response) => {
   try {
-    const users = await User.find().select(
-      'name email created updated photo about following followers'
-    )
+    const users = await User.find()
+      .select('name email created updated photo about following followers')
+      .lean()
+
     res.json(users)
   } catch (err) {
     return res.status(400).json({
@@ -191,7 +192,10 @@ const removeFollower = async (req: Request, res: Response) => {
 const findPeople = async (req: Request, res: Response) => {
   const following = [...req.profile.following, req.profile._id]
   try {
-    const users = await User.find({ _id: { $nin: following } }).select('name')
+    const users = await User.find({ _id: { $nin: following } })
+      .select('name')
+      .lean()
+
     res.json(users)
   } catch (err) {
     return res.status(400).json({
