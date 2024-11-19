@@ -11,8 +11,8 @@ import {
   styled
 } from '@mui/material'
 import {
-  Email as EmailIcon,
-  People as PeopleIcon,
+  EmailOutlined as EmailIcon,
+  PeopleOutlined as PeopleIcon,
   CalendarToday as CalendarIcon
 } from '@mui/icons-material'
 import { TUser } from '../views/Profile'

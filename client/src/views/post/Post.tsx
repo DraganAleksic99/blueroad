@@ -140,7 +140,6 @@ export default function Post({ post, onRemove, showComments }: Props) {
 
   const handleFollowOrUnfollow = (callbackFn: TFollowCallbackFn, postUserId: string) => {
     followMutation.mutate({ callbackFn, postUserId })
-    
   }
 
   const handleLike = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -249,28 +248,29 @@ export default function Post({ post, onRemove, showComments }: Props) {
                   <DeleteIcon sx={{ mr: 1 }} /> Delete
                 </MenuItem>
               )}
-              {post.postedBy._id !== session.user._id && post.postedBy._id !== match?.params?.userId && (
-                <MenuItem
-                  onClick={e => {
-                    e.preventDefault()
+              {post.postedBy._id !== session.user._id &&
+                post.postedBy._id !== match?.params?.userId && (
+                  <MenuItem
+                    onClick={e => {
+                      e.preventDefault()
 
-                    if (isFollowing) {
-                      handleFollowOrUnfollow(unfollowUser, post.postedBy._id)
-                      setAnchorEl(null)
-                    } else {
-                      handleFollowOrUnfollow(followUser, post.postedBy._id)
-                      setAnchorEl(null)
-                    }
-                  }}
-                >
-                  {isFollowing ? (
-                    <PersonRemoveIcon sx={{ mr: 1 }} />
-                  ) : (
-                    <PersonAddAlt1Icon sx={{ mr: 1 }} />
-                  )}
-                  {isFollowing ? 'Unfollow' : 'Follow'} {post.postedBy.name}
-                </MenuItem>
-              )}
+                      if (isFollowing) {
+                        handleFollowOrUnfollow(unfollowUser, post.postedBy._id)
+                        setAnchorEl(null)
+                      } else {
+                        handleFollowOrUnfollow(followUser, post.postedBy._id)
+                        setAnchorEl(null)
+                      }
+                    }}
+                  >
+                    {isFollowing ? (
+                      <PersonRemoveIcon sx={{ mr: 1 }} />
+                    ) : (
+                      <PersonAddAlt1Icon sx={{ mr: 1 }} />
+                    )}
+                    {isFollowing ? 'Unfollow' : 'Follow'} {post.postedBy.name}
+                  </MenuItem>
+                )}
               <MenuItem
                 onClick={e => {
                   e.preventDefault()
@@ -307,77 +307,81 @@ export default function Post({ post, onRemove, showComments }: Props) {
         </Box>
       </CardContent>
 
-      <CardActions sx={{ pl: '60px', py: 1 }}>
-        <Tooltip
-          title={isLiked ? 'Unlike' : 'Like'}
-          componentsProps={{
-            tooltip: {
-              sx: {
-                bgcolor: 'rgba(191, 191, 191, 0.2)',
-                fontSize: '14px',
-                color: '#2196F3',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+      <CardActions
+        sx={{ pl: '60px', py: 1, pr: '6px', display: 'flex', justifyContent: 'space-between' }}
+      >
+        <div>
+          <Tooltip
+            title={isLiked ? 'Unlike' : 'Like'}
+            componentsProps={{
+              tooltip: {
+                sx: {
+                  bgcolor: 'rgba(191, 191, 191, 0.2)',
+                  fontSize: '14px',
+                  color: '#2196F3',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                }
               }
-            }
-          }}
-        >
-          <ActionButton
-            disabled={likeMutation.isPending}
-            startIcon={
-              isLiked ? (
-                <FavoriteIcon
-                  sx={{
-                    '&': {
-                      color: 'rgb(249, 24, 128)'
-                    }
-                  }}
-                />
-              ) : (
-                <FavoriteBorderIcon
+            }}
+          >
+            <ActionButton
+              disabled={likeMutation.isPending}
+              startIcon={
+                isLiked ? (
+                  <FavoriteIcon
+                    sx={{
+                      '&': {
+                        color: 'rgb(249, 24, 128)'
+                      }
+                    }}
+                  />
+                ) : (
+                  <FavoriteBorderIcon
+                    sx={{
+                      '&:hover': {
+                        color: '#2196F3'
+                      }
+                    }}
+                  />
+                )
+              }
+              onClick={handleLike}
+            >
+              {likesCount}
+            </ActionButton>
+          </Tooltip>
+          <Tooltip
+            title="Reply"
+            componentsProps={{
+              tooltip: {
+                sx: {
+                  bgcolor: 'rgba(191, 191, 191, 0.2)',
+                  fontSize: '14px',
+                  color: '#2196F3',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                }
+              }
+            }}
+          >
+            <ActionButton
+              startIcon={
+                <ChatBubbleOutlineIcon
                   sx={{
                     '&:hover': {
                       color: '#2196F3'
                     }
                   }}
                 />
-              )
-            }
-            onClick={handleLike}
-          >
-            {likesCount}
-          </ActionButton>
-        </Tooltip>
-        <Tooltip
-          title="Reply"
-          componentsProps={{
-            tooltip: {
-              sx: {
-                bgcolor: 'rgba(191, 191, 191, 0.2)',
-                fontSize: '14px',
-                color: '#2196F3',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
               }
-            }
-          }}
-        >
-          <ActionButton
-            startIcon={
-              <ChatBubbleOutlineIcon
-                sx={{
-                  '&:hover': {
-                    color: '#2196F3'
-                  }
-                }}
-              />
-            }
-            onClick={e => {
-              e.preventDefault()
-              setShowReplyButton(!showReplyButton)
-            }}
-          >
-            {comments.length}
-          </ActionButton>
-        </Tooltip>
+              onClick={e => {
+                e.preventDefault()
+                setShowReplyButton(!showReplyButton)
+              }}
+            >
+              {comments.length}
+            </ActionButton>
+          </Tooltip>
+        </div>
         <Tooltip
           title="Bookmark"
           componentsProps={{
