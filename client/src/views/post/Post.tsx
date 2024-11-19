@@ -244,11 +244,12 @@ export default function Post({ post, onRemove, showComments }: Props) {
                 }
               }}
             >
-              {post.postedBy._id === session.user._id ? (
+              {post.postedBy._id === session.user._id && (
                 <MenuItem sx={{ color: 'red' }} onClick={deletePost}>
                   <DeleteIcon sx={{ mr: 1 }} /> Delete
                 </MenuItem>
-              ) : (
+              )}
+              {post.postedBy._id !== session.user._id && post.postedBy._id !== match?.params?.userId && (
                 <MenuItem
                   onClick={e => {
                     e.preventDefault()
@@ -298,7 +299,6 @@ export default function Post({ post, onRemove, showComments }: Props) {
           {post.photo && (
             <CardMedia
               component="img"
-              height="400"
               image={baseUrl + '/api/posts/photo/' + post._id}
               alt="Post content"
               sx={{ objectFit: 'cover', border: '1px solid #2196F3', borderRadius: '12px', mt: 1 }}
