@@ -326,6 +326,17 @@ export default function Post({ post, onRemove, showComments }: Props) {
           >
             <ActionButton
               disabled={likeMutation.isPending}
+              sx={{
+                color: isLiked ? 'rgb(249, 24, 128)' : '',
+                '&:hover': {
+                  '& .MuiButton-startIcon': {
+                    color: 'rgb(249, 24, 128)'
+                  },
+                  '&': {
+                    color: 'rgb(249, 24, 128)'
+                  }
+                }
+              }}
               startIcon={
                 isLiked ? (
                   <FavoriteIcon
@@ -336,13 +347,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
                     }}
                   />
                 ) : (
-                  <FavoriteBorderIcon
-                    sx={{
-                      '&:hover': {
-                        color: '#2196F3'
-                      }
-                    }}
-                  />
+                  <FavoriteBorderIcon />
                 )
               }
               onClick={handleLike}
@@ -364,15 +369,17 @@ export default function Post({ post, onRemove, showComments }: Props) {
             }}
           >
             <ActionButton
-              startIcon={
-                <ChatBubbleOutlineIcon
-                  sx={{
-                    '&:hover': {
-                      color: '#2196F3'
-                    }
-                  }}
-                />
-              }
+              sx={{
+                '&:hover': {
+                  '& .MuiButton-startIcon': {
+                    color: '#2196F3'
+                  },
+                  '&': {
+                    color: '#2196F3'
+                  }
+                }
+              }}
+              startIcon={<ChatBubbleOutlineIcon />}
               onClick={e => {
                 e.preventDefault()
                 setShowReplyButton(!showReplyButton)
