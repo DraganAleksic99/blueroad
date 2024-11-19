@@ -37,7 +37,11 @@ const schema = Yup.object({
   name: Yup.string().min(2).max(255).required(),
   about: Yup.string().max(150),
   email: Yup.string().email().max(255).required(),
-  password: Yup.string().min(6).max(255).required(),
+  password: Yup.string().min(6).max(255).required().test(
+    'current-password', 
+    'Incorrect password. Enter your current password', 
+    (value) => value === 'Pass123'
+  ),
 }).required()
 
 export default function EditProfile() {
