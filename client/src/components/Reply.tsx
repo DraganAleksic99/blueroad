@@ -1,5 +1,7 @@
-import { Box, CardContent, Tooltip, IconButton, TextField, styled } from '@mui/material'
+import { baseUrl } from '../config/config'
+import { Box, CardContent, Tooltip, IconButton, TextField, styled, Avatar } from '@mui/material'
 import { Send as SendIcon } from '@mui/icons-material'
+import { Jwt } from '../auth/authHelper'
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
@@ -15,20 +17,22 @@ type Props = {
   comment: string
   setComment: React.Dispatch<React.SetStateAction<string>>
   handleAddComment: () => void
+  session: Jwt
 }
 
-export default function Reply({ comment, setComment, handleAddComment }: Props) {
+export default function Reply({ comment, setComment, handleAddComment, session }: Props) {
   return (
     <CardContent
       sx={{
-        pl: '72px',
+        pl: 2,
         pt: 0,
         '&.MuiCardContent-root:last-child': {
           paddingBottom: 2
         }
       }}
     >
-      <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+      <Box sx={{ display: 'flex', gap: 2 }}>
+        <Avatar src={baseUrl + '/api/users/photo/' + session.user._id} alt={session.user.name} />
         <StyledTextField
           autoFocus
           fullWidth
@@ -62,7 +66,7 @@ export default function Reply({ comment, setComment, handleAddComment }: Props) 
         >
           <span onClickCapture={e => e.preventDefault()}>
             <IconButton
-              sx={{ transform: 'rotate(-15deg)', '&:hover': { color: '#2196F3' } }}
+              sx={{ transform: 'rotate(-20deg)', '&:hover': { color: '#2196F3' }, p: 0, pt: '4px' }}
               onClick={e => {
                 e.preventDefault()
                 handleAddComment()

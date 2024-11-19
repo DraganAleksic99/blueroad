@@ -412,6 +412,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
             comment={newComment}
             setComment={setNewComment}
             handleAddComment={handleAddComment}
+            session={session}
           />
           <Box sx={{ borderTop: '1px solid gray' }}>
             <Comments
@@ -430,6 +431,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
             comment={newComment}
             setComment={setNewComment}
             handleAddComment={handleAddComment}
+            session={session}
           />
         </Collapse>
       )}
