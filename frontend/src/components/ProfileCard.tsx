@@ -2,11 +2,11 @@ import { baseUrl } from '../config/config'
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardMedia, Box, Typography, Button } from '@mui/material'
 import { CalendarToday as CalendarIcon } from '@mui/icons-material'
-import FollowProfileButton from '../components/FollowProfileButton'
+import FollowProfileButton from './FollowProfileButton'
 import auth, { Jwt } from '../auth/authHelper'
 import { TUser } from '../views/Profile'
 import { TPost } from '../views/post/NewsFeed'
-import { TFollowCallbackFn } from '../components/FollowProfileButton'
+import { TFollowCallbackFn } from './FollowProfileButton'
 
 type Props = {
   user: TUser

@@ -81,7 +81,7 @@ const photo = (req: Request, res: Response) => {
 const postById = async (req: Request, res: Response, next: NextFunction, id: string) => {
   try {
     const post = await Post.findById(id)
-      .populate('postedBy', '_id name email')
+      .populate('postedBy', '_id name email followers')
       .populate('comments.postedBy', '_id name email')
       .exec()
 
