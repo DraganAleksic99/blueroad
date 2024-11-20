@@ -60,6 +60,7 @@ const userById = async (req: Request, res: Response, next: NextFunction, id: str
 }
 
 const read = (req: Request, res: Response) => {
+  req.profile.photo.data = null
   return res.json(req.profile)
 }
 
@@ -158,7 +159,7 @@ const addFollower = async (req: Request, res: Response) => {
       req.body.followId,
       { $push: { followers: req.body.userId } },
       { new: true }
-    ).select('_id')
+    ).select('name')
 
     res.json(result)
   } catch (err) {
@@ -188,7 +189,7 @@ const removeFollower = async (req: Request, res: Response) => {
       req.body.unfollowId,
       { $pull: { followers: req.body.userId } },
       { new: true }
-    ).select('_id')
+    ).select('name')
 
     res.json(result)
   } catch (err) {

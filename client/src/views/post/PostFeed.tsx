@@ -1,4 +1,5 @@
-import { useLocation } from 'react-router-dom'
+import { useMatch } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import {
   Card,
   Grid,
@@ -6,9 +7,22 @@ import {
 import MainLayout from '../../layouts/MainLayout'
 import Post from './Post'
 import FindPeople from '../FindPeople'
+import auth from '../../auth/authHelper'
+import { loadPost } from '../../services/postService'
 
 export default function PostFeed() {
-    const post = useLocation().state
+  const { token } = auth.isAuthenticated()
+  const { params: { postId }} = useMatch('/user/:userId/post/:postId')
+    const { data: post, isPending } = useQuery({
+      queryKey: ['post', postId, token],
+      queryFn: async () => {
+        return loadPost( postId,token)
+      }
+    })
+
+    if (isPending) {
+      return <h1>Loading...</h1>
+    }
 
   return (
     <Grid container spacing={2}>

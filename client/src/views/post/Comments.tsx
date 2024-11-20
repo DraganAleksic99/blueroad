@@ -1,6 +1,7 @@
 import { baseUrl } from '../../config/config'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   Card,
   CardHeader,
@@ -39,6 +40,7 @@ export default function Comments({
   comments,
   isFollowing
 }: Props) {
+  const queryClient = useQueryClient()
   const session: Jwt = auth.isAuthenticated()
   const [anchorElements, setAnchorElements] = useState<Record<string, null | HTMLElement>>({})
 
@@ -55,6 +57,18 @@ export default function Comments({
         console.log(data.error)
       } else {
         updateComments(data.comments)
+        queryClient.invalidateQueries({
+          queryKey: ['post'],
+          refetchType: 'all'
+        })
+        queryClient.invalidateQueries({
+          queryKey: ['newsfeed'],
+          refetchType: 'all'
+        })
+        queryClient.invalidateQueries({
+          queryKey: ['posts'],
+          refetchType: 'all'
+        })
       }
     })
   }

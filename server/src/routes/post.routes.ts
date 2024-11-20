@@ -6,8 +6,11 @@ import postCtrl from '../controllers/post.controller'
 const router = Router()
 
 router.route('/api/posts/feed/:userId').get(authCtrl.requireSignIn, postCtrl.listNewsFeed)
-router.route('/api/post/by/:userId').get(authCtrl.requireSignIn, postCtrl.listByUser)
+router.route('/api/posts/by/:userId').get(authCtrl.requireSignIn, postCtrl.listByUser)
 router.route('/api/posts/new/:userId').post(authCtrl.requireSignIn, postCtrl.create)
+
+router.route('/api/post/by/:postId').get(authCtrl.requireSignIn, postCtrl.read)
+
 router.route('/api/posts/photo/:postId').get(postCtrl.photo)
 router
   .route('/api/posts/delete/:postId')

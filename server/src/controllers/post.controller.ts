@@ -27,9 +27,8 @@ const listNewsFeed = async (req: Request, res: Response) => {
 const listByUser = async (req: Request, res: Response) => {
   try {
     const posts = await Post.find({ postedBy: req.profile._id })
-      .populate('comments.postedBy', '_id name email')
-      .select('-photo.data')
       .populate('postedBy', '_id name email')
+      .select('-photo.data')
       .sort('-created')
       .lean()
       .exec()
@@ -49,6 +48,7 @@ const create = (req: Request, res: Response) => {
     if (err) {
       return res.status(400).json({ error: 'Image could not be uploaded' })
     }
+
     const post = new Post({ text: fields.text?.toString() || '' })
     post.postedBy = req.profile
 
@@ -56,6 +56,7 @@ const create = (req: Request, res: Response) => {
       post.photo.data = fs.readFileSync(files.photo[0].filepath)
       post.photo.contentType = files.photo[0].mimetype
     }
+
     try {
       const result = await post.save()
       res.json(result)
@@ -67,6 +68,10 @@ const create = (req: Request, res: Response) => {
   })
 }
 
+const read = (req: Request, res: Response) => {
+  return res.json(req.post)
+}
+
 const photo = (req: Request, res: Response) => {
   res.set('Cross-Origin-Resource-Policy', 'false')
   res.set('Content-Type', req.post.photo.contentType)
@@ -75,11 +80,16 @@ const photo = (req: Request, res: Response) => {
 
 const postById = async (req: Request, res: Response, next: NextFunction, id: string) => {
   try {
-    const post = await Post.findById(id).populate('postedBy', '_id name email').exec()
+    const post = await Post.findById(id)
+      .populate('postedBy', '_id name email')
+      .populate('comments.postedBy', '_id name email')
+      .exec()
+
     if (!post)
       return res.status(400).json({
         error: 'Post not found'
       })
+
     req.post = post
     next()
   } catch (err) {
@@ -91,11 +101,13 @@ const postById = async (req: Request, res: Response, next: NextFunction, id: str
 
 const isPoster = (req: Request, res: Response, next: NextFunction) => {
   const isPoster = req.post && req.auth && req.post.postedBy._id == req.auth._id
+
   if (!isPoster) {
     return res.status(403).json({
       error: 'User is not authorized'
     })
   }
+
   next()
 }
 
@@ -160,6 +172,7 @@ const comment = async (req: Request, res: Response) => {
       .populate('comments.postedBy', '_id name email')
       .populate('postedBy', '_id name email')
       .exec()
+
     res.json(result)
   } catch (err) {
     return res.status(400).json({
@@ -191,6 +204,7 @@ export default {
   listNewsFeed,
   listByUser,
   create,
+  read,
   photo,
   postById,
   isPoster,

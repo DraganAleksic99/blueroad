@@ -104,6 +104,18 @@ export default function Post({ post, onRemove, showComments }: Props) {
     onSuccess: data => {
       setLikesCount(data.length)
       setIsLiked(!isLiked)
+      queryClient.invalidateQueries({
+        queryKey: ['post'],
+        refetchType: 'all'
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['newsfeed'],
+        refetchType: 'all'
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['posts'],
+        refetchType: 'all'
+      })
     }
   })
 
@@ -183,6 +195,18 @@ export default function Post({ post, onRemove, showComments }: Props) {
           message: 'Reply succesfully sent!'
         })
         setComments(data.comments)
+        queryClient.invalidateQueries({
+          queryKey: ['post'],
+          refetchType: 'all'
+        })
+        queryClient.invalidateQueries({
+          queryKey: ['newsfeed'],
+          refetchType: 'all'
+        })
+        queryClient.invalidateQueries({
+          queryKey: ['posts'],
+          refetchType: 'all'
+        })
       }
     })
   }
@@ -298,6 +322,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
 
           {post.photo && (
             <CardMedia
+              loading="lazy"
               component="img"
               image={baseUrl + '/api/posts/photo/' + post._id}
               alt="Post content"

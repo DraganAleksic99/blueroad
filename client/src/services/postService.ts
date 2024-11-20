@@ -22,9 +22,30 @@ const listNewsFeed = async (userId: string, token: string) => {
   }
 }
 
-const loadPosts = async (userId: string, token: string) => {
+const loadPost = async (userId: string, token: string) => {
   try {
     const response = await fetch(baseUrl + '/api/post/by/' + userId, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
+
+    return await response.json()
+  } catch (err) {
+    throw new Error('Something went wrong. Try again.')
+  }
+}
+
+const loadPosts = async (userId: string, token: string) => {
+  try {
+    const response = await fetch(baseUrl + '/api/posts/by/' + userId, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -183,4 +204,4 @@ const uncomment = async (
   }
 }
 
-export { listNewsFeed, loadPosts, createPost, removePost, likePost, unlikePost, comment, uncomment }
+export { listNewsFeed, loadPost, loadPosts, createPost, removePost, likePost, unlikePost, comment, uncomment }
