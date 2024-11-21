@@ -30,7 +30,7 @@ export default function Navigation() {
         <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <Typography variant="h6" color="inherit">
-              Social Media App
+              Blueroad
             </Typography>
           </div>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
