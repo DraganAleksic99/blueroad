@@ -204,7 +204,7 @@ const findPeople = async (req: Request, res: Response) => {
 
   try {
     const users = await User.find({ _id: { $nin: following } })
-      .select('name')
+      .select('name email')
       .lean()
 
     res.json(users)

@@ -157,7 +157,11 @@ export default function FindPeople() {
               </Link>
               <ListItemText
                 primary={user.name}
-                sx={{ maxWidth: '200px' }}
+                secondary={user.email}
+                sx={{
+                  maxWidth: '170px',
+                  overflowX: 'hidden'
+                }}
                 primaryTypographyProps={{
                   fontWeight: 500,
                   variant: 'body1'
