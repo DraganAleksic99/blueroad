@@ -20,7 +20,7 @@ app.use(
   cors({
     credentials: true,
     origin: function (origin, callback) {
-      const allowedOrigins = ['http://localhost:5173', 'https://my-social-media-app1.netlify.app']
+      const allowedOrigins = ['http://localhost:5173', 'https://blue-road.netlify.app']
 
       if (!origin) {
         return callback(null, true)
