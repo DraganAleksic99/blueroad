@@ -1,5 +1,5 @@
 import { baseUrl } from '../../config/config'
-import { useState, useEffect, ChangeEvent } from 'react'
+import { useState, ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Paper,
@@ -13,8 +13,7 @@ import {
   styled
 } from '@mui/material'
 import { ImageOutlined, Close } from '@mui/icons-material'
-import auth, { Jwt } from '../../auth/authHelper'
-import { TUser } from '../Profile'
+import auth, { Session } from '../../auth/authHelper'
 import { TPost } from './NewsFeed'
 import { createPost } from '../../services/postService'
 
@@ -45,15 +44,10 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
   })
   const [imagePreview, setImagePreview] = useState(null)
   const [error, setError] = useState('')
-  const [user, setUser] = useState<TUser | Record<string, unknown>>({})
   const [isPending, setIsPending] = useState(false)
-
-  useEffect(() => {
-    setUser(auth.isAuthenticated().user)
-  }, [])
+  const { user, token }: Session = auth.isAuthenticated()
 
   const handleAddPost = () => {
-    const jwt: Jwt = auth.isAuthenticated()
     const postData = new FormData()
 
     values.text && postData.append('text', values.text)
@@ -62,7 +56,7 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
     setIsPending(true)
 
     createPost(
-      jwt.user._id, jwt.token, postData
+      user._id, token, postData
     ).then(data => {
       if (data.error) {
         setError(data.error)

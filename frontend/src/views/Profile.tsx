@@ -10,7 +10,7 @@ import ProfileCardSkeleton from '../components/skeletons/ProfileCardSkeleton'
 
 import { getUser } from '../services/userService'
 import { loadPosts } from '../services/postService'
-import auth, { Jwt } from '../auth/authHelper'
+import auth, { Session } from '../auth/authHelper'
 import { TPost } from './post/NewsFeed'
 import { TFollowCallbackFn } from '../components/FollowProfileButton'
 
@@ -30,7 +30,7 @@ export type TUser = {
 
 export default function Profile() {
   const queryClient = useQueryClient()
-  const session: Jwt = useMemo(() => auth.isAuthenticated(), [])
+  const session: Session = useMemo(() => auth.isAuthenticated(), [])
   const [isFollowing, setIsFollowing] = useState<boolean>()
   const {
     params: { userId }

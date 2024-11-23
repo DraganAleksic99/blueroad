@@ -34,7 +34,7 @@ import {
 } from '@mui/icons-material'
 import { TPost } from './NewsFeed'
 import Reply from '../../components/Reply'
-import auth, { Jwt } from '../../auth/authHelper'
+import auth, { Session } from '../../auth/authHelper'
 import { followUser, unfollowUser } from '../../services/userService'
 import { removePost, comment, likePost, unlikePost } from '../../services/postService'
 import Comments from './Comments'
@@ -62,7 +62,7 @@ type Props = {
 
 export default function Post({ post, onRemove, showComments }: Props) {
   const queryClient = useQueryClient()
-  const session: Jwt = auth.isAuthenticated()
+  const session: Session = auth.isAuthenticated()
   const match = useMatch('/user/:userId')
 
   const [isLiked, setIsLiked] = useState(false)

@@ -21,7 +21,7 @@ import {
 } from '@mui/icons-material'
 import { uncomment } from '../../services/postService'
 import { followUser, unfollowUser } from '../../services/userService'
-import auth, { Jwt } from '../../auth/authHelper'
+import auth, { Session } from '../../auth/authHelper'
 import { TComment } from './NewsFeed'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 
@@ -41,7 +41,7 @@ export default function Comments({
   isFollowing
 }: Props) {
   const queryClient = useQueryClient()
-  const session: Jwt = auth.isAuthenticated()
+  const session: Session = auth.isAuthenticated()
   const [anchorElements, setAnchorElements] = useState<Record<string, null | HTMLElement>>({})
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, i: number) => {

@@ -5,12 +5,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Avatar, Card, CardHeader, Button, Typography, Box } from '@mui/material'
 import { followUser, unfollowUser } from '../services/userService'
 import { TUser } from '../views/Profile'
-import auth, { Jwt } from '../auth/authHelper'
+import auth, { Session } from '../auth/authHelper'
 import { TFollowCallbackFn } from './FollowProfileButton'
 
 export default function GridCard({ user }: { user: TUser }) {
   const queryClient = useQueryClient()
-  const session: Jwt = auth.isAuthenticated()
+  const session: Session = auth.isAuthenticated()
   const [isFollowing, setIsFollowing] = useState(
     // @ts-expect-error todo: fix on backend
     user.followers?.some(id => id === session.user._id)

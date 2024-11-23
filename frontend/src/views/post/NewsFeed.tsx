@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Card, Grid } from '@mui/material'
 import { listNewsFeed } from '../../services/postService'
-import auth, { Jwt } from '../../auth/authHelper'
+import auth, { Session } from '../../auth/authHelper'
 import PostList from './PostList'
 import { TUser } from '../Profile'
 import MainLayout from '../../layouts/MainLayout'
@@ -35,7 +35,7 @@ export type TPost = {
 
 export default function NewsFeed() {
   const queryClient = useQueryClient()
-  const session: Jwt = auth.isAuthenticated()
+  const session: Session = auth.isAuthenticated()
   const [posts, setPosts] = useState<TPost[]>([])
   const { data, isPending, isSuccess } = useQuery({
     queryKey: ['newsfeed', session],

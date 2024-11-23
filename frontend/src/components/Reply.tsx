@@ -1,7 +1,7 @@
 import { baseUrl } from '../config/config'
 import { Box, CardContent, Tooltip, IconButton, TextField, styled, Avatar } from '@mui/material'
 import { Send as SendIcon } from '@mui/icons-material'
-import { Jwt } from '../auth/authHelper'
+import { Session } from '../auth/authHelper'
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
@@ -17,7 +17,7 @@ type Props = {
   comment: string
   setComment: React.Dispatch<React.SetStateAction<string>>
   handleAddComment: () => void
-  session: Jwt
+  session: Session
 }
 
 export default function Reply({ comment, setComment, handleAddComment, session }: Props) {

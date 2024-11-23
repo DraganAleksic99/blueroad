@@ -1,12 +1,12 @@
 import { signout } from './apiAuth'
 import { TUser } from '../views/Profile'
 
-export type Jwt = {
+export type Session = {
   token: string
   user: TUser
 }
 
-function authenticate(jwt: Jwt, cb: () => void) {
+function authenticate(jwt: Session, cb: () => void) {
   if (typeof window !== 'undefined') {
     sessionStorage.setItem('jwt', JSON.stringify(jwt))
   }

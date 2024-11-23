@@ -1,6 +1,6 @@
 import { Button } from '@mui/material'
 import { followUser, unfollowUser } from '../services/userService'
-import auth, { Jwt } from '../auth/authHelper'
+import auth, { Session } from '../auth/authHelper'
 
 type FollowFn = typeof followUser
 type UnfollowFn = typeof unfollowUser
@@ -8,13 +8,13 @@ type UnfollowFn = typeof unfollowUser
 export type TFollowCallbackFn = FollowFn | UnfollowFn
 
 type Props = {
-  onButtonClick: (cb: TFollowCallbackFn, session: Jwt) => void
+  onButtonClick: (cb: TFollowCallbackFn, session: Session) => void
   following: boolean
   isPending: boolean
 }
 
 export default function FollowProfileButton({ onButtonClick, following, isPending }: Props) {
-  const session: Jwt = auth.isAuthenticated()
+  const session: Session = auth.isAuthenticated()
 
   const followClick = () => {
     onButtonClick(followUser, session)

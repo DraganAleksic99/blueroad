@@ -16,9 +16,8 @@ import {
   Skeleton,
   styled
 } from '@mui/material'
-import { followUser } from '../services/userService'
-import { getUsersToFollow } from '../services/userService'
-import auth, { Jwt } from '../auth/authHelper'
+import { followUser, getUsersToFollow } from '../services/userService'
+import auth, { Session } from '../auth/authHelper'
 import { TUser } from './Profile'
 
 const WhoToFollowPaper = styled(Paper)({
@@ -47,7 +46,7 @@ const usersToFollowQuery = (userId: string, token: string) => ({
 })
 
 export default function FindPeople() {
-  const { user, token }: Jwt = auth.isAuthenticated()
+  const { user, token }: Session = auth.isAuthenticated()
   const { data, isPending } = useQuery(usersToFollowQuery(user._id, token))
   const [buttonIndex, setButtonIndex] = useState(-1)
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardMedia, Box, Typography, Button } from '@mui/material'
 import { CalendarToday as CalendarIcon } from '@mui/icons-material'
 import FollowProfileButton from './FollowProfileButton'
-import auth, { Jwt } from '../auth/authHelper'
+import auth, { Session } from '../auth/authHelper'
 import { TUser } from '../views/Profile'
 import { TPost } from '../views/post/NewsFeed'
 import { TFollowCallbackFn } from './FollowProfileButton'
@@ -23,7 +23,7 @@ export default function ProfileCard({
   isPending,
   clickFollowButton
 }: Props) {
-  const session: Jwt = auth.isAuthenticated()
+  const session: Session = auth.isAuthenticated()
 
   const photoUrl = user.photo
     ? `${baseUrl}/api/users/photo/${user._id}`

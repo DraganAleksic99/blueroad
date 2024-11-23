@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import auth, { Jwt } from '../auth/authHelper'
+import auth, { Session } from '../auth/authHelper'
 import { remove } from '../services/userService'
 import { Navigate } from 'react-router'
 import {
@@ -26,8 +26,9 @@ export default function DeleteUser({ userId }: { userId: string }) {
   }
 
   const deleteAccount = () => {
-    const jwt: Jwt = auth.isAuthenticated()
-    remove(userId, jwt.token).then(data => {
+    const { token }: Session = auth.isAuthenticated()
+    
+    remove(userId, token).then(data => {
       if (data && data.error) {
         console.log(data.error)
       } else {

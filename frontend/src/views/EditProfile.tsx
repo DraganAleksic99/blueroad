@@ -1,7 +1,7 @@
 import { baseUrl } from '../config/config'
 import { ChangeEvent, useState } from 'react'
 import { useMatch, useLocation, useNavigate } from 'react-router'
-import auth, { Jwt } from '../auth/authHelper'
+import auth, { Session } from '../auth/authHelper'
 import { update } from '../services/userService'
 import {
   Card,
@@ -70,7 +70,7 @@ export default function EditProfile() {
   })
 
   const onSubmit: SubmitHandler<IFormValues> = data => {
-    const session: Jwt = auth.isAuthenticated()
+    const session: Session = auth.isAuthenticated()
     const formData = new FormData()
 
     formData.append('photo', data.photo[0])
