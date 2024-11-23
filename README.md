@@ -1,6 +1,10 @@
-# social-media-app
+# blueroad
 
 Social media app with features inspired by X (Twitter).
+
+<br>
+
+![blueroad-home](https://github.com/user-attachments/assets/c93b69c9-96c1-4347-86bc-e7d78821692b)
 
 ## Features
 - User profile
