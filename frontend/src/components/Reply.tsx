@@ -1,12 +1,11 @@
 import { baseUrl } from '../config/config'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { UseMutateFunction } from '@tanstack/react-query'
 import { Box, CardContent, Tooltip, IconButton, TextField, styled, Avatar } from '@mui/material'
 import { Send as SendIcon } from '@mui/icons-material'
-import { comment } from '../services/postService'
 import auth, { Session } from '../auth/authHelper'
-import { TPost } from '../views/post/NewsFeed'
+import { TComment } from '../views/post/NewsFeed'
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
@@ -19,62 +18,19 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 }))
 
 type Props = {
-  postId: string
+  commentMutation: UseMutateFunction<
+    {
+      _id: string
+      comments: TComment[]
+    },
+    Error,
+    string
+  >
 }
 
-export default function Reply({ postId }: Props) {
-  const { user, token }: Session = auth.isAuthenticated()
-  const queryClient = useQueryClient()
+export default function Reply({ commentMutation }: Props) {
+  const { user }: Session = auth.isAuthenticated()
   const [commentText, setCommentText] = useState('')
-
-  const { mutate } = useMutation({
-    mutationFn: async (text: string) => {
-      return comment(user._id, token, postId, { text })
-    },
-    onMutate: async text => {
-      await queryClient.cancelQueries({ queryKey: ['post', postId, token] })
-
-      const previousPost = queryClient.getQueryData(['post', postId, token])
-
-      queryClient.setQueryData(['post', postId, token], (post: TPost) => ({
-        ...post,
-        comments: [
-          {
-            _id: '123456',
-            text,
-            created: new Date(),
-            postedBy: {
-              _id: user._id,
-              name: user.name,
-              email: user.email
-            }
-          },
-          ...post.comments
-        ]
-      }))
-
-      return { previousPost }
-    },
-    onError: (_err, _newPost, context) => {
-      queryClient.setQueryData(['post', postId, token], context.previousPost)
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['post'],
-        refetchType: 'all'
-      })
-
-      queryClient.invalidateQueries({
-        queryKey: ['newsfeed'],
-        refetchType: 'all'
-      })
-
-      queryClient.invalidateQueries({
-        queryKey: ['posts'],
-        refetchType: 'all'
-      })
-    }
-  })
 
   return (
     <CardContent
@@ -98,7 +54,7 @@ export default function Reply({ postId }: Props) {
           onKeyDown={e => {
             if (e.code === 'Enter') {
               e.preventDefault()
-              mutate(commentText)
+              commentMutation(commentText)
               setCommentText('')
             }
           }}
@@ -127,7 +83,7 @@ export default function Reply({ postId }: Props) {
               sx={{ transform: 'rotate(-20deg)', '&:hover': { color: '#2196F3' }, p: 0, pt: '4px' }}
               onClick={e => {
                 e.preventDefault()
-                mutate(commentText)
+                commentMutation(commentText)
                 setCommentText('')
               }}
               disabled={!commentText.trim()}

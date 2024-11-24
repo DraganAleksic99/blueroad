@@ -35,12 +35,12 @@ export type TPost = {
 
 export default function NewsFeed() {
   const queryClient = useQueryClient()
-  const session: Session = auth.isAuthenticated()
+  const { user, token }: Session = auth.isAuthenticated()
   const [posts, setPosts] = useState<TPost[]>([])
   const { data, isPending, isSuccess } = useQuery({
-    queryKey: ['newsfeed', session],
+    queryKey: ['newsfeed', user, token],
     queryFn: async () => {
-      return listNewsFeed(session.user._id, session.token)
+      return listNewsFeed(user._id, token)
     },
   })
 

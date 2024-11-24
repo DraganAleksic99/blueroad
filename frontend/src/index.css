@@ -1,6 +1,22 @@
 .layout {
   min-height: calc(100vh - 64px);
-  background-color: rgba(246, 247, 248, 0.5) ;
+  background-color: rgba(246, 247, 248, 0.5);
+}
+
+.spinner {
+  height: 3rem; 
+  width: 3rem;
+  animation: spin 1s linear infinite;
+  stroke: #a1a1aa;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 a:not([class]) {

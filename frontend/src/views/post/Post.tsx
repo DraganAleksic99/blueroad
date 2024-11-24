@@ -1,7 +1,7 @@
 import { baseUrl } from '../../config/config'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import { Link, useMatch } from 'react-router-dom'
-import { useQueryClient, useMutation } from '@tanstack/react-query'
+import { useQueryClient, useMutation, UseMutateFunction } from '@tanstack/react-query'
 import {
   Card,
   CardHeader,
@@ -32,11 +32,11 @@ import {
   PersonRemoveOutlined as PersonRemoveIcon,
   PersonAddAlt1Outlined as PersonAddAlt1Icon
 } from '@mui/icons-material'
-import { TPost } from './NewsFeed'
+import { TComment, TPost } from './NewsFeed'
 import Reply from '../../components/Reply'
 import auth, { Session } from '../../auth/authHelper'
 import { followUser, unfollowUser } from '../../services/userService'
-import { removePost, likePost, unlikePost } from '../../services/postService'
+import { removePost, likePost, unlikePost, comment } from '../../services/postService'
 import Comments from './Comments'
 import { TUser } from '../Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
@@ -58,11 +58,22 @@ type Props = {
   post: TPost
   onRemove?: (post: TPost) => void
   showComments?: boolean
+  commentMutation: UseMutateFunction<
+    {
+      _id: string
+      comments: TComment[]
+    },
+    Error,
+    string,
+    {
+      previousPost: unknown
+    }
+  >
 }
 
-export default function Post({ post, onRemove, showComments }: Props) {
+export default function Post({ post, onRemove, showComments, commentMutation }: Props) {
   const queryClient = useQueryClient()
-  const session: Session = auth.isAuthenticated()
+  const { user, token }: Session = auth.isAuthenticated()
   const match = useMatch('/user/:userId')
 
   const [isLiked, setIsLiked] = useState(false)
@@ -78,9 +89,50 @@ export default function Post({ post, onRemove, showComments }: Props) {
     message: ''
   })
 
+  const addCommentMutation= useMutation({
+    mutationFn: async (text: string) => {
+      return comment(user._id, token, post._id, { text })
+    },
+    onMutate: async () => {
+      
+      await queryClient.cancelQueries({ queryKey: ['newsfeed', user, token] })
+      
+      const previousData = queryClient.getQueryData(['newsfeed', user, token])
+      
+      queryClient.setQueryData(['newsfeed', user, token], (oldPosts: TPost[]) => {
+        const postToUpdate = oldPosts.find((oldPost => oldPost._id === post._id))
+        postToUpdate.comments.length += 1
+        const postToUpdateIndex = oldPosts.findIndex((oldPost => oldPost._id === post._id))
+        
+        return [...oldPosts.slice(0, postToUpdateIndex), postToUpdate, ...oldPosts.slice(postToUpdateIndex + 1)]
+      })
+
+      return { previousData }
+    },
+    onError: (_err, _newPost, context) => {
+      queryClient.setQueryData(['newsfeed', user, token], context.previousData)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['post'],
+        refetchType: 'all'
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: ['newsfeed'],
+        refetchType: 'all'
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: ['posts'],
+        refetchType: 'all'
+      })
+    }
+  })
+
   const removePostMutation = useMutation({
     mutationFn: async () => {
-      return removePost(post._id, session.token)
+      return removePost(post._id, token)
     },
     onSuccess: () => {
       setSnackbarInfo({
@@ -89,7 +141,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
       })
       setAnchorEl(null)
       onRemove(post)
-      if (match.params.userId && match.params.userId === session.user._id) {
+      if (match.params.userId && match.params.userId === user._id) {
         queryClient.invalidateQueries({ queryKey: ['posts'] })
       }
     }
@@ -97,7 +149,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
 
   const likeMutation = useMutation({
     mutationFn: async (callbackFn: TLikeCallbackFn) => {
-      return callbackFn(session.user._id, session.token, post._id)
+      return callbackFn(user._id, token, post._id)
     },
     onSuccess: data => {
       setLikesCount(data.length)
@@ -125,7 +177,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
 
   const checkIsFollowing = (postUser: TUser) => {
     // @ts-expect-error todo: fix on backend
-    const match = postUser?.followers?.some(id => id === session.user._id)
+    const match = postUser?.followers?.some(id => id === user._id)
     setIsFollowing(match)
   }
 
@@ -137,7 +189,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
       callbackFn: TFollowCallbackFn
       postUserId: string
     }) => {
-      return callbackFn(session.user._id, session.token, postUserId)
+      return callbackFn(user._id, token, postUserId)
     },
     onSuccess: data => {
       setIsFollowing(!isFollowing)
@@ -165,7 +217,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
   }
 
   const checkLike = (likes: string[]) => {
-    const match = likes.indexOf(session.user._id) !== -1
+    const match = likes.indexOf(user._id) !== -1
     setIsLiked(match)
   }
 
@@ -235,12 +287,12 @@ export default function Post({ post, onRemove, showComments }: Props) {
                 }
               }}
             >
-              {post.postedBy._id === session.user._id && (
+              {post.postedBy._id === user._id && (
                 <MenuItem sx={{ color: 'red' }} onClick={deletePost}>
                   <DeleteIcon sx={{ mr: 1 }} /> Delete
                 </MenuItem>
               )}
-              {post.postedBy._id !== session.user._id &&
+              {post.postedBy._id !== user._id &&
                 post.postedBy._id !== match?.params?.userId && (
                   <MenuItem
                     onClick={e => {
@@ -412,7 +464,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
       </CardActions>
       {showComments && (
         <>
-          <Reply postId={post._id} />
+          <Reply commentMutation={commentMutation}/>
           <Box sx={{ borderTop: '1px solid gray' }}>
             <Comments
               postId={post._id}
@@ -425,7 +477,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
       )}
       {!showComments && (
         <Collapse in={showReplyButton} timeout="auto" unmountOnExit>
-          <Reply postId={post._id} />
+          <Reply commentMutation={addCommentMutation.mutate} />
         </Collapse>
       )}
       <Snackbar
