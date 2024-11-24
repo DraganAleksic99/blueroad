@@ -1,5 +1,5 @@
 import { baseUrl } from '../config/config'
-import { TComment } from '../views/post/NewsFeed'
+import { TComment, TPost } from '../views/post/NewsFeed'
 
 const listNewsFeed = async (userId: string, token: string) => {
   try {
@@ -22,7 +22,7 @@ const listNewsFeed = async (userId: string, token: string) => {
   }
 }
 
-const loadPost = async (userId: string, token: string) => {
+const loadPost = async (userId: string, token: string): Promise<TPost> => {
   try {
     const response = await fetch(baseUrl + '/api/post/by/' + userId, {
       method: 'GET',
@@ -155,7 +155,10 @@ const comment = async (
   token: string,
   postId: string,
   comment: TComment
-) => {
+): Promise<{
+  _id: string
+  comments: TComment[]
+}> => {
   try {
     const response = await fetch(baseUrl + '/api/posts/comment/' + userId, {
       method: 'PUT',
@@ -164,7 +167,7 @@ const comment = async (
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + token
       },
-      body: JSON.stringify({ postId: postId, comment: comment })
+      body: JSON.stringify({ postId, comment })
     })
 
     if (!response.ok) {
@@ -182,7 +185,9 @@ const uncomment = async (
   token: string,
   postId: string,
   comment: TComment
-) => {
+): Promise<{
+  message: string
+}> => {
   try {
     const response = await fetch(baseUrl + '/api/posts/uncomment', {
       method: 'PUT',
@@ -191,7 +196,7 @@ const uncomment = async (
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + token
       },
-      body: JSON.stringify({ userId, postId, comment: comment })
+      body: JSON.stringify({ userId, postId, comment })
     })
 
     if (!response.ok) {
@@ -204,4 +209,14 @@ const uncomment = async (
   }
 }
 
-export { listNewsFeed, loadPost, loadPosts, createPost, removePost, likePost, unlikePost, comment, uncomment }
+export {
+  listNewsFeed,
+  loadPost,
+  loadPosts,
+  createPost,
+  removePost,
+  likePost,
+  unlikePost,
+  comment,
+  uncomment
+}

@@ -166,11 +166,11 @@ const comment = async (req: Request, res: Response) => {
   try {
     const result = await Post.findByIdAndUpdate(
       req.body.postId,
-      { $push: { comments: comment } },
+      { $push: { comments: { $each: [comment], $position: 0 } } },
       { new: true }
     )
+      .select('comments')
       .populate('comments.postedBy', '_id name email')
-      .populate('postedBy', '_id name email')
       .exec()
 
     res.json(result)
@@ -183,16 +183,15 @@ const comment = async (req: Request, res: Response) => {
 
 const uncomment = async (req: Request, res: Response) => {
   const comment = req.body.comment
+
   try {
-    const result = await Post.findByIdAndUpdate(
-      req.body.postId,
-      { $pull: { comments: { _id: comment._id } } },
-      { new: true }
-    )
-      .populate('comments.postedBy', '_id name email')
-      .populate('postedBy', '_id name email')
-      .exec()
-    res.json(result)
+    await Post.findByIdAndUpdate(req.body.postId, {
+      $pull: { comments: { _id: comment._id } }
+    })
+
+    res.json({
+      message: 'Comment deleted successfully!'
+    })
   } catch (err) {
     return res.status(400).json({
       error: dbErrorHandler.getErrorMessage(err)

@@ -1,7 +1,12 @@
 import { baseUrl } from '../config/config'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Box, CardContent, Tooltip, IconButton, TextField, styled, Avatar } from '@mui/material'
 import { Send as SendIcon } from '@mui/icons-material'
-import { Session } from '../auth/authHelper'
+import { comment } from '../services/postService'
+import auth, { Session } from '../auth/authHelper'
+import { TPost } from '../views/post/NewsFeed'
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
@@ -14,13 +19,63 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 }))
 
 type Props = {
-  comment: string
-  setComment: React.Dispatch<React.SetStateAction<string>>
-  handleAddComment: () => void
-  session: Session
+  postId: string
 }
 
-export default function Reply({ comment, setComment, handleAddComment, session }: Props) {
+export default function Reply({ postId }: Props) {
+  const { user, token }: Session = auth.isAuthenticated()
+  const queryClient = useQueryClient()
+  const [commentText, setCommentText] = useState('')
+
+  const { mutate } = useMutation({
+    mutationFn: async (text: string) => {
+      return comment(user._id, token, postId, { text })
+    },
+    onMutate: async text => {
+      await queryClient.cancelQueries({ queryKey: ['post', postId, token] })
+
+      const previousPost = queryClient.getQueryData(['post', postId, token])
+
+      queryClient.setQueryData(['post', postId, token], (post: TPost) => ({
+        ...post,
+        comments: [
+          {
+            _id: '123456',
+            text,
+            created: new Date(),
+            postedBy: {
+              _id: user._id,
+              name: user.name,
+              email: user.email
+            }
+          },
+          ...post.comments
+        ]
+      }))
+
+      return { previousPost }
+    },
+    onError: (_err, _newPost, context) => {
+      queryClient.setQueryData(['post', postId, token], context.previousPost)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['post'],
+        refetchType: 'all'
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: ['newsfeed'],
+        refetchType: 'all'
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: ['posts'],
+        refetchType: 'all'
+      })
+    }
+  })
+
   return (
     <CardContent
       sx={{
@@ -32,7 +87,9 @@ export default function Reply({ comment, setComment, handleAddComment, session }
       }}
     >
       <Box sx={{ display: 'flex', gap: 2 }}>
-        <Avatar src={baseUrl + '/api/users/photo/' + session.user._id} alt={session.user.name} />
+        <Link to={`/user/${user._id}`}>
+          <Avatar src={baseUrl + '/api/users/photo/' + user._id} alt={user.name} />
+        </Link>
         <StyledTextField
           autoFocus
           fullWidth
@@ -41,13 +98,14 @@ export default function Reply({ comment, setComment, handleAddComment, session }
           onKeyDown={e => {
             if (e.code === 'Enter') {
               e.preventDefault()
-              handleAddComment()
+              mutate(commentText)
+              setCommentText('')
             }
           }}
-          value={comment}
+          value={commentText}
           onChange={e => {
             e.preventDefault()
-            setComment(e.target.value)
+            setCommentText(e.target.value)
           }}
           onClick={e => e.preventDefault()}
         />
@@ -69,9 +127,10 @@ export default function Reply({ comment, setComment, handleAddComment, session }
               sx={{ transform: 'rotate(-20deg)', '&:hover': { color: '#2196F3' }, p: 0, pt: '4px' }}
               onClick={e => {
                 e.preventDefault()
-                handleAddComment()
+                mutate(commentText)
+                setCommentText('')
               }}
-              disabled={!comment.trim()}
+              disabled={!commentText.trim()}
             >
               <SendIcon />
             </IconButton>

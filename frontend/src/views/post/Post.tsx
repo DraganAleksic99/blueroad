@@ -36,7 +36,7 @@ import { TPost } from './NewsFeed'
 import Reply from '../../components/Reply'
 import auth, { Session } from '../../auth/authHelper'
 import { followUser, unfollowUser } from '../../services/userService'
-import { removePost, comment, likePost, unlikePost } from '../../services/postService'
+import { removePost, likePost, unlikePost } from '../../services/postService'
 import Comments from './Comments'
 import { TUser } from '../Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
@@ -71,8 +71,6 @@ export default function Post({ post, onRemove, showComments }: Props) {
   const [showReplyButton, setShowReplyButton] = useState(false)
 
   const [likesCount, setLikesCount] = useState(post.likes.length)
-  const [comments, setComments] = useState(post.comments)
-  const [newComment, setNewComment] = useState('')
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const [snackbarInfo, setSnackbarInfo] = useState({
@@ -179,36 +177,6 @@ export default function Post({ post, onRemove, showComments }: Props) {
   const deletePost = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     e.preventDefault()
     removePostMutation.mutate()
-  }
-
-  const handleAddComment = () => {
-    comment(session.user._id, session.token, post._id, { text: newComment }).then(data => {
-      if (data.error) {
-        setSnackbarInfo({
-          open: true,
-          message: data.error
-        })
-      } else {
-        setNewComment('')
-        setSnackbarInfo({
-          open: true,
-          message: 'Reply succesfully sent!'
-        })
-        setComments(data.comments)
-        queryClient.invalidateQueries({
-          queryKey: ['post'],
-          refetchType: 'all'
-        })
-        queryClient.invalidateQueries({
-          queryKey: ['newsfeed'],
-          refetchType: 'all'
-        })
-        queryClient.invalidateQueries({
-          queryKey: ['posts'],
-          refetchType: 'all'
-        })
-      }
-    })
   }
 
   return (
@@ -410,7 +378,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
                 setShowReplyButton(!showReplyButton)
               }}
             >
-              {comments.length}
+              {post.comments.length}
             </ActionButton>
           </Tooltip>
         </div>
@@ -444,17 +412,11 @@ export default function Post({ post, onRemove, showComments }: Props) {
       </CardActions>
       {showComments && (
         <>
-          <Reply
-            comment={newComment}
-            setComment={setNewComment}
-            handleAddComment={handleAddComment}
-            session={session}
-          />
+          <Reply postId={post._id} />
           <Box sx={{ borderTop: '1px solid gray' }}>
             <Comments
-              updateComments={setComments}
               postId={post._id}
-              comments={comments}
+              comments={post.comments}
               isFollowing={isFollowing}
               handleFollowOrUnfollow={handleFollowOrUnfollow}
             />
@@ -463,12 +425,7 @@ export default function Post({ post, onRemove, showComments }: Props) {
       )}
       {!showComments && (
         <Collapse in={showReplyButton} timeout="auto" unmountOnExit>
-          <Reply
-            comment={newComment}
-            setComment={setNewComment}
-            handleAddComment={handleAddComment}
-            session={session}
-          />
+          <Reply postId={post._id} />
         </Collapse>
       )}
       <Snackbar

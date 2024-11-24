@@ -1,3 +1,3 @@
-const baseUrl = 'https://social-media-app-production-43ee.up.railway.app'
+const baseUrl = 'http://localhost:3500'
 
 export { baseUrl }
