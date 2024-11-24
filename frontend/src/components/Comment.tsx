@@ -110,6 +110,7 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={() => setAnchorEl(null)}
+              disableScrollLock={true}
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               PaperProps={{

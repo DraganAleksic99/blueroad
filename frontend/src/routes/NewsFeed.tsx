@@ -31,6 +31,7 @@ export type TPost = {
   created: Date
   likes: string[]
   comments: TComment[]
+  imagePreview?: string
 }
 
 export default function NewsFeed() {
@@ -49,13 +50,6 @@ export default function NewsFeed() {
     setPosts(data)
   }, [isSuccess, data])
 
-  const addPost = (post: TPost) => {
-    const updatedPosts = [...posts]
-    updatedPosts.unshift(post)
-    setPosts(updatedPosts)
-    queryClient.invalidateQueries({ queryKey: ["newsfeed"]})
-  }
-
   const removePost = (post: TPost) => {
     const updatedPosts = [...posts]
     const index = updatedPosts.indexOf(post)
@@ -69,7 +63,7 @@ export default function NewsFeed() {
       <Grid item lg={8}>
         <Card>
           <MainLayout>
-            <NewPost addPost={addPost} />
+            <NewPost />
             <PostList arePostsPending={isPending} removePost={removePost} posts={posts} />
           </MainLayout>
         </Card>

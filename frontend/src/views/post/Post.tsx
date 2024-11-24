@@ -32,14 +32,14 @@ import {
   PersonRemoveOutlined as PersonRemoveIcon,
   PersonAddAlt1Outlined as PersonAddAlt1Icon
 } from '@mui/icons-material'
-import { TComment, TPost } from '../../routes/NewsFeed'
 import Reply from '../../components/Reply'
+import Comments from './Comments'
 import auth, { Session } from '../../auth/authHelper'
 import { followUser, unfollowUser } from '../../services/userService'
 import { removePost, likePost, unlikePost, comment } from '../../services/postService'
-import Comments from './Comments'
 import { TUser } from '../../routes/Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
+import { TComment, TPost } from '../../routes/NewsFeed'
 
 const ActionButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
@@ -228,6 +228,7 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
   const deletePost = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     e.preventDefault()
     removePostMutation.mutate()
+    setAnchorEl(null)
   }
 
   return (
@@ -274,6 +275,7 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
                 e.preventDefault()
                 setAnchorEl(null)
               }}
+              disableScrollLock={true}
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               PaperProps={{
@@ -338,6 +340,16 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
       <CardContent sx={{ p: 0, pt: '4px' }}>
         <Box sx={{ pl: '72px', pr: 2 }}>
           <Typography variant="body1">{post.text}</Typography>
+
+          {post.imagePreview && (
+            <CardMedia
+            loading="lazy"
+            component="img"
+            image={post.imagePreview}
+            alt="Post content"
+            sx={{ objectFit: 'cover', border: '1px solid #2196F3', borderRadius: '12px', mt: 1 }}
+          />
+          )}
 
           {post.photo && (
             <CardMedia

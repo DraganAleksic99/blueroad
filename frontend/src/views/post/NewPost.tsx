@@ -1,5 +1,6 @@
 import { baseUrl } from '../../config/config'
 import { useState, ChangeEvent } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import {
   Paper,
@@ -37,15 +38,60 @@ const VisuallyHiddenInput = styled('input')({
   width: 1
 })
 
-export default function NewPost({ addPost }: { addPost: (post: TPost) => void }) {
+export default function NewPost() {
+  const queryClient = useQueryClient()
+  const [imagePreview, setImagePreview] = useState(null)
+  const { user, token }: Session = auth.isAuthenticated()
+  
   const [values, setValues] = useState({
     text: '',
     photo: null
   })
-  const [imagePreview, setImagePreview] = useState(null)
-  const [error, setError] = useState('')
-  const [isPending, setIsPending] = useState(false)
-  const { user, token }: Session = auth.isAuthenticated()
+
+  const { mutate } = useMutation({
+    mutationFn: async (postData: FormData) => {
+      return createPost(user._id, token, postData)
+    },
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['newsfeed', user, token] })
+
+      const previousPosts: TPost[] = queryClient.getQueryData(['newsfeed', user, token])
+
+      queryClient.setQueryData(['newsfeed', user, token], (oldPosts: TPost[]) => {
+        return [
+          {
+            text: values.text,
+            postedBy: {
+              _id: user._id,
+              name: user.name,
+              email: user.email
+            },
+            created: new Date(),
+            likes: [],
+            comments: [],
+            imagePreview
+          },
+          ...oldPosts,
+        ]
+      })
+
+      return { previousPosts }
+    },
+    onError: (_err, _newPost, context) => {
+      queryClient.setQueryData(['newsfeed', user, token], context.previousPosts)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['newsfeed'],
+        refetchType: 'all'
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: ['posts'],
+        refetchType: 'all'
+      })
+    }
+  })
 
   const handleAddPost = () => {
     const postData = new FormData()
@@ -53,20 +99,8 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
     values.text && postData.append('text', values.text)
     values.photo && postData.append('photo', values.photo)
 
-    setIsPending(true)
-
-    createPost(
-      user._id, token, postData
-    ).then(data => {
-      if (data.error) {
-        setError(data.error)
-        setIsPending(false)
-      } else {
-        setValues({ ...values, text: '', photo: null })
-        addPost(data)
-        setIsPending(false)
-      }
-    })
+    mutate(postData)
+    setValues({ ...values, text: '', photo: null })
   }
 
   const handleChange = (name: string) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +109,7 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
   }
 
   return (
-    <Paper sx={{ p: 2, mb: "2px" }}>
+    <Paper sx={{ p: 2, mb: '2px' }}>
       <Stack direction="row" spacing={2} sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
         <Link to={`/user/${user._id}`}>
           <Avatar src={baseUrl + '/api/users/photo/' + user._id} />
@@ -140,7 +174,7 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
           />
         </PostButton>
         <Button
-        disabled={!values.text || isPending}
+          disabled={!values.text}
           variant="outlined"
           size="small"
           sx={{
@@ -153,7 +187,6 @@ export default function NewPost({ addPost }: { addPost: (post: TPost) => void })
           Post
         </Button>
       </Stack>
-      {error}
     </Paper>
   )
 }
