@@ -32,13 +32,13 @@ import {
   PersonRemoveOutlined as PersonRemoveIcon,
   PersonAddAlt1Outlined as PersonAddAlt1Icon
 } from '@mui/icons-material'
-import { TComment, TPost } from './NewsFeed'
+import { TComment, TPost } from '../../routes/NewsFeed'
 import Reply from '../../components/Reply'
 import auth, { Session } from '../../auth/authHelper'
 import { followUser, unfollowUser } from '../../services/userService'
 import { removePost, likePost, unlikePost, comment } from '../../services/postService'
 import Comments from './Comments'
-import { TUser } from '../Profile'
+import { TUser } from '../../routes/Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 
 const ActionButton = styled(Button)(({ theme }) => ({
@@ -176,7 +176,6 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
   }, [])
 
   const checkIsFollowing = (postUser: TUser) => {
-    // @ts-expect-error todo: fix on backend
     const match = postUser?.followers?.some(id => id === user._id)
     setIsFollowing(match)
   }

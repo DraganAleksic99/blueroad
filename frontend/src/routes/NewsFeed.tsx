@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Card, Grid } from '@mui/material'
-import { listNewsFeed } from '../../services/postService'
-import auth, { Session } from '../../auth/authHelper'
-import PostList from './PostList'
-import { TUser } from '../Profile'
-import MainLayout from '../../layouts/MainLayout'
-import NewPost from './NewPost'
-import FindPeople from '../FindPeople'
+import { listNewsFeed } from '../services/postService'
+import auth, { Session } from '../auth/authHelper'
+import PostList from '../views/post/PostList'
+import { TUser } from './Profile'
+import MainLayout from '../layouts/MainLayout'
+import NewPost from '../views/post/NewPost'
+import FindPeople from '../views/FindPeople'
 
 export type TComment = {
   _id?: string

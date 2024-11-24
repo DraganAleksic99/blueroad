@@ -4,14 +4,14 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { Paper } from '@mui/material'
 
 import MainLayout from '../layouts/MainLayout'
-import ProfileTabs from './ProfileTabs'
+import ProfileTabs from '../views/ProfileTabs'
 import ProfileCard from '../components/ProfileCard'
 import ProfileCardSkeleton from '../components/skeletons/ProfileCardSkeleton'
 
 import { getUser } from '../services/userService'
 import { loadPosts } from '../services/postService'
 import auth, { Session } from '../auth/authHelper'
-import { TPost } from './post/NewsFeed'
+import { TPost } from '../routes/NewsFeed'
 import { TFollowCallbackFn } from '../components/FollowProfileButton'
 
 export type TUser = {

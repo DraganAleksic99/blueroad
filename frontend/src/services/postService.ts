@@ -1,5 +1,5 @@
 import { baseUrl } from '../config/config'
-import { TComment, TPost } from '../views/post/NewsFeed'
+import { TComment, TPost } from '../routes/NewsFeed'
 
 const listNewsFeed = async (userId: string, token: string) => {
   try {

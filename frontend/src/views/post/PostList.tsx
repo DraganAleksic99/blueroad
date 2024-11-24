@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { TPost } from './NewsFeed'
+import { TPost } from '../../routes/NewsFeed'
 import Post from './Post'
 
 type Props = {

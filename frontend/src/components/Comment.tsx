@@ -22,7 +22,7 @@ import {
 import { followUser, unfollowUser } from '../services/userService'
 import { uncomment } from '../services/postService'
 import auth, { Session } from '../auth/authHelper'
-import { TComment } from '../views/post/NewsFeed'
+import { TComment } from '../routes/NewsFeed'
 import { TFollowCallbackFn } from './FollowProfileButton'
 
 type Props = {

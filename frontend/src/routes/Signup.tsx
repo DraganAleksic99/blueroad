@@ -23,7 +23,7 @@ import MainLayout from '../layouts/MainLayout'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
-import { StyledPaper, StyledButton } from './Signin'
+import { StyledPaper, StyledButton } from '../routes/Signin'
 import { Link } from 'react-router-dom'
 
 interface IFormValues {

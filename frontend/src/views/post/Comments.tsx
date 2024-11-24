@@ -1,6 +1,6 @@
 import Comment from '../../components/Comment'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
-import { TComment } from './NewsFeed'
+import { TComment } from '../../routes/NewsFeed'
 
 type Props = {
   postId: string

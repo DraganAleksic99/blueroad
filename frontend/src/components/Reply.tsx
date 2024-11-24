@@ -5,7 +5,7 @@ import { UseMutateFunction } from '@tanstack/react-query'
 import { Box, CardContent, Tooltip, IconButton, TextField, styled, Avatar } from '@mui/material'
 import { Send as SendIcon } from '@mui/icons-material'
 import auth, { Session } from '../auth/authHelper'
-import { TComment } from '../views/post/NewsFeed'
+import { TComment } from '../routes/NewsFeed'
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {

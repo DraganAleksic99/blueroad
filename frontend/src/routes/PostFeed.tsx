@@ -4,11 +4,11 @@ import {
   Card,
   Grid,
 } from '@mui/material'
-import MainLayout from '../../layouts/MainLayout'
-import Post from './Post'
-import FindPeople from '../FindPeople'
-import auth from '../../auth/authHelper'
-import { loadPost, comment } from '../../services/postService'
+import MainLayout from '../layouts/MainLayout'
+import Post from '../views/post/Post'
+import FindPeople from '../views/FindPeople'
+import auth from '../auth/authHelper'
+import { loadPost, comment } from '../services/postService'
 import { TPost } from './NewsFeed'
 
 export default function PostFeed() {

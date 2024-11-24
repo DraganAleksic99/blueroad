@@ -4,7 +4,7 @@ import { AppBar, Typography, Tabs, Tab } from '@mui/material'
 import FollowGrid from '../components/FollowGrid'
 import PostList from './post/PostList'
 import { TUser } from './Profile'
-import { TPost } from './post/NewsFeed'
+import { TPost } from '../routes/NewsFeed'
 
 type Props = {
   user: TUser | Record<string, never>

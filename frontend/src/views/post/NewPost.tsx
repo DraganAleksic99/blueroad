@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 import { ImageOutlined, Close } from '@mui/icons-material'
 import auth, { Session } from '../../auth/authHelper'
-import { TPost } from './NewsFeed'
+import { TPost } from '../../routes/NewsFeed'
 import { createPost } from '../../services/postService'
 
 const PostButton = styled(Button)(({ theme }) => ({

@@ -12,12 +12,12 @@ import './index.css'
 import Layout from './App'
 import ProtectedRoute from './components/ProtectedRoute'
 import Users, { usersLoader } from './routes/Users'
-import Signin from './views/Signin'
-import Signup from './views/Signup'
-import Profile from './views/Profile'
-import EditProfile from './views/EditProfile'
-import NewsFeed from './views/post/NewsFeed'
-import PostFeed from './views/post/PostFeed'
+import Signin from './routes/Signin'
+import Signup from './routes/Signup'
+import Profile from './routes/Profile'
+import EditProfile from './routes/EditProfile'
+import NewsFeed from './routes/NewsFeed'
+import PostFeed from './routes/PostFeed'
 
 const queryClient = new QueryClient()
 
