@@ -9,7 +9,8 @@ import { getUsers } from '../services/userService'
 
 const usersQuery = () => ({
   queryKey: ['users'],
-  queryFn: async () => getUsers()
+  queryFn: async () => getUsers(),
+  staleTime: Infinity
 })
 
 // eslint-disable-next-line react-refresh/only-export-components

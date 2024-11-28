@@ -38,7 +38,7 @@ export default function PostList({ posts, removePost, arePostsPending }: Props) 
   return (
     <div style={{ maxWidth: '715px', margin: 'auto', backgroundColor: 'rgba(246, 247, 248, 0.5)' }}>
       {posts?.map(post => (
-        <Link to={`/user/${post.postedBy._id}/post/${post._id}`} key={post._id}>
+        <Link to={`/user/${post.postedBy._id}/post/${post._id}`} key={post._id} unstable_viewTransition>
           <Post post={post} onRemove={removePost} />
         </Link>
       ))}

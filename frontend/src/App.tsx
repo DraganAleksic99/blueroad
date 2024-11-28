@@ -1,5 +1,5 @@
 import './App.css'
-import { Outlet, ScrollRestoration } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import Navigation from './components/Navigation'
 import { CssBaseline } from '@mui/material'
 
@@ -9,7 +9,6 @@ function App() {
       <CssBaseline />
       <Navigation />
       <Outlet />
-      <ScrollRestoration />
     </div>
   )
 }
