@@ -1,4 +1,5 @@
-import { defer } from 'react-router-dom'
+import { useEffect } from 'react'
+import { defer, useLocation } from 'react-router-dom'
 import { useQuery, QueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { Paper, Box } from '@mui/material'
@@ -25,7 +26,12 @@ export const usersLoader = (queryClient: QueryClient) => async () => {
 }
 
 export default function Users() {
+  const { pathname } = useLocation()
   const { data: users, isPending } = useQuery(usersQuery())
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <Paper elevation={2}>
