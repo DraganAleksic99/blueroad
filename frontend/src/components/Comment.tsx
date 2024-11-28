@@ -22,7 +22,7 @@ import {
 import { followUser, unfollowUser } from '../services/userService'
 import { uncomment } from '../services/postService'
 import auth, { Session } from '../auth/authHelper'
-import { TComment } from '../routes/NewsFeed'
+import { TComment, TPost } from '../routes/NewsFeed'
 import { TFollowCallbackFn } from './FollowProfileButton'
 
 type Props = {
@@ -41,7 +41,22 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
     mutationFn: async () => {
       return uncomment(user._id, token, postId, comment)
     },
-    onSuccess() {
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['post', postId, token] })
+
+      const previousPostData: TPost = queryClient.getQueryData(['post', postId, token])
+
+      queryClient.setQueryData(['post', postId, token], (oldPost: TPost) => ({
+        ...oldPost,
+        comments: [...oldPost.comments.filter((c) => c._id !== comment._id)]
+      }))
+
+      return { previousPostData }
+    },
+    onError: (_err, _newPost, context) => {
+      queryClient.setQueryData(['post', postId, token], context.previousPostData)
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ['post'],
         refetchType: 'all'
