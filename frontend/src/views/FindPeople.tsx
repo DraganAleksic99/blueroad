@@ -18,7 +18,7 @@ import {
 } from '@mui/material'
 import { followUser, getUsersToFollow } from '../services/userService'
 import auth, { Session } from '../auth/authHelper'
-import { TUser } from './Profile'
+import { TUser } from '../routes/Profile'
 
 const WhoToFollowPaper = styled(Paper)({
   position: 'sticky',
@@ -48,7 +48,6 @@ const usersToFollowQuery = (userId: string, token: string) => ({
 export default function FindPeople() {
   const { user, token }: Session = auth.isAuthenticated()
   const { data, isPending } = useQuery(usersToFollowQuery(user._id, token))
-  const [buttonIndex, setButtonIndex] = useState(-1)
 
   const queryClient = useQueryClient()
   const [followedUserName, setFollowedUserName] = useState('')
@@ -57,12 +56,28 @@ export default function FindPeople() {
     message: ''
   })
 
-  const { mutate, isPending: isMutationPending } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: (userToFollow: TUser) => {
       return followUser(user._id, token, userToFollow._id)
     },
+    onMutate: async userToFollow => {
+      await queryClient.cancelQueries({ queryKey: ['usersToFollow', user._id, token] })
+
+      const previousData: TUser[] = queryClient.getQueryData(['usersToFollow', user._id, token])
+
+      queryClient.setQueryData(['usersToFollow', user._id, token], (oldUsers: TUser[]) => {
+        return [...oldUsers.filter(oldUser => oldUser._id !== userToFollow._id)]
+      })
+
+      return { previousData }
+    },
+    onError: (_err, _newPost, context) => {
+      queryClient.setQueryData(['usersToFollow', user._id, token], context.previousData)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['usersToFollow', user._id, token] })
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['usersToFollow'] })
       setSnackbarInfo({
         open: true,
         message: `You followed ${followedUserName}`
@@ -126,12 +141,11 @@ export default function FindPeople() {
           Who to follow
         </Typography>
         <List>
-          {data.map((user, index) => (
+          {data.map((user) => (
             <ListItem
               key={user._id}
               secondaryAction={
                 <Button
-                disabled={isMutationPending && (buttonIndex === index)}
                   variant="outlined"
                   size="small"
                   sx={{
@@ -141,9 +155,7 @@ export default function FindPeople() {
                   }}
                   onClick={() => {
                     handleFollow(user)
-                    setButtonIndex(index)
-                  }
-                  }
+                  }}
                 >
                   Follow
                 </Button>
