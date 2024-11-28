@@ -47,7 +47,6 @@ export default function Reply({ commentMutation }: Props) {
           <Avatar src={baseUrl + '/api/users/photo/' + user._id} alt={user.name} />
         </Link>
         <StyledTextField
-          autoFocus
           fullWidth
           size="small"
           placeholder="Post your reply..."
