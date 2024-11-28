@@ -1,5 +1,5 @@
 import { signout } from './apiAuth'
-import { TUser } from '../views/Profile'
+import { TUser } from '../routes/Profile'
 
 export type Session = {
   token: string

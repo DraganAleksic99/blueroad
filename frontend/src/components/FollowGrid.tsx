@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import { TUser } from '../views/Profile'
+import { TUser } from '../routes/Profile'
 import GridCard from './GridCard'
 
 export default function FollowGrid({ users = [] }: { users: TUser[] }) {

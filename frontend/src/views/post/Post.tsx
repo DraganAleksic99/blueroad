@@ -58,7 +58,7 @@ type Props = {
   post: TPost
   onRemove?: (post: TPost) => void
   showComments?: boolean
-  commentMutation: UseMutateFunction<
+  commentMutation?: UseMutateFunction<
     {
       _id: string
       comments: TComment[]
@@ -176,6 +176,7 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
   }, [])
 
   const checkIsFollowing = (postUser: TUser) => {
+    // @ts-expect-error todo: fix on backend
     const match = postUser?.followers?.some(id => id === user._id)
     setIsFollowing(match)
   }

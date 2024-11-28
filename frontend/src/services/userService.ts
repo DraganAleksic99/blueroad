@@ -1,5 +1,5 @@
 import { baseUrl } from "../config/config"
-import { TUser } from "../views/Profile"
+import { TUser } from "../routes/Profile"
 
 const create = async (user: { name: string; email: string; password: string }) => {
   try {

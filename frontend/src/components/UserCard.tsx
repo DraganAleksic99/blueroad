@@ -15,7 +15,7 @@ import {
   PeopleOutlined as PeopleIcon,
   CalendarToday as CalendarIcon
 } from '@mui/icons-material'
-import { TUser } from '../views/Profile'
+import { TUser } from '../routes/Profile'
 
 export const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',

@@ -3,7 +3,7 @@ import { useMatch } from 'react-router-dom'
 import { AppBar, Typography, Tabs, Tab } from '@mui/material'
 import FollowGrid from '../components/FollowGrid'
 import PostList from './post/PostList'
-import { TUser } from './Profile'
+import { TUser } from '../routes/Profile'
 import { TPost } from '../routes/NewsFeed'
 
 type Props = {
