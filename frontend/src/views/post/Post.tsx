@@ -2,6 +2,7 @@ import { baseUrl } from '../../config/config'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import { Link, useMatch } from 'react-router-dom'
 import { useQueryClient, useMutation, UseMutateFunction } from '@tanstack/react-query'
+import { useDebouncedCallback, useThrottledCallback } from 'use-debounce'
 import {
   Card,
   CardHeader,
@@ -52,7 +53,7 @@ const ActionButton = styled(Button)(({ theme }) => ({
 type likeFn = typeof likePost
 type unlikeFn = typeof unlikePost
 
-type TLikeCallbackFn = likeFn | unlikeFn
+export type TLikeCallbackFn = likeFn | unlikeFn
 
 type Props = {
   post: TPost
@@ -76,12 +77,14 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
   const { user, token }: Session = auth.isAuthenticated()
   const match = useMatch('/user/:userId')
 
+  const [likesCount, setLikesCount] = useState(post.likes.length)
+  const [previousMutation, setPreviousMutation] = useState<'liked' | 'unliked'>('liked')
+
   const [isLiked, setIsLiked] = useState(false)
   const [saved, setSaved] = useState(false)
   const [isFollowing, setIsFollowing] = useState<boolean>()
   const [showReplyButton, setShowReplyButton] = useState(false)
 
-  const [likesCount, setLikesCount] = useState(post.likes.length)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const [snackbarInfo, setSnackbarInfo] = useState({
@@ -89,22 +92,25 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
     message: ''
   })
 
-  const addCommentMutation= useMutation({
+  const addCommentMutation = useMutation({
     mutationFn: async (text: string) => {
       return comment(user._id, token, post._id, { text })
     },
     onMutate: async () => {
-      
       await queryClient.cancelQueries({ queryKey: ['newsfeed', user, token] })
-      
+
       const previousData = queryClient.getQueryData(['newsfeed', user, token])
-      
+
       queryClient.setQueryData(['newsfeed', user, token], (oldPosts: TPost[]) => {
-        const postToUpdate = oldPosts.find((oldPost => oldPost._id === post._id))
+        const postToUpdate = oldPosts.find(oldPost => oldPost._id === post._id)
         postToUpdate.comments.length += 1
-        const postToUpdateIndex = oldPosts.findIndex((oldPost => oldPost._id === post._id))
-        
-        return [...oldPosts.slice(0, postToUpdateIndex), postToUpdate, ...oldPosts.slice(postToUpdateIndex + 1)]
+        const postToUpdateIndex = oldPosts.findIndex(oldPost => oldPost._id === post._id)
+
+        return [
+          ...oldPosts.slice(0, postToUpdateIndex),
+          postToUpdate,
+          ...oldPosts.slice(postToUpdateIndex + 1)
+        ]
       })
 
       return { previousData }
@@ -151,9 +157,21 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
     mutationFn: async (callbackFn: TLikeCallbackFn) => {
       return callbackFn(user._id, token, post._id)
     },
-    onSuccess: data => {
-      setLikesCount(data.length)
-      setIsLiked(!isLiked)
+    onMutate() {
+      if (previousMutation === 'liked') {
+        setPreviousMutation('unliked')
+      } else {
+        setPreviousMutation('liked')
+      }
+    },
+    onSettled(data) {
+      const match = data.indexOf(user._id) !== -1
+
+      if (match !== isLiked) {
+        setIsLiked(match)
+        setLikesCount(data.length)
+      }
+
       queryClient.invalidateQueries({
         queryKey: ['post'],
         refetchType: 'all'
@@ -167,6 +185,11 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
         refetchType: 'all'
       })
     }
+  })
+
+  const debouncedLikeMutation = useDebouncedCallback(likeMutation.mutate, 200, {
+    leading: true,
+    trailing: false
   })
 
   useEffect(() => {
@@ -204,11 +227,38 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
     followMutation.mutate({ callbackFn, postUserId })
   }
 
+  const optimisticLikeUpdate = () => {
+    setIsLiked(!isLiked)
+    
+    if (previousMutation === 'unliked' && !isLiked) {
+      setIsLiked(true)
+      return setLikesCount(likesCount + 1)
+    }
+
+    if (previousMutation === 'liked' && isLiked) {
+      setIsLiked(false)
+      return setLikesCount(likesCount - 1)
+    }
+
+    if (isLiked) {
+      setLikesCount(likesCount - 1)
+    } else {
+      setLikesCount(likesCount + 1)
+    }
+  }
+
+const throttledOptimisticLikeUpdate = useThrottledCallback(optimisticLikeUpdate, 200, {
+  leading: true,
+  trailing: false
+})
+
   const handleLike = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
-    const callbackFn = isLiked ? unlikePost : likePost
+    const callbackFn = previousMutation === 'liked' ? unlikePost : likePost
 
-    likeMutation.mutate(callbackFn)
+    throttledOptimisticLikeUpdate()
+
+    debouncedLikeMutation(callbackFn)
   }
 
   const handleSave = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -219,6 +269,11 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
   const checkLike = (likes: string[]) => {
     const match = likes.indexOf(user._id) !== -1
     setIsLiked(match)
+    if (match) {
+      setPreviousMutation('liked')
+    } else {
+      setPreviousMutation('unliked')
+    }
   }
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -294,29 +349,28 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
                   <DeleteIcon sx={{ mr: 1 }} /> Delete
                 </MenuItem>
               )}
-              {post.postedBy._id !== user._id &&
-                post.postedBy._id !== match?.params?.userId && (
-                  <MenuItem
-                    onClick={e => {
-                      e.preventDefault()
+              {post.postedBy._id !== user._id && post.postedBy._id !== match?.params?.userId && (
+                <MenuItem
+                  onClick={e => {
+                    e.preventDefault()
 
-                      if (isFollowing) {
-                        handleFollowOrUnfollow(unfollowUser, post.postedBy._id)
-                        setAnchorEl(null)
-                      } else {
-                        handleFollowOrUnfollow(followUser, post.postedBy._id)
-                        setAnchorEl(null)
-                      }
-                    }}
-                  >
-                    {isFollowing ? (
-                      <PersonRemoveIcon sx={{ mr: 1 }} />
-                    ) : (
-                      <PersonAddAlt1Icon sx={{ mr: 1 }} />
-                    )}
-                    {isFollowing ? 'Unfollow' : 'Follow'} {post.postedBy.name}
-                  </MenuItem>
-                )}
+                    if (isFollowing) {
+                      handleFollowOrUnfollow(unfollowUser, post.postedBy._id)
+                      setAnchorEl(null)
+                    } else {
+                      handleFollowOrUnfollow(followUser, post.postedBy._id)
+                      setAnchorEl(null)
+                    }
+                  }}
+                >
+                  {isFollowing ? (
+                    <PersonRemoveIcon sx={{ mr: 1 }} />
+                  ) : (
+                    <PersonAddAlt1Icon sx={{ mr: 1 }} />
+                  )}
+                  {isFollowing ? 'Unfollow' : 'Follow'} {post.postedBy.name}
+                </MenuItem>
+              )}
               <MenuItem
                 onClick={e => {
                   e.preventDefault()
@@ -344,12 +398,12 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
 
           {post.imagePreview && (
             <CardMedia
-            loading="lazy"
-            component="img"
-            image={post.imagePreview}
-            alt="Post content"
-            sx={{ objectFit: 'cover', border: '1px solid #2196F3', borderRadius: '12px', mt: 1 }}
-          />
+              loading="lazy"
+              component="img"
+              image={post.imagePreview}
+              alt="Post content"
+              sx={{ objectFit: 'cover', border: '1px solid #2196F3', borderRadius: '12px', mt: 1 }}
+            />
           )}
 
           {post.photo && (
@@ -382,7 +436,6 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
             }}
           >
             <ActionButton
-              disabled={likeMutation.isPending}
               sx={{
                 color: isLiked ? 'rgb(249, 24, 128)' : '',
                 '&:hover': {
@@ -476,7 +529,7 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
       </CardActions>
       {showComments && (
         <>
-          <Reply commentMutation={commentMutation}/>
+          <Reply commentMutation={commentMutation} />
           <Box sx={{ borderTop: '1px solid gray' }}>
             <Comments
               postId={post._id}

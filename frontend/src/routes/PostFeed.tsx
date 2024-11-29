@@ -5,13 +5,13 @@ import { Card, Grid } from '@mui/material'
 import MainLayout from '../layouts/MainLayout'
 import Post from '../views/post/Post'
 import FindPeople from '../views/FindPeople'
-import auth from '../auth/authHelper'
+import auth, { Session } from '../auth/authHelper'
 import { loadPost, comment } from '../services/postService'
 import { TPost } from './NewsFeed'
 
 export default function PostFeed() {
   const { pathname } = useLocation()
-  const { user, token } = auth.isAuthenticated()
+  const { user, token }: Session = auth.isAuthenticated()
   const {
     params: { postId }
   } = useMatch('/user/:userId/post/:postId')
@@ -24,7 +24,7 @@ export default function PostFeed() {
     }
   })
 
-  const { mutate } = useMutation({
+  const addCommentMutation = useMutation({
     mutationFn: async (text: string) => {
       return comment(user._id, token, postId, { text })
     },
@@ -74,8 +74,8 @@ export default function PostFeed() {
   })
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    window.scrollTo(0, 0)
+  }, [pathname])
 
   return (
     <Grid container spacing={2}>
@@ -85,7 +85,7 @@ export default function PostFeed() {
             {isPending ? (
               <h1>Loading...</h1>
             ) : (
-              <Post commentMutation={mutate} post={post} showComments />
+              <Post commentMutation={addCommentMutation.mutate} post={post} showComments />
             )}
           </MainLayout>
         </Card>
