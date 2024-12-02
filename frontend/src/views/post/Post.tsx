@@ -38,6 +38,7 @@ import Comments from './Comments'
 import auth, { Session } from '../../auth/authHelper'
 import { followUser, unfollowUser } from '../../services/userService'
 import { removePost, likePost, unlikePost, comment } from '../../services/postService'
+import { addBookmark, removeBookmark } from '../../services/userService'
 import { TUser } from '../../routes/Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 import { TComment, TPost } from '../../routes/NewsFeed'
@@ -52,13 +53,17 @@ const ActionButton = styled(Button)(({ theme }) => ({
 
 type likeFn = typeof likePost
 type unlikeFn = typeof unlikePost
+type addBookmarkFn = typeof addBookmark
+type removeBookmarkFn = typeof removeBookmark
 
 export type TLikeCallbackFn = likeFn | unlikeFn
+export type TBookmarkCallbackFn = addBookmarkFn | removeBookmarkFn
 
 type Props = {
   post: TPost
   onRemove?: (post: TPost) => void
   showComments?: boolean
+  bookmarkedPostsIds: string[]
   commentMutation?: UseMutateFunction<
     {
       _id: string
@@ -72,16 +77,25 @@ type Props = {
   >
 }
 
-export default function Post({ post, onRemove, showComments, commentMutation }: Props) {
+export default function Post({
+  post,
+  onRemove,
+  showComments,
+  bookmarkedPostsIds,
+  commentMutation
+}: Props) {
   const queryClient = useQueryClient()
   const { user, token }: Session = auth.isAuthenticated()
   const match = useMatch('/user/:userId')
 
   const [likesCount, setLikesCount] = useState(post.likes.length)
-  const [previousMutation, setPreviousMutation] = useState<'liked' | 'unliked'>('liked')
+  const [previousLikeMutation, setPreviousLikeMutation] = useState<'liked' | 'unliked'>('liked')
+  const [previousBookmarkMutation, setPreviousBookmarkMutation] = useState<
+    'bookmark' | 'unbookmark'
+  >('bookmark')
 
   const [isLiked, setIsLiked] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [isBookmark, setIsBookmark] = useState(false)
   const [isFollowing, setIsFollowing] = useState<boolean>()
   const [showReplyButton, setShowReplyButton] = useState(false)
 
@@ -158,10 +172,10 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
       return callbackFn(user._id, token, post._id)
     },
     onMutate() {
-      if (previousMutation === 'liked') {
-        setPreviousMutation('unliked')
+      if (previousLikeMutation === 'liked') {
+        setPreviousLikeMutation('unliked')
       } else {
-        setPreviousMutation('liked')
+        setPreviousLikeMutation('liked')
       }
     },
     onSettled(data) {
@@ -195,6 +209,7 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
   useEffect(() => {
     checkIsFollowing(post.postedBy)
     checkLike(post.likes)
+    checkisBookmarked()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -229,13 +244,13 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
 
   const optimisticLikeUpdate = () => {
     setIsLiked(!isLiked)
-    
-    if (previousMutation === 'unliked' && !isLiked) {
+
+    if (previousLikeMutation === 'unliked' && !isLiked) {
       setIsLiked(true)
       return setLikesCount(likesCount + 1)
     }
 
-    if (previousMutation === 'liked' && isLiked) {
+    if (previousLikeMutation === 'liked' && isLiked) {
       setIsLiked(false)
       return setLikesCount(likesCount - 1)
     }
@@ -247,32 +262,116 @@ export default function Post({ post, onRemove, showComments, commentMutation }: 
     }
   }
 
-const throttledOptimisticLikeUpdate = useThrottledCallback(optimisticLikeUpdate, 200, {
-  leading: true,
-  trailing: false
-})
+  const throttledOptimisticLikeUpdate = useThrottledCallback(optimisticLikeUpdate, 200, {
+    leading: true,
+    trailing: false
+  })
 
   const handleLike = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
-    const callbackFn = previousMutation === 'liked' ? unlikePost : likePost
+    const callbackFn = previousLikeMutation === 'liked' ? unlikePost : likePost
 
     throttledOptimisticLikeUpdate()
-
     debouncedLikeMutation(callbackFn)
   }
 
-  const handleSave = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const optimisticBookmarkUpdate = () => {
+    setIsBookmark(!isBookmark)
+
+    if (previousBookmarkMutation === 'unbookmark' && !isBookmark) {
+      return setIsBookmark(true)
+    }
+
+    if (previousBookmarkMutation === 'bookmark' && isBookmark) {
+      return setIsBookmark(false)
+    }
+  }
+
+  const throttledOptimisticBookmarkUpdate = useThrottledCallback(optimisticBookmarkUpdate, 200, {
+    leading: true,
+    trailing: false
+  })
+
+  const bookmarkMutation = useMutation({
+    mutationFn: async (callbackFn: TBookmarkCallbackFn) => {
+      return callbackFn(user._id, token, post)
+    },
+    onMutate: async () => {
+      if (previousBookmarkMutation === 'bookmark') {
+        setPreviousBookmarkMutation('unbookmark')
+
+        await queryClient.cancelQueries({ queryKey: ['bookmarks', user, token] })
+
+        const previousBookmarks = queryClient.getQueryData(['bookmarks', user, token])
+
+        queryClient.setQueryData(['bookmarks', user, token], (oldData: { _id: string, bookmarkedPosts: TPost[]}) => {
+          const updatedBookmarks =  [...oldData.bookmarkedPosts.filter(oldPost => oldPost._id !== post._id)]
+
+          return {
+            ...oldData,
+            bookmarkedPosts: updatedBookmarks
+          }
+        })
+
+        return { previousBookmarks }
+      } else {
+        setPreviousBookmarkMutation('bookmark')
+      }
+    },
+    onError(_err, _newPost, context) {
+      if (previousBookmarkMutation === 'unbookmark') {
+        queryClient.setQueryData(['bookmarks', user, token], context.previousBookmarks)
+      }
+
+      setIsBookmark(!isBookmark)
+      setSnackbarInfo({
+        open: true,
+        message: `Something went wrong. Please try again.`
+      })
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: ['bookmarks', user, token]
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: ['ids', user, token]
+      })
+    }
+  })
+
+  const debouncedBookmarkMutation = useDebouncedCallback(bookmarkMutation.mutate, 200, {
+    leading: true,
+    trailing: false
+  })
+
+  const handleBookmark = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
-    setSaved(!saved)
+    const callbackFn = previousBookmarkMutation === 'bookmark' ? removeBookmark : addBookmark
+
+    throttledOptimisticBookmarkUpdate()
+    debouncedBookmarkMutation(callbackFn)
   }
 
   const checkLike = (likes: string[]) => {
     const match = likes.indexOf(user._id) !== -1
     setIsLiked(match)
     if (match) {
-      setPreviousMutation('liked')
+      setPreviousLikeMutation('liked')
     } else {
-      setPreviousMutation('unliked')
+      setPreviousLikeMutation('unliked')
+    }
+  }
+
+  const checkisBookmarked = () => {
+    const isBookmarked = bookmarkedPostsIds.some(id => id === post._id)
+
+    setIsBookmark(isBookmarked)
+
+    if (isBookmarked) {
+      setPreviousBookmarkMutation('bookmark')
+    } else {
+      setPreviousBookmarkMutation('unbookmark')
     }
   }
 
@@ -512,8 +611,8 @@ const throttledOptimisticLikeUpdate = useThrottledCallback(optimisticLikeUpdate,
             }
           }}
         >
-          <IconButton onClick={handleSave} size="small">
-            {saved ? (
+          <IconButton onClick={handleBookmark} size="small">
+            {isBookmark ? (
               <BookmarkIcon color="primary" />
             ) : (
               <BookmarkBorderIcon

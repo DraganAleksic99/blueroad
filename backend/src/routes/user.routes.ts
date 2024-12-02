@@ -5,6 +5,7 @@ import authCtrl from '../controllers/auth.controller'
 const router = Router()
 
 router.route('/api/users').get(userCtrl.list).post(userCtrl.create)
+
 router
   .route('/api/users/:userId')
   .get(authCtrl.requireSignIn, userCtrl.read)
@@ -22,5 +23,11 @@ router
   .put(authCtrl.requireSignIn, userCtrl.removeFollowing, userCtrl.removeFollower)
 
 router.route('/api/users/findpeople/:userId').get(authCtrl.requireSignIn, userCtrl.findPeople)
+
+router.route('/api/bookmarks/:id').get(authCtrl.requireSignIn, userCtrl.getBookmarkedPosts)
+router.route('/api/bookmarks/ids/:id').get(authCtrl.requireSignIn, userCtrl.getBookmarkedPostsIds)
+
+router.route('/api/bookmarks/add/:id').put(authCtrl.requireSignIn, userCtrl.addBookmark)
+router.route('/api/bookmarks/remove/:id').put(authCtrl.requireSignIn, userCtrl.removeBookmark)
 
 export default router

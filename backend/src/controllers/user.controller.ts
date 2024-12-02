@@ -215,6 +215,81 @@ const findPeople = async (req: Request, res: Response) => {
   }
 }
 
+const getBookmarkedPosts = async (req: Request, res: Response) => {
+  const { id } = req.params
+
+  try {
+    const user = await User.findById(id)
+      .select('bookmarkedPosts')
+      .populate({
+        path: 'bookmarkedPosts',
+        select: '-photo.data',
+        populate: {
+          path: 'postedBy',
+          select: '_id name email followers'
+        }
+      })
+      .lean()
+      .exec()
+
+    res.json(user)
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    })
+  }
+}
+
+const getBookmarkedPostsIds = async (req: Request, res: Response) => {
+  const { id } = req.params
+
+  try {
+    const user = await User.findById(id).select('bookmarkedPosts').populate('_id').lean().exec()
+
+    res.json(user.bookmarkedPosts)
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    })
+  }
+}
+
+const addBookmark = async (req: Request, res: Response) => {
+  const { id } = req.params
+
+  try {
+    await User.findByIdAndUpdate(id, {
+      $push: { bookmarkedPosts: req.body.post }
+    })
+
+    res.json({
+      message: 'Post successfully added to bookmarks'
+    })
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    })
+  }
+}
+
+const removeBookmark = async (req: Request, res: Response) => {
+  const { id } = req.params
+
+  try {
+    await User.findByIdAndUpdate(id, {
+      $pull: { bookmarkedPosts: req.body.post._id }
+    })
+
+    res.json({
+      message: 'Post successfully removed from bookmarks'
+    })
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    })
+  }
+}
+
 export default {
   create,
   list,
@@ -228,5 +303,9 @@ export default {
   addFollower,
   removeFollowing,
   removeFollower,
-  findPeople
+  findPeople,
+  getBookmarkedPosts,
+  getBookmarkedPostsIds,
+  addBookmark,
+  removeBookmark
 }

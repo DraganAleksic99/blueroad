@@ -1,5 +1,6 @@
-import { baseUrl } from "../config/config"
-import { TUser } from "../routes/Profile"
+import { baseUrl } from '../config/config'
+import { TPost } from '../routes/NewsFeed'
+import { TUser } from '../routes/Profile'
 
 const create = async (user: { name: string; email: string; password: string }) => {
   try {
@@ -14,7 +15,7 @@ const create = async (user: { name: string; email: string; password: string }) =
 
     return await response.json()
   } catch (err) {
-    throw new Error("Something went wrong. Try again.")
+    throw new Error('Something went wrong. Try again.')
   }
 }
 
@@ -24,7 +25,7 @@ const getUsers = async (): Promise<TUser[]> => {
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       }
     })
 
@@ -34,7 +35,7 @@ const getUsers = async (): Promise<TUser[]> => {
 
     return await response.json()
   } catch (err) {
-    throw new Error("Something went wrong. Try again.")
+    throw new Error('Something went wrong. Try again.')
   }
 }
 
@@ -55,7 +56,7 @@ const getUser = async (userId: string, token: string): Promise<TUser> => {
 
     return await response.json()
   } catch (err) {
-    throw new Error("Something went wrong. Try again.")
+    throw new Error('Something went wrong. Try again.')
   }
 }
 
@@ -72,7 +73,7 @@ const update = async (userId: string, token: string, user: FormData) => {
 
     return await response.json()
   } catch (err) {
-    throw new Error("Something went wrong. Try again.")
+    throw new Error('Something went wrong. Try again.')
   }
 }
 
@@ -93,7 +94,7 @@ const remove = async (userId: string, token: string) => {
 
     return await response.json()
   } catch (err) {
-    throw new Error("Something went wrong. Try again.")
+    throw new Error('Something went wrong. Try again.')
   }
 }
 
@@ -106,7 +107,7 @@ const followUser = async (userId: string, token: string, followId: string): Prom
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + token
       },
-      body: JSON.stringify({ userId, followId})
+      body: JSON.stringify({ userId, followId })
     })
 
     if (!response.ok) {
@@ -115,7 +116,7 @@ const followUser = async (userId: string, token: string, followId: string): Prom
 
     return await response.json()
   } catch (err) {
-    throw new Error("Something went wrong. Please try again.")
+    throw new Error('Something went wrong. Please try again.')
   }
 }
 
@@ -158,8 +159,107 @@ const getUsersToFollow = async (userId: string, token: string): Promise<TUser[]>
 
     return await response.json()
   } catch (err) {
-    throw new Error("Something went wrong. Try again.")
+    throw new Error('Something went wrong. Try again.')
   }
 }
 
-export { create, getUsers, getUser, update, remove, followUser, unfollowUser, getUsersToFollow }
+const getBookmarks = async (userId: string, token: string): Promise<TUser> => {
+  try {
+    const response = await fetch(baseUrl + '/api/bookmarks/' + userId, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
+
+    return await response.json()
+  } catch (err) {
+    throw new Error('Something went wrong. Try again.')
+  }
+}
+
+const getBookmarksIds = async (userId: string, token: string): Promise<string[]> => {
+  try {
+    const response = await fetch(baseUrl + '/api/bookmarks/ids/' + userId, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
+
+    return await response.json()
+  } catch (err) {
+    throw new Error('Something went wrong. Try again.')
+  }
+}
+
+const addBookmark = async (userId: string, token: string, post: TPost): Promise<string> => {
+  try {
+    const response = await fetch(baseUrl + '/api/bookmarks/add/' + userId, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      body: JSON.stringify({ post })
+    })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
+
+    return await response.json()
+  } catch (err) {
+    throw new Error('Something went wrong. Try again.')
+  }
+}
+
+const removeBookmark = async (userId: string, token: string, post: TPost): Promise<string> => {
+  try {
+    const response = await fetch(baseUrl + '/api/bookmarks/remove/' + userId, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      body: JSON.stringify({ post })
+    })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
+
+    return await response.json()
+  } catch (err) {
+    throw new Error('Something went wrong. Try again.')
+  }
+}
+
+export {
+  create,
+  getUsers,
+  getUser,
+  update,
+  remove,
+  followUser,
+  unfollowUser,
+  getUsersToFollow,
+  getBookmarks,
+  getBookmarksIds,
+  addBookmark,
+  removeBookmark
+}

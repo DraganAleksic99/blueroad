@@ -7,7 +7,7 @@ type TComment = {
   postedBy: Types.ObjectId
 }
 
-interface IPost {
+export interface IPost {
   text: string
   photo: {
     data: Buffer

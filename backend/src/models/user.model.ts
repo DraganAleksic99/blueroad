@@ -1,5 +1,6 @@
 import { Document, Schema, model } from 'mongoose'
 import bcrypt from 'bcrypt'
+import { IPost } from './post.model'
 
 export interface IUser {
   name: string
@@ -11,6 +12,7 @@ export interface IUser {
   }
   following: IUser[]
   followers: IUser[]
+  bookmarkedPosts: IPost[]
   created: Date
   updated: number
   hashed_password: string
@@ -44,6 +46,7 @@ const UserSchema = new Schema<IUserDocument>({
   },
   following: [{ type: Schema.ObjectId, ref: 'User' }],
   followers: [{ type: Schema.ObjectId, ref: 'User' }],
+  bookmarkedPosts: [{ type: Schema.ObjectId, ref: 'Post' }],
   created: {
     type: Date,
     default: Date.now

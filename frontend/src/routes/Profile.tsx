@@ -26,6 +26,7 @@ export type TUser = {
   }
   following: TUser[]
   followers: TUser[]
+  bookmarkedPosts?: TPost[] 
 }
 
 export default function Profile() {

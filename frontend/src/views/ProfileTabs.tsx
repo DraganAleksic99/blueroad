@@ -3,6 +3,7 @@ import { useMatch } from 'react-router-dom'
 import { AppBar, Typography, Tabs, Tab } from '@mui/material'
 import FollowGrid from '../components/FollowGrid'
 import PostList from './post/PostList'
+import Bookmarks from '../components/Bookmarks'
 import { TUser } from '../routes/Profile'
 import { TPost } from '../routes/NewsFeed'
 
@@ -38,6 +39,7 @@ export default function ProfileTabs({ user = {}, posts = [], onRemove, arePostsP
           <Tab label="Posts" />
           <Tab label="Followers" />
           <Tab label="Following" />
+          <Tab label="Bookmarks" />
         </Tabs>
       </AppBar>
       {currentTab === 0 && (
@@ -53,6 +55,11 @@ export default function ProfileTabs({ user = {}, posts = [], onRemove, arePostsP
       {currentTab === 2 && (
         <TabContainer>
           <FollowGrid users={user.following} />
+        </TabContainer>
+      )}
+      {currentTab === 3 && (
+        <TabContainer>
+          <Bookmarks />
         </TabContainer>
       )}
     </div>
