@@ -1,6 +1,6 @@
 import { baseUrl } from '../../config/config'
 import { SyntheticEvent, useEffect, useState } from 'react'
-import { Link, useMatch } from 'react-router-dom'
+import { Link, useMatch, useLocation } from 'react-router-dom'
 import { useQueryClient, useMutation, UseMutateFunction } from '@tanstack/react-query'
 import { useDebouncedCallback, useThrottledCallback } from 'use-debounce'
 import {
@@ -63,7 +63,7 @@ type Props = {
   post: TPost
   onRemove?: (post: TPost) => void
   showComments?: boolean
-  bookmarkedPostsIds: string[]
+  bookmarkedPostsIds?: string[]
   commentMutation?: UseMutateFunction<
     {
       _id: string
@@ -87,6 +87,7 @@ export default function Post({
   const queryClient = useQueryClient()
   const { user, token }: Session = auth.isAuthenticated()
   const match = useMatch('/user/:userId')
+  const { state } = useLocation()
 
   const [likesCount, setLikesCount] = useState(post.likes.length)
   const [previousLikeMutation, setPreviousLikeMutation] = useState<'liked' | 'unliked'>('liked')
@@ -300,6 +301,8 @@ export default function Post({
       if (previousBookmarkMutation === 'bookmark') {
         setPreviousBookmarkMutation('unbookmark')
 
+        if (!match) return
+
         await queryClient.cancelQueries({ queryKey: ['bookmarks', user, token] })
 
         const previousBookmarks = queryClient.getQueryData(['bookmarks', user, token])
@@ -331,11 +334,13 @@ export default function Post({
     },
     onSettled() {
       queryClient.invalidateQueries({
-        queryKey: ['bookmarks', user, token]
+        queryKey: ['bookmarks', user, token],
+        refetchType: 'all'
       })
 
       queryClient.invalidateQueries({
-        queryKey: ['ids', user, token]
+        queryKey: ['ids', user, token],
+        refetchType: 'all'
       })
     }
   })
@@ -364,7 +369,16 @@ export default function Post({
   }
 
   const checkisBookmarked = () => {
-    const isBookmarked = bookmarkedPostsIds.some(id => id === post._id)
+
+    let ids = []
+
+    if (!bookmarkedPostsIds) {
+      ids = state.bookmarkedPostsIds
+    } else {
+      ids = bookmarkedPostsIds
+    }
+
+    const isBookmarked = ids.some(id => id === post._id)
 
     setIsBookmark(isBookmarked)
 
