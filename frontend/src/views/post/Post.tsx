@@ -2,7 +2,6 @@ import { baseUrl } from '../../config/config'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import { Link, useMatch } from 'react-router-dom'
 import { useQueryClient, useMutation, UseMutateFunction } from '@tanstack/react-query'
-import { useDebouncedCallback, useThrottledCallback } from 'use-debounce'
 import {
   Card,
   CardHeader,
@@ -22,8 +21,6 @@ import {
 } from '@mui/material'
 import {
   MoreHoriz as MoreHorizIcon,
-  FavoriteBorder as FavoriteBorderIcon,
-  Favorite as FavoriteIcon,
   ChatBubbleOutline as ChatBubbleOutlineIcon,
   FlagOutlined as FlagIcon,
   DeleteOutlined as DeleteIcon,
@@ -34,9 +31,10 @@ import Reply from '../../components/Reply'
 import Comments from './Comments'
 import BookmarkButton from '../../components/BookmarkButton'
 import Tooltip from '../../components/Tooltip'
+import LikeButton from '../../components/LikeButton'
 import auth, { Session } from '../../auth/authHelper'
 import { followUser, unfollowUser } from '../../services/userService'
-import { removePost, likePost, unlikePost, comment } from '../../services/postService'
+import { removePost, comment } from '../../services/postService'
 import { TUser } from '../../routes/Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 import { TComment, TPost } from '../../routes/NewsFeed'
@@ -46,13 +44,17 @@ const ActionButton = styled(Button)(({ theme }) => ({
   color: theme.palette.text.secondary,
   borderRadius: '8px',
   padding: 0,
-  paddingBlock: '4px'
+  paddingBlock: '4px',
+  '&:hover': {
+    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+    '& .MuiButton-startIcon': {
+      color: 'rgb(33, 150, 243)'
+    },
+    '&': {
+      color: 'rgb(33, 150, 243)'
+    }
+  }
 }))
-
-type likeFn = typeof likePost
-type unlikeFn = typeof unlikePost
-
-export type TLikeCallbackFn = likeFn | unlikeFn
 
 type Props = {
   post: TPost
@@ -83,10 +85,6 @@ export default function Post({
   const { user, token }: Session = auth.isAuthenticated()
   const match = useMatch('/user/:userId')
 
-  const [likesCount, setLikesCount] = useState(post.likes.length)
-  const [previousLikeMutation, setPreviousLikeMutation] = useState<'liked' | 'unliked'>('liked')
-
-  const [isLiked, setIsLiked] = useState(false)
   const [isFollowing, setIsFollowing] = useState<boolean>()
   const [showReplyButton, setShowReplyButton] = useState(false)
 
@@ -158,48 +156,8 @@ export default function Post({
     }
   })
 
-  const likeMutation = useMutation({
-    mutationFn: async (callbackFn: TLikeCallbackFn) => {
-      return callbackFn(user._id, token, post._id)
-    },
-    onMutate() {
-      if (previousLikeMutation === 'liked') {
-        setPreviousLikeMutation('unliked')
-      } else {
-        setPreviousLikeMutation('liked')
-      }
-    },
-    onSettled(data) {
-      const match = data.indexOf(user._id) !== -1
-
-      if (match !== isLiked) {
-        setIsLiked(match)
-        setLikesCount(data.length)
-      }
-
-      queryClient.invalidateQueries({
-        queryKey: ['post'],
-        refetchType: 'all'
-      })
-      queryClient.invalidateQueries({
-        queryKey: ['newsfeed'],
-        refetchType: 'all'
-      })
-      queryClient.invalidateQueries({
-        queryKey: ['posts'],
-        refetchType: 'all'
-      })
-    }
-  })
-
-  const debouncedLikeMutation = useDebouncedCallback(likeMutation.mutate, 200, {
-    leading: true,
-    trailing: false
-  })
-
   useEffect(() => {
     checkIsFollowing(post.postedBy)
-    checkLike(post.likes)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -232,49 +190,6 @@ export default function Post({
     followMutation.mutate({ callbackFn, postUserId })
   }
 
-  const optimisticLikeUpdate = () => {
-    setIsLiked(!isLiked)
-
-    if (previousLikeMutation === 'unliked' && !isLiked) {
-      setIsLiked(true)
-      return setLikesCount(likesCount + 1)
-    }
-
-    if (previousLikeMutation === 'liked' && isLiked) {
-      setIsLiked(false)
-      return setLikesCount(likesCount - 1)
-    }
-
-    if (isLiked) {
-      setLikesCount(likesCount - 1)
-    } else {
-      setLikesCount(likesCount + 1)
-    }
-  }
-
-  const throttledOptimisticLikeUpdate = useThrottledCallback(optimisticLikeUpdate, 200, {
-    leading: true,
-    trailing: false
-  })
-
-  const handleLike = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault()
-    const callbackFn = previousLikeMutation === 'liked' ? unlikePost : likePost
-
-    throttledOptimisticLikeUpdate()
-    debouncedLikeMutation(callbackFn)
-  }
-
-  const checkLike = (likes: string[]) => {
-    const match = likes.indexOf(user._id) !== -1
-    setIsLiked(match)
-    if (match) {
-      setPreviousLikeMutation('liked')
-    } else {
-      setPreviousLikeMutation('unliked')
-    }
-  }
-
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault()
     setAnchorEl(event.currentTarget)
@@ -300,10 +215,7 @@ export default function Post({
         }
         action={
           <>
-            <Tooltip
-              title="More"
-              offset={24}
-            >
+            <Tooltip title="More" offset={24}>
               <IconButton onClick={handleMenuOpen}>
                 <MoreHorizIcon
                   sx={{
@@ -412,57 +324,9 @@ export default function Post({
         sx={{ pl: '62px', py: 1, pr: '8px', display: 'flex', justifyContent: 'space-between' }}
       >
         <div>
-          <Tooltip
-            title={isLiked ? 'Unlike' : 'Like'}
-            offset={isLiked ? 15 : 7}
-          >
+          <LikeButton post={post} />
+          <Tooltip title="Reply" offset={12}>
             <ActionButton
-              sx={{
-                color: isLiked ? 'rgb(249, 24, 128)' : '',
-                '&:hover': {
-                  backgroundColor: 'rgba(249, 24, 128, 0.1)',
-                  '& .MuiButton-startIcon': {
-                    color: 'rgb(249, 24, 128)'
-                  },
-                  '&': {
-                    color: 'rgb(249, 24, 128)'
-                  }
-                }
-              }}
-              startIcon={
-                isLiked ? (
-                  <FavoriteIcon
-                    sx={{
-                      '&': {
-                        color: 'rgb(249, 24, 128)'
-                      }
-                    }}
-                  />
-                ) : (
-                  <FavoriteBorderIcon />
-                )
-              }
-              onClick={handleLike}
-            >
-              {likesCount}
-            </ActionButton>
-          </Tooltip>
-          <Tooltip
-            title="Reply"
-            offset={12}
-          >
-            <ActionButton
-              sx={{
-                '&:hover': {
-                  backgroundColor: 'rgba(33, 150, 243, 0.1)',
-                  '& .MuiButton-startIcon': {
-                    color: 'rgb(33, 150, 243)'
-                  },
-                  '&': {
-                    color: 'rgb(33, 150, 243)'
-                  }
-                }
-              }}
               startIcon={<ChatBubbleOutlineIcon />}
               onClick={e => {
                 e.preventDefault()

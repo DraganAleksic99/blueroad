@@ -45,7 +45,7 @@ export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, po
       ids = bookmarkedPostsIds
     }
 
-    const isBookmarked = ids.some(id => id === post._id)
+    const isBookmarked = ids?.some(id => id === post._id)
 
     setIsBookmarked(isBookmarked)
 
