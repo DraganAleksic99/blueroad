@@ -17,7 +17,6 @@ import {
   Menu,
   MenuItem,
   Box,
-  Tooltip,
   Snackbar,
   styled
 } from '@mui/material'
@@ -34,6 +33,7 @@ import {
 import Reply from '../../components/Reply'
 import Comments from './Comments'
 import BookmarkButton from '../../components/BookmarkButton'
+import Tooltip from '../../components/Tooltip'
 import auth, { Session } from '../../auth/authHelper'
 import { followUser, unfollowUser } from '../../services/userService'
 import { removePost, likePost, unlikePost, comment } from '../../services/postService'
@@ -302,16 +302,7 @@ export default function Post({
           <>
             <Tooltip
               title="More"
-              componentsProps={{
-                tooltip: {
-                  sx: {
-                    bgcolor: 'rgba(191, 191, 191, 0.2)',
-                    fontSize: '14px',
-                    color: '#2196F3',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                  }
-                }
-              }}
+              offset={24}
             >
               <IconButton onClick={handleMenuOpen}>
                 <MoreHorizIcon
@@ -423,16 +414,7 @@ export default function Post({
         <div>
           <Tooltip
             title={isLiked ? 'Unlike' : 'Like'}
-            componentsProps={{
-              tooltip: {
-                sx: {
-                  bgcolor: 'rgba(191, 191, 191, 0.2)',
-                  fontSize: '14px',
-                  color: '#2196F3',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                }
-              }
-            }}
+            offset={isLiked ? 15 : 7}
           >
             <ActionButton
               sx={{
@@ -467,16 +449,7 @@ export default function Post({
           </Tooltip>
           <Tooltip
             title="Reply"
-            componentsProps={{
-              tooltip: {
-                sx: {
-                  bgcolor: 'rgba(191, 191, 191, 0.2)',
-                  fontSize: '14px',
-                  color: '#2196F3',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                }
-              }
-            }}
+            offset={12}
           >
             <ActionButton
               sx={{

@@ -1,9 +1,12 @@
 import { baseUrl } from '../config/config'
+
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { UseMutateFunction } from '@tanstack/react-query'
-import { Box, CardContent, Tooltip, IconButton, TextField, styled, Avatar } from '@mui/material'
+import { Box, CardContent, IconButton, TextField, styled, Avatar } from '@mui/material'
 import { Send as SendIcon } from '@mui/icons-material'
+
+import Tooltip from './Tooltip'
 import auth, { Session } from '../auth/authHelper'
 import { TComment } from '../routes/NewsFeed'
 
@@ -66,16 +69,7 @@ export default function Reply({ commentMutation }: Props) {
         />
         <Tooltip
           title="Reply"
-          componentsProps={{
-            tooltip: {
-              sx: {
-                bgcolor: 'rgba(191, 191, 191, 0.2)',
-                fontSize: '14px',
-                color: '#2196F3',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-              }
-            }
-          }}
+          offset={34}
         >
           <span onClickCapture={e => e.preventDefault()}>
             <IconButton

@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { useMatch, useLocation } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDebouncedCallback, useThrottledCallback } from 'use-debounce'
-import { Tooltip, IconButton } from '@mui/material'
+import { IconButton } from '@mui/material'
 import { Bookmark as BookmarkIcon, BookmarkBorder as BookmarkBorderIcon } from '@mui/icons-material'
+import Tooltip from './Tooltip'
 import { addBookmark, removeBookmark } from '../services/userService'
 import auth, { Session } from '../auth/authHelper'
 import { TPost } from '../routes/NewsFeed'
@@ -149,17 +150,8 @@ export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, po
 
   return (
     <Tooltip
-      title="Bookmark"
-      componentsProps={{
-        tooltip: {
-          sx: {
-            bgcolor: 'rgba(191, 191, 191, 0.2)',
-            fontSize: '14px',
-            color: '#2196F3',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-          }
-        }
-      }}
+      title={isBookmarked ? 'Remove from bookmarks' : "Bookmark"}
+      offset={isBookmarked ? 88 : 44}
     >
       <IconButton onClick={handleBookmark} size="small">
         {isBookmarked ? (
