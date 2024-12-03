@@ -1,7 +1,9 @@
 import { baseUrl } from '../../config/config'
-import { SyntheticEvent, useEffect, useState } from 'react'
-import { Link, useMatch } from 'react-router-dom'
+
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useQueryClient, useMutation, UseMutateFunction } from '@tanstack/react-query'
+
 import {
   Card,
   CardHeader,
@@ -10,31 +12,23 @@ import {
   CardMedia,
   Avatar,
   Typography,
-  IconButton,
   Button,
   Collapse,
-  Menu,
-  MenuItem,
   Box,
   Snackbar,
   styled
 } from '@mui/material'
-import {
-  MoreHoriz as MoreHorizIcon,
-  ChatBubbleOutline as ChatBubbleOutlineIcon,
-  FlagOutlined as FlagIcon,
-  DeleteOutlined as DeleteIcon,
-  PersonRemoveOutlined as PersonRemoveIcon,
-  PersonAddAlt1Outlined as PersonAddAlt1Icon
-} from '@mui/icons-material'
+
+import { ChatBubbleOutline as ChatBubbleOutlineIcon } from '@mui/icons-material'
 import Reply from '../../components/Reply'
 import Comments from './Comments'
 import BookmarkButton from '../../components/BookmarkButton'
 import Tooltip from '../../components/Tooltip'
 import LikeButton from '../../components/LikeButton'
+import PostMenu from '../../components/PostMenu'
+
+import { comment } from '../../services/postService'
 import auth, { Session } from '../../auth/authHelper'
-import { followUser, unfollowUser } from '../../services/userService'
-import { removePost, comment } from '../../services/postService'
 import { TUser } from '../../routes/Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 import { TComment, TPost } from '../../routes/NewsFeed'
@@ -83,12 +77,9 @@ export default function Post({
 }: Props) {
   const queryClient = useQueryClient()
   const { user, token }: Session = auth.isAuthenticated()
-  const match = useMatch('/user/:userId')
 
   const [isFollowing, setIsFollowing] = useState<boolean>()
   const [showReplyButton, setShowReplyButton] = useState(false)
-
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const [snackbarInfo, setSnackbarInfo] = useState({
     open: false,
@@ -106,7 +97,9 @@ export default function Post({
 
       queryClient.setQueryData(['newsfeed', user, token], (oldPosts: TPost[]) => {
         const postToUpdate = oldPosts.find(oldPost => oldPost._id === post._id)
+
         postToUpdate.comments.length += 1
+
         const postToUpdateIndex = oldPosts.findIndex(oldPost => oldPost._id === post._id)
 
         return [
@@ -139,23 +132,6 @@ export default function Post({
     }
   })
 
-  const removePostMutation = useMutation({
-    mutationFn: async () => {
-      return removePost(post._id, token)
-    },
-    onSuccess: () => {
-      setSnackbarInfo({
-        open: true,
-        message: 'Post succesfully deleted!'
-      })
-      setAnchorEl(null)
-      onRemove(post)
-      if (match.params.userId && match.params.userId === user._id) {
-        queryClient.invalidateQueries({ queryKey: ['posts'] })
-      }
-    }
-  })
-
   useEffect(() => {
     checkIsFollowing(post.postedBy)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -183,22 +159,18 @@ export default function Post({
         open: true,
         message: `You ${isFollowing ? 'unfollowed' : 'followed'} ${data.name}`
       })
+    },
+    onError() {
+      setIsFollowing(!isFollowing)
+      setSnackbarInfo({
+        open: true,
+        message: `Somenthing went wrong. Please try again.`
+      })
     }
   })
 
   const handleFollowOrUnfollow = (callbackFn: TFollowCallbackFn, postUserId: string) => {
     followMutation.mutate({ callbackFn, postUserId })
-  }
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault()
-    setAnchorEl(event.currentTarget)
-  }
-
-  const deletePost = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-    e.preventDefault()
-    removePostMutation.mutate()
-    setAnchorEl(null)
   }
 
   return (
@@ -214,75 +186,13 @@ export default function Post({
           </Link>
         }
         action={
-          <>
-            <Tooltip title="More" offset={24}>
-              <IconButton onClick={handleMenuOpen}>
-                <MoreHorizIcon
-                  sx={{
-                    '&:hover': {
-                      color: '#2196F3'
-                    }
-                  }}
-                />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={(e: SyntheticEvent) => {
-                e.preventDefault()
-                setAnchorEl(null)
-              }}
-              disableScrollLock={true}
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-              PaperProps={{
-                sx: {
-                  borderRadius: '12px',
-                  minWidth: '200px',
-                  '& .MuiList-root': {
-                    padding: '8px 0'
-                  }
-                }
-              }}
-            >
-              {post.postedBy._id === user._id && (
-                <MenuItem sx={{ color: 'red' }} onClick={deletePost}>
-                  <DeleteIcon sx={{ mr: 1 }} /> Delete
-                </MenuItem>
-              )}
-              {post.postedBy._id !== user._id && post.postedBy._id !== match?.params?.userId && (
-                <MenuItem
-                  onClick={e => {
-                    e.preventDefault()
-
-                    if (isFollowing) {
-                      handleFollowOrUnfollow(unfollowUser, post.postedBy._id)
-                      setAnchorEl(null)
-                    } else {
-                      handleFollowOrUnfollow(followUser, post.postedBy._id)
-                      setAnchorEl(null)
-                    }
-                  }}
-                >
-                  {isFollowing ? (
-                    <PersonRemoveIcon sx={{ mr: 1 }} />
-                  ) : (
-                    <PersonAddAlt1Icon sx={{ mr: 1 }} />
-                  )}
-                  {isFollowing ? 'Unfollow' : 'Follow'} {post.postedBy.name}
-                </MenuItem>
-              )}
-              <MenuItem
-                onClick={e => {
-                  e.preventDefault()
-                  setAnchorEl(null)
-                }}
-              >
-                <FlagIcon sx={{ mr: 1 }} /> Report post
-              </MenuItem>
-            </Menu>
-          </>
+          <PostMenu
+            post={post}
+            isFollowing={isFollowing}
+            onRemove={onRemove}
+            handleFollowOrUnfollow={handleFollowOrUnfollow}
+            setSnackbarInfo={setSnackbarInfo}
+          />
         }
         title={
           <>
