@@ -44,9 +44,9 @@ import { TComment, TPost } from '../../routes/NewsFeed'
 const ActionButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
   color: theme.palette.text.secondary,
-  '&:hover': {
-    backgroundColor: theme.palette.action.hover
-  }
+  borderRadius: '8px',
+  padding: 0,
+  paddingBlock: '4px'
 }))
 
 type likeFn = typeof likePost
@@ -438,6 +438,7 @@ export default function Post({
               sx={{
                 color: isLiked ? 'rgb(249, 24, 128)' : '',
                 '&:hover': {
+                  backgroundColor: 'rgba(249, 24, 128, 0.1)',
                   '& .MuiButton-startIcon': {
                     color: 'rgb(249, 24, 128)'
                   },
@@ -480,11 +481,12 @@ export default function Post({
             <ActionButton
               sx={{
                 '&:hover': {
+                  backgroundColor: 'rgba(33, 150, 243, 0.1)',
                   '& .MuiButton-startIcon': {
-                    color: '#2196F3'
+                    color: 'rgb(33, 150, 243)'
                   },
                   '&': {
-                    color: '#2196F3'
+                    color: 'rgb(33, 150, 243)'
                   }
                 }
               }}

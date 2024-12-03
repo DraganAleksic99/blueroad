@@ -18,11 +18,20 @@ import auth, { Session } from '../../auth/authHelper'
 import { TPost } from '../../routes/NewsFeed'
 import { createPost } from '../../services/postService'
 
-const PostButton = styled(Button)(({ theme }) => ({
+const ImageButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
   color: theme.palette.text.secondary,
+  marginLeft: '48px',
+  paddingBlock: 0,
+  borderRadius: '8px',
   '&:hover': {
-    backgroundColor: theme.palette.action.hover
+    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+    '& .MuiButton-startIcon': {
+      color: '#2196F3'
+    },
+    '&': {
+      color: '#2196F3'
+    }
   }
 }))
 
@@ -42,7 +51,7 @@ export default function NewPost() {
   const queryClient = useQueryClient()
   const [imagePreview, setImagePreview] = useState(null)
   const { user, token }: Session = auth.isAuthenticated()
-  
+
   const [values, setValues] = useState({
     text: '',
     photo: null
@@ -71,7 +80,7 @@ export default function NewPost() {
             comments: [],
             imagePreview
           },
-          ...oldPosts,
+          ...oldPosts
         ]
       })
 
@@ -149,12 +158,11 @@ export default function NewPost() {
         </Box>
       )}
       <Stack sx={{ justifyContent: 'space-between' }} direction="row">
-        <PostButton
+        <ImageButton
           role={undefined}
           // @ts-expect-error required prop, ts doesn't recognize
           component="label"
           tabIndex={-1}
-          sx={{ ml: '48px', py: 0 }}
           startIcon={<ImageOutlined />}
         >
           Photo
@@ -172,7 +180,7 @@ export default function NewPost() {
               handleChange('photo')(e)
             }}
           />
-        </PostButton>
+        </ImageButton>
         <Button
           disabled={!values.text}
           variant="outlined"
