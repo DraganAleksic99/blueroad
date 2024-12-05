@@ -3,7 +3,6 @@ import { useMatch } from 'react-router-dom'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { Paper } from '@mui/material'
 
-import MainLayout from '../layouts/MainLayout'
 import ProfileTabs from '../views/ProfileTabs'
 import ProfileCard from '../components/ProfileCard'
 import ProfileCardSkeleton from '../components/skeletons/ProfileCardSkeleton'
@@ -35,7 +34,7 @@ export default function Profile() {
   const [isFollowing, setIsFollowing] = useState<boolean>()
   const {
     params: { userId }
-  } = useMatch('/user/:userId')
+  } = useMatch('/profile/:userId')
 
   const { data: user, isLoading } = useQuery({
     queryKey: ['profile', userId, session],
@@ -77,8 +76,7 @@ export default function Profile() {
   }
 
   return (
-    <Paper elevation={4}>
-      <MainLayout>
+    <Paper elevation={2} sx={{ borderRight: '1px solid #e5e7eb' }}>
         {isLoading ? (
           <ProfileCardSkeleton />
         ) : (
@@ -92,7 +90,6 @@ export default function Profile() {
         )}
 
         <ProfileTabs arePostsPending={arePostsPending} onRemove={removePost} posts={posts} user={user} />
-      </MainLayout>
     </Paper>
   )
 }

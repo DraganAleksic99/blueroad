@@ -23,12 +23,9 @@ export default function PostList({ posts, removePost, arePostsPending }: Props) 
     staleTime: Infinity
   })
 
-  if (arePostsPending) {
-    return <Spinner />
-  }
-
   return (
-    <div style={{ maxWidth: '715px', margin: 'auto', backgroundColor: 'rgba(246, 247, 248, 0.5)' }}>
+    <div style={{ minHeight: '100vh', maxWidth: '715px', margin: 'auto', backgroundColor: 'rgba(246, 247, 248, 0.5)' }}>
+      { arePostsPending && <Spinner />}
       {posts?.map(post => (
         <Link
           to={`/user/${post.postedBy._id}/post/${post._id}`}

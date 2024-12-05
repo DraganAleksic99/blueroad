@@ -5,9 +5,7 @@ import { listNewsFeed } from '../services/postService'
 import auth, { Session } from '../auth/authHelper'
 import PostList from '../views/post/PostList'
 import { TUser } from './Profile'
-import MainLayout from '../layouts/MainLayout'
 import NewPost from '../views/post/NewPost'
-import FindPeople from '../views/FindPeople'
 
 export type TComment = {
   _id?: string
@@ -42,7 +40,7 @@ export default function NewsFeed() {
     queryKey: ['newsfeed', user, token],
     queryFn: async () => {
       return listNewsFeed(user._id, token)
-    },
+    }
   })
 
   useEffect(() => {
@@ -55,21 +53,16 @@ export default function NewsFeed() {
     const index = updatedPosts.indexOf(post)
     updatedPosts.splice(index, 1)
     setPosts(updatedPosts)
-    queryClient.invalidateQueries({ queryKey: ["newsfeed"]})
+    queryClient.invalidateQueries({ queryKey: ['newsfeed'] })
   }
 
   return (
-    <Grid container spacing={2}>
-      <Grid item lg={8}>
+    <Grid container spacing={2} sx={{ borderRight: '1px solid #e5e7eb' }}>
+      <Grid item sx={{ width: '100%' }}>
         <Card>
-          <MainLayout>
-            <NewPost />
-            <PostList arePostsPending={isPending} removePost={removePost} posts={posts} />
-          </MainLayout>
+          <NewPost />
+          <PostList arePostsPending={isPending} removePost={removePost} posts={posts} />
         </Card>
-      </Grid>
-      <Grid sx={{ p: 0, backgroundColor: 'rgba(246, 247, 248, 0.5)' }} item lg={4}>
-        <FindPeople />
       </Grid>
     </Grid>
   )

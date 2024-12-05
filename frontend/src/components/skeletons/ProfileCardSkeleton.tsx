@@ -2,14 +2,14 @@ import { Card, CardContent, Box, Skeleton } from '@mui/material'
 
 export default function ProfileCardSkeleton() {
   return (
-    <Card sx={{ display: 'flex', alignItems: 'center', gap: '50px', pb: 2 }}>
+    <Card sx={{ display: 'flex', alignItems: 'center', gap: 3, p: 2 }}>
       <Skeleton
         variant="circular"
         animation="wave"
-        sx={{ width: 150, height: 150, borderRadius: '50%', ml: '25%' }}
+        sx={{ width: 150, height: 150, borderRadius: '50%' }}
       />
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <CardContent sx={{ flex: '1 0 auto', pt: 3 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '1 1 auto' }}>
+        <CardContent sx={{ width: '100%', p: 0 }}>
           <Skeleton
             width="100%"
             animation="wave"

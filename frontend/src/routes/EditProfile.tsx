@@ -88,7 +88,7 @@ export default function EditProfile() {
         setIsLoading(false)
       } else {
         setIsLoading(false)
-        navigate(`/user/${data._id}`)
+        navigate(`/profile/${data._id}`)
       }
     })
   }
@@ -319,7 +319,7 @@ export default function EditProfile() {
               color="primary"
               variant="outlined"
               sx={{ borderRadius: '20px', px: 3, textTransform: 'none' }}
-              onClick={() => navigate(`/user/${match.params.userId}`)}
+              onClick={() => navigate(`/profile/${match.params.userId}`)}
               disabled={isLoading}
             >
               Cancel

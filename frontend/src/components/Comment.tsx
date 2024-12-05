@@ -81,13 +81,13 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
       <CardHeader
         sx={{ pb: 0, alignItems: 'flex-start' }}
         avatar={
-          <Link to={`/user/${comment.postedBy._id}`}>
+          <Link to={`/profile/${comment.postedBy._id}`}>
             <Avatar src={baseUrl + '/api/users/photo/' + comment.postedBy._id} />
           </Link>
         }
         title={
           <div>
-            <Link to={'/user/' + comment.postedBy._id}>
+            <Link to={'/profile/' + comment.postedBy._id}>
               <span className='text-underline' style={{ fontWeight: 600, fontSize: '1rem' }}>{comment.postedBy.name}</span>
             </Link>
             {' • '}

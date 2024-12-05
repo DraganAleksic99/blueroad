@@ -40,7 +40,7 @@ export default function PostMenu({
   const queryClient = useQueryClient()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
-  const match = useMatch('/user/:userId')
+  const match = useMatch('/profile/:userId')
 
   const removePostMutation = useMutation({
     mutationFn: async () => {

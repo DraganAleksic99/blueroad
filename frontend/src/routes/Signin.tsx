@@ -101,7 +101,7 @@ export default function Signin() {
       <MainLayout>
         <Container
           maxWidth="sm"
-          sx={{ minHeight: 'calc(100vh - 64px)', display: 'flex', alignItems: 'center' }}
+          sx={{ height: '100vh', display: 'flex', alignItems: 'center' }}
         >
           <StyledPaper elevation={3}>
             <Typography

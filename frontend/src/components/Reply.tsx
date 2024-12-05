@@ -46,7 +46,7 @@ export default function Reply({ commentMutation }: Props) {
       }}
     >
       <Box sx={{ display: 'flex', gap: 2 }}>
-        <Link to={`/user/${user._id}`}>
+        <Link to={`/profile/${user._id}`}>
           <Avatar src={baseUrl + '/api/users/photo/' + user._id} alt={user.name} />
         </Link>
         <StyledTextField

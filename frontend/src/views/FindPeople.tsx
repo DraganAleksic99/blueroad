@@ -21,9 +21,7 @@ import auth, { Session } from '../auth/authHelper'
 import { TUser } from '../routes/Profile'
 
 const WhoToFollowPaper = styled(Paper)({
-  position: 'sticky',
-  top: 8,
-  maxHeight: 'calc(100vh - 8px)',
+  maxHeight: '100vh',
   overflowY: 'auto',
   '&::-webkit-scrollbar': {
     width: '6px'
@@ -141,44 +139,51 @@ export default function FindPeople() {
           Who to follow
         </Typography>
         <List>
-          {data.map((user) => (
-            <ListItem
-              key={user._id}
-              secondaryAction={
-                <Button
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    borderRadius: '20px',
-                    textTransform: 'none',
-                    px: 2
-                  }}
-                  onClick={() => {
-                    handleFollow(user)
-                  }}
-                >
-                  Follow
-                </Button>
-              }
-            >
-              <Link to={`/user/${user._id}`}>
+          {data.map(user => (
+            <Link to={`/profile/${user._id}`}>
+              <ListItem
+                key={user._id}
+                sx={{ '&:hover': { backgroundColor: 'rgb(246, 247, 248)' }}}
+                secondaryAction={
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                      borderRadius: '20px',
+                      textTransform: 'none',
+                      px: 2,
+                      py: '4px'
+                    }}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      handleFollow(user)
+                    }}
+                  >
+                    Follow
+                  </Button>
+                }
+              >
                 <ListItemAvatar>
                   <Avatar src={baseUrl + '/api/users/photo/' + user._id} alt={user.name} />
                 </ListItemAvatar>
-              </Link>
-              <ListItemText
-                primary={user.name}
-                secondary={user.email}
-                sx={{
-                  maxWidth: '170px',
-                  overflowX: 'hidden'
-                }}
-                primaryTypographyProps={{
-                  fontWeight: 500,
-                  variant: 'body1'
-                }}
-              />
-            </ListItem>
+                <ListItemText
+                  primary={user.name}
+                  secondary={user.email}
+                  sx={{
+                    maxWidth: '170px',
+                    overflowX: 'hidden',
+                    '.MuiListItemText-primary:hover': {
+                      textDecoration: 'underline'
+                    }
+                  }}
+                  primaryTypographyProps={{
+                    fontWeight: 500,
+                    variant: 'body1',
+                    width: 'fit-content'
+                  }}
+                />
+              </ListItem>
+            </Link>
           ))}
         </List>
         <Snackbar

@@ -1,9 +1,8 @@
-import { SyntheticEvent, useState, PropsWithChildren, useEffect } from 'react'
+import { SyntheticEvent, useState, useEffect } from 'react'
 import { useMatch } from 'react-router-dom'
-import { AppBar, Typography, Tabs, Tab } from '@mui/material'
+import { AppBar, Tabs, Tab, Box } from '@mui/material'
 import FollowGrid from '../components/FollowGrid'
 import PostList from './post/PostList'
-import Bookmarks from '../components/Bookmarks'
 import { TUser } from '../routes/Profile'
 import { TPost } from '../routes/NewsFeed'
 
@@ -18,7 +17,7 @@ export default function ProfileTabs({ user = {}, posts = [], onRemove, arePostsP
   const [currentTab, setCurrentTab] = useState(0)
   const {
     params: { userId }
-  } = useMatch('/user/:userId')
+  } = useMatch('/profile/:userId')
 
   const handleTabChange = (_event: SyntheticEvent, value: number) => {
     setCurrentTab(value)
@@ -28,48 +27,53 @@ export default function ProfileTabs({ user = {}, posts = [], onRemove, arePostsP
 
   return (
     <div>
-      <AppBar position="static" color="default">
+      <AppBar elevation={1} position="static" color="default">
         <Tabs
           value={currentTab}
           onChange={handleTabChange}
-          indicatorColor="primary"
-          textColor="primary"
+          sx={{
+            '& .MuiButtonBase-root': {
+              textTransform: 'none',
+              fontSize: '1rem',
+              px: '30px'
+            },
+            '& .MuiButtonBase-root:hover': {
+              backgroundColor: 'rgba(33, 150, 243, 0.1)',
+            },
+            '& .Mui-selected': {
+              color: 'rgb(33, 150, 243)',
+              fontWeight: 'bold'
+            }
+          }}
           centered
+          TabIndicatorProps={{
+            sx: {
+              height: '4px',
+              borderRadius: '2px',
+              backgroundColor: 'rgb(33, 150, 243)'
+            }
+          }}
         >
           <Tab label="Posts" />
           <Tab label="Followers" />
           <Tab label="Following" />
-          <Tab label="Bookmarks" />
         </Tabs>
       </AppBar>
       {currentTab === 0 && (
-        <TabContainer>
+        <Box sx={{ pt: '2px' }}>
           <PostList arePostsPending={arePostsPending} removePost={onRemove} posts={posts} />
-        </TabContainer>
+        </Box>
       )}
       {currentTab === 1 && (
-        <TabContainer>
+        <Box sx={{ pt: '2px' }}>
           <FollowGrid users={user.followers} />
-        </TabContainer>
+        </Box>
       )}
       {currentTab === 2 && (
-        <TabContainer>
+        <Box sx={{ pt: '2px' }}>
           <FollowGrid users={user.following} />
-        </TabContainer>
-      )}
-      {currentTab === 3 && (
-        <TabContainer>
-          <Bookmarks />
-        </TabContainer>
+        </Box>
       )}
     </div>
-  )
-}
-
-const TabContainer = ({ children } : PropsWithChildren) => {
-  return (
-    <Typography component="div" style={{ padding: 8 * 2 }}>
-      {children}
-    </Typography>
   )
 }

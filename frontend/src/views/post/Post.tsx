@@ -178,7 +178,7 @@ export default function Post({
       <CardHeader
         sx={{ pb: 0, alignItems: 'flex-start' }}
         avatar={
-          <Link to={`/user/${post.postedBy._id}`}>
+          <Link to={`/profile/${post.postedBy._id}`}>
             <Avatar
               src={baseUrl + '/api/users/photo/' + post.postedBy._id}
               alt={post.postedBy.name}
@@ -196,7 +196,11 @@ export default function Post({
         }
         title={
           <>
-            <span style={{ fontWeight: 600, fontSize: '1rem' }}>{post.postedBy.name}</span>
+            <Link to={`/profile/${post.postedBy._id}`}>
+              <span className="text-underline" style={{ fontWeight: 600, fontSize: '1rem' }}>
+                {post.postedBy.name}
+              </span>
+            </Link>
             {' • '}
             <span>{new Date(post.created).toDateString()}</span>
           </>
@@ -231,7 +235,7 @@ export default function Post({
       </CardContent>
 
       <CardActions
-        sx={{ pl: '62px', py: 1, pr: '8px', display: 'flex', justifyContent: 'space-between' }}
+        sx={{ pl: '64px', py: 1, pr: '8px', display: 'flex', justifyContent: 'space-between' }}
       >
         <div>
           <LikeButton post={post} />

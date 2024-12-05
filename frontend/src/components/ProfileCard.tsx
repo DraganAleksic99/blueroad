@@ -30,22 +30,22 @@ export default function ProfileCard({
     : `${baseUrl}/api/defaultPhoto`
 
   return (
-    <Card sx={{ display: 'flex', alignItems: 'center', gap: '50px', pb: 2 }}>
+    <Card sx={{ display: 'flex', alignItems: 'center', gap: 3, p: 2 }}>
       <CardMedia
         component="img"
-        sx={{ width: 150, height: 150, borderRadius: '50%', ml: '25%' }}
+        sx={{ width: 150, height: 150, minWidth: 150, minHeight: 150, borderRadius: '50%' }}
         image={photoUrl}
       />
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <CardContent sx={{ flex: '1 0 auto', pt: 3 }}>
-          <Typography component="div" variant="h5">
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '1 1 auto' }}>
+        <CardContent sx={{ p: 0, width: '100%' }}>
+          <Typography sx={{ display: 'flex', justifyContent: 'space-between' }} component="div" variant="h5">
             {user.name}
             {session && session.user?._id === user._id ? (
               <Link to={`/user/edit/${user._id}`} state={user}>
                 <Button
                   variant="outlined"
                   size="small"
-                  sx={{ ml: 4, px: 2, textTransform: 'none', borderRadius: '20px' }}
+                  sx={{ px: 2, textTransform: 'none', borderRadius: '20px' }}
                 >
                   Edit Profile
                 </Button>

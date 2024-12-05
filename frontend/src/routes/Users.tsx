@@ -34,12 +34,12 @@ export default function Users() {
   }, [pathname]);
 
   return (
-    <Paper elevation={2}>
+    <Paper elevation={2} sx={{ borderRight: '1px solid #e5e7eb' }}>
       <MainLayout>
-        <Box sx={{ p: 3, pt: 0, columnCount: 3 }}>
+        <Box sx={{ p: 2, pt: 0, columnCount: 2 }}>
           {isPending
             ? Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} style={{ display: 'inline-block', width: '100%', marginTop: '24px' }}>
+                <div key={i} style={{ display: 'inline-block', width: '100%', marginTop: '16px' }}>
                   <UserCardSkeleton />
                 </div>
               ))
@@ -48,7 +48,7 @@ export default function Users() {
                   <Link
                     to={`/user/${user._id}`}
                     key={user._id}
-                    style={{ display: 'inline-block', width: '100%', marginTop: '24px' }}
+                    style={{ display: 'inline-block', width: '100%', marginTop: '16px' }}
                   >
                     <UserCard user={user} />
                   </Link>

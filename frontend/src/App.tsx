@@ -1,14 +1,11 @@
-import './App.css'
-import { Outlet } from 'react-router-dom'
-import Navigation from './components/Navigation'
+import AppLayout from './layouts/AppLayout'
 import { CssBaseline } from '@mui/material'
 
 function App() {
   return (
     <div className="app">
+      <AppLayout />
       <CssBaseline />
-      <Navigation />
-      <Outlet />
     </div>
   )
 }

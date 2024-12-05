@@ -18,13 +18,23 @@ import Profile from './routes/Profile'
 import EditProfile from './routes/EditProfile'
 import NewsFeed from './routes/NewsFeed'
 import PostFeed from './routes/PostFeed'
+import Bookmarks from './components/Bookmarks'
 
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route element={<Layout />}>
-      <Route path="/">
+    <Route>
+      <Route path="login" element={<Signin />} />
+      <Route path="signup" element={<Signup />} />
+      <Route
+        element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
+        path="/"
+      >
         <Route
           index
           element={
@@ -34,8 +44,6 @@ const router = createBrowserRouter(
           }
         />
         <Route path="users" loader={usersLoader(queryClient)} element={<Users />} />
-        <Route path="signup" element={<Signup />} />
-        <Route path="login" element={<Signin />} />
         <Route
           path="user/edit/:userId"
           element={
@@ -45,10 +53,18 @@ const router = createBrowserRouter(
           }
         />
         <Route
-          path="user/:userId"
+          path="profile/:userId"
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="bookmarks"
+          element={
+            <ProtectedRoute>
+              <Bookmarks />
             </ProtectedRoute>
           }
         />

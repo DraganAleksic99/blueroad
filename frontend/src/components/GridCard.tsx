@@ -22,7 +22,7 @@ export default function GridCard({ user }: { user: TUser }) {
     },
     onSuccess: () => {
       setIsFollowing(!isFollowing)
-      queryClient.invalidateQueries({ queryKey: ["profile"]})
+      queryClient.invalidateQueries({ queryKey: ['profile'] })
     }
   })
 
@@ -34,103 +34,104 @@ export default function GridCard({ user }: { user: TUser }) {
   const isFollower = user.following?.some(id => id === session.user?._id)
 
   return (
-    <Link to={`/user/${user._id}`}>
-    <Card sx={{ height: '100%' }}>
-      <CardHeader
-        avatar={
-          
+    <Link to={`/profile/${user._id}`}>
+      <Card sx={{ height: '100%', border: 'none', boxShadow: 'none', '&:hover': { backgroundColor: 'rgb(246, 247, 248)' } }}>
+        <CardHeader
+          avatar={
             <Avatar
               src={baseUrl + '/api/users/photo/' + user._id}
               sx={{ margin: 'auto' }}
               alt={user.name}
             />
-        }
-        action={
-          isFollowing ? (
-            <Button
-              variant="outlined"
-              size="small"
-              disabled={isPending}
-              onClick={(e) => {
-                e.preventDefault()
-                handleButtonClick(unfollowUser)
-              }}
-              data-following="Following"
-              data-unfollow="Unfollow"
-              sx={{
-                px: 2,
-                textTransform: 'none',
-                borderRadius: '20px',
-                position: 'absolute',
-                right: 16,
-                top: 8,
-                '&::before': {
-                  content: 'attr(data-following)'
-                },
-                '&:hover, &.Mui-disabled': {
-                  color: 'rgb(249, 24, 128)',
-                  borderColor: 'rgb(249, 24, 128)',
-                  '&::before': {
-                    content: 'attr(data-unfollow)'
-                  }
-                },
-                '&.Mui-disabled': {
-                  opacity: 0.5,
-                  pointerEvents: 'none'
-                }
-              }}
-            />
-          ) : (
-            session.user._id === user._id ? null : (
+          }
+          action={
+            isFollowing ? (
               <Button
-              variant="outlined"
-              size="small"
-              disabled={isPending}
-              onClick={(e) => {
-                e.preventDefault()
-                handleButtonClick(followUser)
-              }}
-              sx={{
-                px: 2,
-                textTransform: 'none',
-                borderRadius: '20px',
-                position: 'absolute',
-                right: 16,
-                top: 8
-              }}
-            >
-              Follow
-            </Button>
-            )
-          )
-        }
-        title={<Typography sx={{ fontWeight: 600, maxWidth: '200px' }}>{user.name}</Typography>}
-        subheader={
-          <div>
-            <Typography>{user.email}</Typography>
-            {isFollower && (
-              <Box
+                variant="outlined"
+                size="small"
+                disabled={isPending}
+                onClick={e => {
+                  e.preventDefault()
+                  handleButtonClick(unfollowUser)
+                }}
+                data-following="Following"
+                data-unfollow="Unfollow"
                 sx={{
-                  fontSize: '12px',
-                  backgroundColor: '#636363',
-                  color: '#afafaf',
-                  width: 'fit-content',
-                  borderRadius: '4px',
-                  px: 1,
-                  py: '1px',
-                  mt: '2px'
+                  px: 2,
+                  py: '4px',
+                  textTransform: 'none',
+                  borderRadius: '20px',
+                  position: 'absolute',
+                  top: '16px',
+                  right: '16px',
+                  backgroundColor:'rgba(33, 150, 243, 0.1)',
+                  '&::before': {
+                    content: 'attr(data-following)'
+                  },
+                  '&:hover, &.Mui-disabled': {
+                    color: 'rgb(249, 24, 128)',
+                    borderColor: 'rgb(249, 24, 128)',
+                    '&::before': {
+                      content: 'attr(data-unfollow)'
+                    }
+                  },
+                  '&.Mui-disabled': {
+                    opacity: 0.5,
+                    pointerEvents: 'none'
+                  }
+                }}
+              />
+            ) : session.user._id === user._id ? null : (
+              <Button
+                variant="outlined"
+                size="small"
+                disabled={isPending}
+                onClick={e => {
+                  e.preventDefault()
+                  handleButtonClick(followUser)
+                }}
+                sx={{
+                  px: 2,
+                  py: '4px',
+                  textTransform: 'none',
+                  borderRadius: '20px',
+                  position: 'absolute',
+                  top: '16px',
+                  right: '16px',
                 }}
               >
-                Follows you
-              </Box>
-            )}
-            <Typography variant="body2" color="#000" sx={{ pt: 1 }}>
-              {user.about}
-            </Typography>
-          </div>
-        }
-      />
-    </Card>
+                { isFollower ? 'Follow back' : 'Follow'}
+              </Button>
+            )
+          }
+          title={<Typography sx={{ fontWeight: 600, maxWidth: '200px' }}>{user.name}</Typography>}
+          subheader={
+            <div>
+              <Typography component="span">{user.email}</Typography>
+              {isFollower && (
+                <Box
+                  sx={{
+                    display: 'inline',
+                    fontSize: '12px',
+                    backgroundColor: '#6b7280',
+                    color: '#d1d5db',
+                    width: 'fit-content',
+                    borderRadius: '4px',
+                    px: '6px',
+                    py: '2px',
+                    ml: '4px'
+                  }}
+                >
+                  Follows you
+                </Box>
+              )}
+              <Typography variant="body2" color="#000" sx={{ pt: '4px', pr: 1 }}>
+                {user.about}
+              </Typography>
+            </div>
+          }
+        />
+      </Card>
     </Link>
   )
 }

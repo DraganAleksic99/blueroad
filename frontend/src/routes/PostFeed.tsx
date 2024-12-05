@@ -2,9 +2,7 @@ import { useEffect } from 'react'
 import { useMatch, useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Card, Grid } from '@mui/material'
-import MainLayout from '../layouts/MainLayout'
 import Post from '../views/post/Post'
-import FindPeople from '../views/FindPeople'
 import auth, { Session } from '../auth/authHelper'
 import { loadPost, comment } from '../services/postService'
 import { TPost } from './NewsFeed'
@@ -78,20 +76,15 @@ export default function PostFeed() {
   }, [pathname])
 
   return (
-    <Grid container spacing={2}>
-      <Grid item lg={8}>
+    <Grid container sx={{ borderRight: '1px solid #e5e7eb', minHeight: '100vh' }}>
+      <Grid item sx={{ width: '100%' }}>
         <Card>
-          <MainLayout>
-            {isPending ? (
-              <h1>Loading...</h1>
-            ) : (
-              <Post commentMutation={addCommentMutation.mutate} post={post} showComments />
-            )}
-          </MainLayout>
+          {isPending ? (
+            <h1>Loading...</h1>
+          ) : (
+            <Post commentMutation={addCommentMutation.mutate} post={post} showComments />
+          )}
         </Card>
-      </Grid>
-      <Grid sx={{ p: 0, backgroundColor: 'rgba(246, 247, 248, 0.5)' }} item lg={4}>
-        <FindPeople />
       </Grid>
     </Grid>
   )

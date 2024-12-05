@@ -4,6 +4,14 @@ html {
 
 body {
   scrollbar-gutter: stable;
+  min-height: 100vh;
+  margin: 0;
+  scroll-behavior: smooth;
+}
+
+.app {
+  max-width: 1280px;
+  margin: auto;
 }
 
 .layout {
@@ -27,6 +35,12 @@ body {
   }
 }
 
+a {
+  text-decoration-skip-ink: auto;
+  text-decoration: none;
+  color: black;
+}
+
 a:not([class]) {
   text-decoration-skip-ink: auto;
   text-decoration: none;
@@ -35,4 +49,5 @@ a:not([class]) {
 
 .text-underline:hover {
   text-decoration: underline;
+  cursor: pointer;
 }
