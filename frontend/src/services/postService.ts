@@ -11,6 +11,8 @@ const listNewsFeed = async (userId: string, token: string) => {
         Authorization: 'Bearer ' + token
       }
     })
+    
+    if (response.status === 401) sessionStorage.removeItem('jwt')
 
     if (!response.ok) {
       throw new Error(`Something went wrong. Please try again.`)
@@ -32,6 +34,8 @@ const loadPost = async (userId: string, token: string): Promise<TPost> => {
         Authorization: 'Bearer ' + token
       }
     })
+    
+    if (response.status === 401) sessionStorage.removeItem('jwt')
 
     if (!response.ok) {
       throw new Error(`Something went wrong. Please try again.`)
@@ -53,6 +57,8 @@ const loadPosts = async (userId: string, token: string) => {
         Authorization: 'Bearer ' + token
       }
     })
+    
+    if (response.status === 401) sessionStorage.removeItem('jwt')
 
     if (!response.ok) {
       throw new Error(`Something went wrong. Please try again.`)

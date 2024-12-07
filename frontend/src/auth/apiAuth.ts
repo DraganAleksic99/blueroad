@@ -11,18 +11,28 @@ const signin = async (user: { email: string; password: string }) => {
       credentials: 'include',
       body: JSON.stringify(user)
     })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
+
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error(`Something went wrong. Please try again.`)
   }
 }
 
 const signout = async () => {
   try {
     const response = await fetch(baseUrl + '/auth/signout', { method: 'GET' })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
+    
     return await response.json()
   } catch (err) {
-    console.log(err)
+    throw new Error(`Something went wrong. Please try again.`)
   }
 }
 

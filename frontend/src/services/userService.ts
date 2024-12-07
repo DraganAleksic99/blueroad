@@ -13,6 +13,10 @@ const create = async (user: { name: string; email: string; password: string }) =
       body: JSON.stringify(user)
     })
 
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
+
     return await response.json()
   } catch (err) {
     throw new Error('Something went wrong. Try again.')
@@ -28,6 +32,8 @@ const getUsers = async (): Promise<TUser[]> => {
         'Content-Type': 'application/json'
       }
     })
+
+    if (response.status === 401) sessionStorage.removeItem('jwt')
 
     if (!response.ok) {
       throw new Error(`Something went wrong. Please try again.`)
@@ -49,6 +55,8 @@ const getUser = async (userId: string, token: string): Promise<TUser> => {
         Authorization: 'Bearer ' + token
       }
     })
+    
+    if (response.status === 401) sessionStorage.removeItem('jwt')
 
     if (!response.ok) {
       throw new Error(`Something went wrong. Please try again.`)
@@ -70,6 +78,10 @@ const update = async (userId: string, token: string, user: FormData) => {
       },
       body: user
     })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
 
     return await response.json()
   } catch (err) {
@@ -152,6 +164,8 @@ const getUsersToFollow = async (userId: string, token: string): Promise<TUser[]>
         Authorization: 'Bearer ' + token
       }
     })
+    
+    if (response.status === 401) sessionStorage.removeItem('jwt')
 
     if (!response.ok) {
       throw new Error(`Something went wrong. Please try again.`)
@@ -173,6 +187,8 @@ const getBookmarks = async (userId: string, token: string): Promise<TUser> => {
         Authorization: 'Bearer ' + token
       }
     })
+    
+    if (response.status === 401) sessionStorage.removeItem('jwt')
 
     if (!response.ok) {
       throw new Error(`Something went wrong. Please try again.`)
@@ -194,6 +210,8 @@ const getBookmarksIds = async (userId: string, token: string): Promise<string[]>
         Authorization: 'Bearer ' + token
       }
     })
+    
+    if (response.status === 401) sessionStorage.removeItem('jwt')
 
     if (!response.ok) {
       throw new Error(`Something went wrong. Please try again.`)
