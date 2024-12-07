@@ -1,7 +1,7 @@
 import { baseUrl } from '../config/config'
 
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { UseMutateFunction } from '@tanstack/react-query'
 import { Box, CardContent, IconButton, TextField, styled, Avatar } from '@mui/material'
 import { Send as SendIcon } from '@mui/icons-material'
@@ -34,12 +34,14 @@ type Props = {
 export default function Reply({ commentMutation }: Props) {
   const { user }: Session = auth.isAuthenticated()
   const [commentText, setCommentText] = useState('')
+  const { pathname } = useLocation()
 
   return (
     <CardContent
       sx={{
+        borderTop: '1px solid #e5e7eb',
         pl: 2,
-        pt: 0,
+        pt: 2,
         '&.MuiCardContent-root:last-child': {
           paddingBottom: 2
         }
@@ -50,6 +52,7 @@ export default function Reply({ commentMutation }: Props) {
           <Avatar src={baseUrl + '/api/users/photo/' + user._id} alt={user.name} />
         </Link>
         <StyledTextField
+          autoFocus={pathname === '/' ? true : false}
           fullWidth
           size="small"
           placeholder="Post your reply..."
@@ -67,10 +70,7 @@ export default function Reply({ commentMutation }: Props) {
           }}
           onClick={e => e.preventDefault()}
         />
-        <Tooltip
-          title="Reply"
-          offset={34}
-        >
+        <Tooltip title="Reply" offset={34}>
           <span onClickCapture={e => e.preventDefault()}>
             <IconButton
               sx={{ transform: 'rotate(-20deg)', '&:hover': { color: '#2196F3' }, p: 0, pt: '4px' }}

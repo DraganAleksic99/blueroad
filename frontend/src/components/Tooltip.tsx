@@ -19,7 +19,7 @@ export default function Tooltip({ children, title, offset }: Props) {
           {
             name: 'offset',
             options: {
-              offset: [offset, -10]
+              offset: [offset, 0]
             }
           }
         ]

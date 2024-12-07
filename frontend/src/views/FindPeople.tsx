@@ -140,9 +140,8 @@ export default function FindPeople() {
         </Typography>
         <List>
           {data.map(user => (
-            <Link to={`/profile/${user._id}`}>
+            <Link key={user._id} to={`/profile/${user._id}`}>
               <ListItem
-                key={user._id}
                 sx={{ '&:hover': { backgroundColor: 'rgb(246, 247, 248)' }}}
                 secondaryAction={
                   <Button

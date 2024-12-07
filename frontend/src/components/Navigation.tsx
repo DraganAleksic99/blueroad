@@ -91,7 +91,7 @@ export default function Navigation() {
           </Typography>
           <List>
             {navigationItems.map(item => (
-              <NavLink to={item.url}>
+              <NavLink key={item.url} to={item.url}>
                 {({ isActive }) => (
                   <Box sx={{ '&:hover .MuiListItemButton-root': {backgroundColor: 'rgba(33, 150, 243, 0.1)' }}}>
                   <ListItemButton

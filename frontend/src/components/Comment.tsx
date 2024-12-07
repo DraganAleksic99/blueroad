@@ -48,7 +48,7 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
 
       queryClient.setQueryData(['post', postId, token], (oldPost: TPost) => ({
         ...oldPost,
-        comments: [...oldPost.comments.filter((c) => c._id !== comment._id)]
+        comments: [...oldPost.comments.filter(c => c._id !== comment._id)]
       }))
 
       return { previousPostData }
@@ -61,10 +61,12 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
         queryKey: ['post'],
         refetchType: 'all'
       })
+
       queryClient.invalidateQueries({
         queryKey: ['newsfeed'],
         refetchType: 'all'
       })
+
       queryClient.invalidateQueries({
         queryKey: ['posts'],
         refetchType: 'all'
@@ -77,7 +79,16 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
   }
 
   return (
-    <Card sx={{ mb: '2px' }}>
+    <Card
+      sx={{
+        '&:last-child': {
+          mb: 0,
+          borderBottom: 'none'
+        },
+        borderRadius: 0,
+        borderBottom: '1px solid #e5e7eb'
+      }}
+    >
       <CardHeader
         sx={{ pb: 0, alignItems: 'flex-start' }}
         avatar={
@@ -88,7 +99,9 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
         title={
           <div>
             <Link to={'/profile/' + comment.postedBy._id}>
-              <span className='text-underline' style={{ fontWeight: 600, fontSize: '1rem' }}>{comment.postedBy.name}</span>
+              <span className="text-underline" style={{ fontWeight: 600, fontSize: '1rem' }}>
+                {comment.postedBy.name}
+              </span>
             </Link>
             {' • '}
             <span>{new Date(comment.created).toDateString()}</span>

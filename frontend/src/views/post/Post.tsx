@@ -1,7 +1,7 @@
 import { baseUrl } from '../../config/config'
 
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useQueryClient, useMutation, UseMutateFunction } from '@tanstack/react-query'
 
 import {
@@ -77,6 +77,7 @@ export default function Post({
 }: Props) {
   const queryClient = useQueryClient()
   const { user, token }: Session = auth.isAuthenticated()
+  const { pathname } = useLocation()
 
   const [isFollowing, setIsFollowing] = useState<boolean>()
   const [showReplyButton, setShowReplyButton] = useState(false)
@@ -174,7 +175,13 @@ export default function Post({
   }
 
   return (
-    <Card sx={{ mb: '2px', borderRadius: 2 }}>
+    <Card
+      sx={{
+        mb: `${pathname === '/' ? '2px' : 0}`,
+        borderRadius: 0,
+        '&:hover': { backgroundColor: `${pathname === '/' ? 'rgb(246, 247, 248)' : ''}` }
+      }}
+    >
       <CardHeader
         sx={{ pb: 0, alignItems: 'flex-start' }}
         avatar={
@@ -260,7 +267,7 @@ export default function Post({
       {showComments && (
         <>
           <Reply commentMutation={commentMutation} />
-          <Box sx={{ borderTop: '1px solid gray' }}>
+          <Box sx={{ borderTop: '1px solid #e5e7eb' }}>
             <Comments
               postId={post._id}
               comments={post.comments}
