@@ -46,7 +46,10 @@ export default function Reply({ commentMutation }: Props) {
     <CardContent
       sx={{
         borderTop: '1px solid #e5e7eb',
-        p: 2
+        p: 2,
+        '&:last-child': {
+          pb: 2
+        }
       }}
     >
       <Box sx={{ display: 'flex', gap: 2 }}>
