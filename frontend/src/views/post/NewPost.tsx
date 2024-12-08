@@ -48,6 +48,8 @@ const VisuallyHiddenInput = styled('input')({
   width: 1
 })
 
+const MAX_CHARS = 300
+
 export default function NewPost() {
   const queryClient = useQueryClient()
   const [imagePreview, setImagePreview] = useState(null)
@@ -57,6 +59,7 @@ export default function NewPost() {
     text: '',
     photo: null
   })
+  const progress = (values.text.length / MAX_CHARS) * 100
 
   const { mutate } = useMutation({
     mutationFn: async (postData: FormData) => {
@@ -139,6 +142,8 @@ export default function NewPost() {
               py: 1
             }
           }}
+          inputMode="text"
+          inputProps={{ maxLength: MAX_CHARS }}
         />
       </Stack>
       {values.photo && (
@@ -191,19 +196,38 @@ export default function NewPost() {
             }}
           />
         </ImageButton>
-        <Button
-          disabled={!values.text}
-          variant="outlined"
-          size="small"
-          sx={{
-            borderRadius: '20px',
-            textTransform: 'none',
-            px: 2
-          }}
-          onClick={handleAddPost}
-        >
-          Post
-        </Button>
+        <Box display="flex">
+          <Box display="flex" alignItems="center">
+            <Box sx={{ mr: 2 }}>{MAX_CHARS - values.text.length}</Box>
+            <svg style={{ height: '25px', width: '25px', marginRight: '16px' }} viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="#e5e7eb" strokeWidth="2" />
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="rgb(33, 150, 243)"
+                strokeWidth="2"
+                strokeDasharray="62.83185307179586"
+                strokeDashoffset={62.83185307179586 - (progress / 100) * 62.83185307179586}
+                transform="rotate(-90 12 12)"
+              />
+            </svg>
+          </Box>
+          <Button
+            disabled={!values.text}
+            variant="outlined"
+            size="small"
+            sx={{
+              borderRadius: '20px',
+              textTransform: 'none',
+              px: 2
+            }}
+            onClick={handleAddPost}
+          >
+            Post
+          </Button>
+        </Box>
       </Stack>
     </Paper>
   )
