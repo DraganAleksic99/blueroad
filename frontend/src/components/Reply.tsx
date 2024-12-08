@@ -3,22 +3,25 @@ import { baseUrl } from '../config/config'
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { UseMutateFunction } from '@tanstack/react-query'
-import { Box, CardContent, IconButton, TextField, styled, Avatar } from '@mui/material'
-import { Send as SendIcon } from '@mui/icons-material'
-
-import Tooltip from './Tooltip'
+import { Box, CardContent, Button, TextField, styled, Avatar, Stack } from '@mui/material'
 import auth, { Session } from '../auth/authHelper'
 import { TComment } from '../routes/NewsFeed'
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
+const StyledTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
-    borderRadius: 20,
-    backgroundColor: theme.palette.action.hover,
-    '&:hover': {
-      backgroundColor: theme.palette.action.selected
-    }
+    padding: 0,
+  paddingBottom: 1,
+    '& fieldset': {
+        borderColor: 'transparent',
+      },
+      '&:hover fieldset': {
+        borderColor: 'transparent',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'transparent',
+      }
   }
-}))
+})
 
 type Props = {
   commentMutation: UseMutateFunction<
@@ -31,21 +34,19 @@ type Props = {
   >
 }
 
+const MAX_CHARS = 300
+
 export default function Reply({ commentMutation }: Props) {
   const { user }: Session = auth.isAuthenticated()
   const [commentText, setCommentText] = useState('')
   const { pathname } = useLocation()
+  const progress = (commentText.length / MAX_CHARS) * 100
 
   return (
     <CardContent
       sx={{
         borderTop: '1px solid #e5e7eb',
-        pl: 2,
-        pt: 2,
-        pr: 1,
-        '&.MuiCardContent-root:last-child': {
-          paddingBottom: 2
-        }
+        p: 2
       }}
     >
       <Box sx={{ display: 'flex', gap: 2 }}>
@@ -55,6 +56,7 @@ export default function Reply({ commentMutation }: Props) {
         <StyledTextField
           autoFocus={pathname === '/' ? true : false}
           fullWidth
+          multiline
           size="small"
           placeholder="Post your reply..."
           onKeyDown={e => {
@@ -71,31 +73,45 @@ export default function Reply({ commentMutation }: Props) {
           }}
           onClick={e => e.preventDefault()}
         />
-        <Tooltip title="Reply" offset={15}>
-          <span onClickCapture={e => e.preventDefault()}>
-            <IconButton
-              size="small"
-              sx={{
-                transform: 'rotate(-30deg)',
-                '&:hover': {
-                  backgroundColor: 'rgba(33, 150, 243, 0.1)',
-                  '& .MuiSvgIcon-root': {
-                    color: 'rgb(33, 150, 243)'
-                  }
-                }
-              }}
-              onClick={e => {
-                e.preventDefault()
-                commentMutation(commentText)
-                setCommentText('')
-              }}
-              disabled={!commentText.trim()}
-            >
-              <SendIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
       </Box>
+      <Stack sx={{ justifyContent: 'flex-end', pt: 1 }} direction="row">
+        <Box display="flex">
+          <Box display="flex" alignItems="center">
+            <Box sx={{ mr: 2 }}>{MAX_CHARS - commentText.length}</Box>
+            <svg style={{ height: '25px', width: '25px', marginRight: '16px' }} viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="#e5e7eb" strokeWidth="2" />
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="rgb(33, 150, 243)"
+                strokeWidth="2"
+                strokeDasharray="62.83185307179586"
+                strokeDashoffset={62.83185307179586 - (progress / 100) * 62.83185307179586}
+                transform="rotate(-90 12 12)"
+              />
+            </svg>
+          </Box>
+          <Button
+            variant="outlined"
+            size="small"
+            sx={{
+              borderRadius: '20px',
+              textTransform: 'none',
+              px: 2
+            }}
+            onClick={e => {
+              e.preventDefault()
+              commentMutation(commentText)
+              setCommentText('')
+            }}
+            disabled={!commentText.trim()}
+          >
+            Reply
+          </Button>
+        </Box>
+      </Stack>
     </CardContent>
   )
 }
