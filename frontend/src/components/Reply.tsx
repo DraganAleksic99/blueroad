@@ -42,6 +42,7 @@ export default function Reply({ commentMutation }: Props) {
         borderTop: '1px solid #e5e7eb',
         pl: 2,
         pt: 2,
+        pr: 1,
         '&.MuiCardContent-root:last-child': {
           paddingBottom: 2
         }
@@ -70,10 +71,18 @@ export default function Reply({ commentMutation }: Props) {
           }}
           onClick={e => e.preventDefault()}
         />
-        <Tooltip title="Reply" offset={34}>
+        <Tooltip title="Reply" offset={15}>
           <span onClickCapture={e => e.preventDefault()}>
             <IconButton
-              sx={{ transform: 'rotate(-20deg)', '&:hover': { color: '#2196F3' }, p: 0, pt: '4px' }}
+              sx={{
+                transform: 'rotate(-30deg)',
+                '&:hover': {
+                  backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                  '& .MuiSvgIcon-root': {
+                    color: 'rgb(33, 150, 243)'
+                  }
+                }
+              }}
               onClick={e => {
                 e.preventDefault()
                 commentMutation(commentText)

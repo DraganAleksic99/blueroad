@@ -30,7 +30,7 @@ export default function ProfileCard({
     : `${baseUrl}/api/defaultPhoto`
 
   return (
-    <Card sx={{ display: 'flex', alignItems: 'center', gap: 3, p: 2 }}>
+    <Card sx={{ display: 'flex', alignItems: 'center', gap: 3, p: 2, borderRadius: 0 }}>
       <CardMedia
         component="img"
         sx={{ width: 150, height: 150, minWidth: 150, minHeight: 150, borderRadius: '50%' }}

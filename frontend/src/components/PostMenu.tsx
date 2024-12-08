@@ -72,15 +72,19 @@ export default function PostMenu({
 
   return (
     <>
-      <Tooltip title="More" offset={24}>
-        <IconButton onClick={handleMenuOpen}>
-          <MoreHorizIcon
-            sx={{
-              '&:hover': {
-                color: '#2196F3'
+      <Tooltip title="More" offset={8}>
+        <IconButton
+          sx={{
+            '&:hover': {
+              backgroundColor: 'rgba(33, 150, 243, 0.1)',
+              '& .MuiSvgIcon-root': {
+                color: 'rgb(33, 150, 243)'
               }
-            }}
-          />
+            }
+          }}
+          onClick={handleMenuOpen}
+        >
+          <MoreHorizIcon />
         </IconButton>
       </Tooltip>
       <Menu
@@ -99,13 +103,16 @@ export default function PostMenu({
             minWidth: '200px',
             '& .MuiList-root': {
               padding: '8px 0'
+            },
+            '& .MuiMenuItem-root': {
+              fontWeight: '500'
             }
           }
         }}
       >
         {post.postedBy._id === user._id && (
           <MenuItem sx={{ color: 'red' }} onClick={deletePost}>
-            <DeleteIcon sx={{ mr: 1 }} /> Delete
+            <DeleteIcon sx={{ mr: '12px' }} /> Delete
           </MenuItem>
         )}
         {post.postedBy._id !== user._id && post.postedBy._id !== match?.params?.userId && (
@@ -123,9 +130,9 @@ export default function PostMenu({
             }}
           >
             {isFollowing ? (
-              <PersonRemoveIcon sx={{ mr: 1 }} />
+              <PersonRemoveIcon sx={{ mr: '12px' }} />
             ) : (
-              <PersonAddAlt1Icon sx={{ mr: 1 }} />
+              <PersonAddAlt1Icon sx={{ mr: '12px' }} />
             )}
             {isFollowing ? 'Unfollow' : 'Follow'} {post.postedBy.name}
           </MenuItem>
@@ -136,7 +143,7 @@ export default function PostMenu({
             setAnchorEl(null)
           }}
         >
-          <FlagIcon sx={{ mr: 1 }} /> Report post
+          <FlagIcon sx={{ mr: '12px' }} /> Report post
         </MenuItem>
       </Menu>
     </>

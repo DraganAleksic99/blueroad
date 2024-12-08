@@ -177,9 +177,9 @@ export default function Post({
   return (
     <Card
       sx={{
-        mb: `${pathname === '/' ? '2px' : 0}`,
         borderRadius: 0,
-        '&:hover': { backgroundColor: `${pathname === '/' ? 'rgb(246, 247, 248)' : ''}` }
+        '&:hover': { backgroundColor: `${pathname === '/' ? 'rgb(246, 247, 248)' : ''}` },
+        borderBottom: '1px solid #e5e7eb'
       }}
     >
       <CardHeader
@@ -225,7 +225,7 @@ export default function Post({
               component="img"
               image={post.imagePreview}
               alt="Post content"
-              sx={{ objectFit: 'cover', border: '1px solid #2196F3', borderRadius: '12px', mt: 1 }}
+              sx={{ objectFit: 'cover', border: '1px solid #e5e7eb', borderRadius: '12px', mt: 1 }}
             />
           )}
 
@@ -235,7 +235,7 @@ export default function Post({
               component="img"
               image={baseUrl + '/api/posts/photo/' + post._id}
               alt="Post content"
-              sx={{ objectFit: 'cover', border: '1px solid #2196F3', borderRadius: '12px', mt: 1 }}
+              sx={{ objectFit: 'cover', border: '1px solid #e5e7eb', borderRadius: '12px', mt: 1 }}
             />
           )}
         </Box>
@@ -246,7 +246,7 @@ export default function Post({
       >
         <div>
           <LikeButton post={post} />
-          <Tooltip title="Reply" offset={12}>
+          <Tooltip title="Reply" offset={-5}>
             <ActionButton
               startIcon={<ChatBubbleOutlineIcon />}
               onClick={e => {
@@ -267,7 +267,7 @@ export default function Post({
       {showComments && (
         <>
           <Reply commentMutation={commentMutation} />
-          <Box sx={{ borderTop: '1px solid #e5e7eb' }}>
+          <Box sx={{ borderTop: '1px solid #e5e7eb', borderRadius: 0 }}>
             <Comments
               postId={post._id}
               comments={post.comments}
@@ -290,7 +290,8 @@ export default function Post({
         sx={{
           '& .MuiPaper-root': {
             color: '#2196F3',
-            bgcolor: 'rgba(191, 191, 191, 0.2)'
+            bgcolor: '#fff',
+            borderRadius: '12px'
           }
         }}
         onClose={() => setSnackbarInfo({ open: false, message: '' })}

@@ -78,7 +78,7 @@ export default function PostFeed() {
   return (
     <Grid container sx={{ borderRight: '1px solid #e5e7eb', minHeight: '100vh' }}>
       <Grid item sx={{ width: '100%' }}>
-        <Card>
+        <Card elevation={0} sx={{ borderRadius: 0 }}>
           {isPending ? (
             <h1>Loading...</h1>
           ) : (

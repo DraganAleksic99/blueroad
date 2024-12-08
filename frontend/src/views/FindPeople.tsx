@@ -21,6 +21,8 @@ import auth, { Session } from '../auth/authHelper'
 import { TUser } from '../routes/Profile'
 
 const WhoToFollowPaper = styled(Paper)({
+  borderRadius: 0,
+  borderLeft: '1px solid #e5e7eb',
   maxHeight: '100vh',
   overflowY: 'auto',
   '&::-webkit-scrollbar': {
@@ -90,7 +92,7 @@ export default function FindPeople() {
 
   if (isPending) {
     return (
-      <WhoToFollowPaper>
+      <WhoToFollowPaper elevation={0}>
         <Box>
           <Typography sx={{ fontWeight: '500', ml: 2, mb: 0, mt: 2 }} variant="h5" gutterBottom>
             Who to follow
@@ -133,7 +135,7 @@ export default function FindPeople() {
   }
 
   return (
-    <WhoToFollowPaper>
+    <WhoToFollowPaper elevation={0}>
       <Box>
         <Typography sx={{ fontWeight: '500', ml: 2, mb: 0, mt: 2 }} variant="h5" gutterBottom>
           Who to follow
@@ -142,7 +144,7 @@ export default function FindPeople() {
           {data.map(user => (
             <Link key={user._id} to={`/profile/${user._id}`}>
               <ListItem
-                sx={{ '&:hover': { backgroundColor: 'rgb(246, 247, 248)' }}}
+                sx={{ '&:hover': { backgroundColor: 'rgb(246, 247, 248)' } }}
                 secondaryAction={
                   <Button
                     variant="outlined"
@@ -153,7 +155,7 @@ export default function FindPeople() {
                       px: 2,
                       py: '4px'
                     }}
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault()
                       handleFollow(user)
                     }}
@@ -193,7 +195,8 @@ export default function FindPeople() {
           sx={{
             '& .MuiPaper-root': {
               color: '#2196F3',
-              bgcolor: 'rgba(191, 191, 191, 0.2)'
+              bgcolor: '#fff',
+              borderRadius: '12px'
             }
           }}
           open={snackbarInfo.open}

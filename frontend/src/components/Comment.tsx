@@ -123,14 +123,18 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
                 }
               }}
             >
-              <IconButton onClick={e => handleMenuOpen(e)}>
-                <MoreHorizIcon
-                  sx={{
-                    '&:hover': {
-                      color: '#2196F3'
+              <IconButton
+                sx={{
+                  '&:hover': {
+                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                    '& .MuiSvgIcon-root': {
+                      color: 'rgb(33, 150, 243)'
                     }
-                  }}
-                />
+                  }
+                }}
+                onClick={e => handleMenuOpen(e)}
+              >
+                <MoreHorizIcon />
               </IconButton>
             </Tooltip>
             <Menu
@@ -148,6 +152,9 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
                   boxShadow: '0px 2px 8px rgba(0,0,0,0.1)',
                   '& .MuiList-root': {
                     padding: '8px 0'
+                  },
+                  '& .MuiMenuItem-root': {
+                    fontWeight: '500'
                   }
                 }
               }}
@@ -160,7 +167,7 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
                     setAnchorEl(null)
                   }}
                 >
-                  <DeleteIcon sx={{ mr: 1 }} /> Delete
+                  <DeleteIcon sx={{ mr: '12px' }} /> Delete
                 </MenuItem>
               ) : (
                 <MenuItem
@@ -175,9 +182,9 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
                   }}
                 >
                   {isFollowing ? (
-                    <PersonRemoveIcon sx={{ mr: 1 }} />
+                    <PersonRemoveIcon sx={{ mr: '12px' }} />
                   ) : (
-                    <PersonAddAlt1Icon sx={{ mr: 1 }} />
+                    <PersonAddAlt1Icon sx={{ mr: '12px' }} />
                   )}
                   {isFollowing ? 'Unfollow' : 'Follow'} {comment.postedBy.name}
                 </MenuItem>
@@ -188,7 +195,7 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
                   setAnchorEl(null)
                 }}
               >
-                <FlagIcon sx={{ mr: 1 }} /> Report Comment
+                <FlagIcon sx={{ mr: '12px' }} /> Report Comment
               </MenuItem>
             </Menu>
           </>

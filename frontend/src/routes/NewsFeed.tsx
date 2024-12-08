@@ -59,7 +59,7 @@ export default function NewsFeed() {
   return (
     <Grid container spacing={2} sx={{ borderRight: '1px solid #e5e7eb' }}>
       <Grid item sx={{ width: '100%' }}>
-        <Card>
+        <Card sx={{ borderRadius: 0 }}>
           <NewPost />
           <PostList arePostsPending={isPending} removePost={removePost} posts={posts} />
         </Card>

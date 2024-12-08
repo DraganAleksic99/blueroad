@@ -150,21 +150,21 @@ export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, po
 
   return (
     <Tooltip
-      title={isBookmarked ? 'Remove from bookmarks' : "Bookmark"}
-      offset={isBookmarked ? 88 : 44}
+      title={isBookmarked ? 'Remove from bookmarks' : 'Bookmark'}
+      offset={isBookmarked ? 66 : 24}
     >
-      <IconButton onClick={handleBookmark} size="small">
-        {isBookmarked ? (
-          <BookmarkIcon color="primary" />
-        ) : (
-          <BookmarkBorderIcon
-            sx={{
-              '&:hover': {
-                color: '#2196F3'
-              }
-            }}
-          />
-        )}
+      <IconButton
+        sx={{
+          '&:hover': {
+            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+            '& .MuiSvgIcon-root': {
+              color: 'rgb(33, 150, 243)'
+            }
+          }
+        }}
+        onClick={handleBookmark}
+      >
+        {isBookmarked ? <BookmarkIcon color="primary" /> : <BookmarkBorderIcon />}
       </IconButton>
     </Tooltip>
   )

@@ -133,7 +133,7 @@ export default function LikeButton({ post }: Props) {
   }
 
   return (
-    <Tooltip title={isLiked ? 'Unlike' : 'Like'} offset={isLiked ? 15 : 7}>
+    <Tooltip title={isLiked ? 'Unlike' : 'Like'} offset={isLiked ? 0 : -7}>
       <ActionButton
         sx={{ color: isLiked ? 'rgb(249, 24, 128)' : '' }}
         startIcon={
