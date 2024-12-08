@@ -154,6 +154,7 @@ export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, po
       offset={isBookmarked ? 66 : 24}
     >
       <IconButton
+        size="small"
         sx={{
           '&:hover': {
             backgroundColor: 'rgba(33, 150, 243, 0.1)',

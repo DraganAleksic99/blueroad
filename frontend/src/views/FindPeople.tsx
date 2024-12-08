@@ -23,6 +23,7 @@ import { TUser } from '../routes/Profile'
 const WhoToFollowPaper = styled(Paper)({
   borderRadius: 0,
   borderLeft: '1px solid #e5e7eb',
+  borderRight: '1px solid #e5e7eb',
   maxHeight: '100vh',
   overflowY: 'auto',
   '&::-webkit-scrollbar': {
@@ -153,7 +154,7 @@ export default function FindPeople() {
                       borderRadius: '20px',
                       textTransform: 'none',
                       px: 2,
-                      py: '4px'
+                      py: '5px'
                     }}
                     onClick={e => {
                       e.preventDefault()

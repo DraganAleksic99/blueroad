@@ -38,7 +38,9 @@ const ActionButton = styled(Button)(({ theme }) => ({
   color: theme.palette.text.secondary,
   borderRadius: '8px',
   padding: 0,
-  paddingBlock: '4px',
+  paddingBlock: '3px',
+  fontSize: '1rem',
+  maxHeight: '34px',
   '&:hover': {
     backgroundColor: 'rgba(33, 150, 243, 0.1)',
     '& .MuiButton-startIcon': {
@@ -178,7 +180,11 @@ export default function Post({
     <Card
       sx={{
         borderRadius: 0,
-        '&:hover': { backgroundColor: `${pathname === '/' ? 'rgb(246, 247, 248)' : ''}` },
+        '&:hover': {
+          backgroundColor: `${
+            pathname === '/' || pathname === '/bookmarks' ? 'rgb(246, 247, 248)' : ''
+          }`
+        },
         borderBottom: '1px solid #e5e7eb'
       }}
     >
@@ -242,12 +248,13 @@ export default function Post({
       </CardContent>
 
       <CardActions
-        sx={{ pl: '64px', py: 1, pr: '8px', display: 'flex', justifyContent: 'space-between' }}
+        sx={{ pl: '64px', py: '4px', pr: '8px', display: 'flex', justifyContent: 'space-between' }}
       >
-        <div>
+        <Box display="flex" width="30%" justifyContent="space-between">
           <LikeButton post={post} />
           <Tooltip title="Reply" offset={-5}>
             <ActionButton
+              sx={{ borderRadius: '30px' }}
               startIcon={<ChatBubbleOutlineIcon />}
               onClick={e => {
                 e.preventDefault()
@@ -257,7 +264,7 @@ export default function Post({
               {post.comments.length}
             </ActionButton>
           </Tooltip>
-        </div>
+        </Box>
         <BookmarkButton
           bookmarkedPostsIds={bookmarkedPostsIds}
           post={post}

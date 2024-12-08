@@ -13,7 +13,9 @@ const ActionButton = styled(Button)(({ theme }) => ({
   color: theme.palette.text.secondary,
   borderRadius: '8px',
   padding: 0,
-  paddingBlock: '4px',
+  paddingBlock: '3px',
+  fontSize: '1rem',
+  maxHeight: '34px',
   '&:hover': {
     backgroundColor: 'rgba(249, 24, 128, 0.1)',
     '& .MuiButton-startIcon': {
@@ -86,7 +88,7 @@ export default function LikeButton({ post }: Props) {
         queryKey: ['newsfeed'],
         refetchType: 'all'
       })
-      
+
       queryClient.invalidateQueries({
         queryKey: ['posts'],
         refetchType: 'all'
@@ -135,7 +137,7 @@ export default function LikeButton({ post }: Props) {
   return (
     <Tooltip title={isLiked ? 'Unlike' : 'Like'} offset={isLiked ? 0 : -7}>
       <ActionButton
-        sx={{ color: isLiked ? 'rgb(249, 24, 128)' : '' }}
+        sx={{ color: isLiked ? 'rgb(249, 24, 128)' : '', borderRadius: '30px' }}
         startIcon={
           isLiked ? (
             <FavoriteIcon

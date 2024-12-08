@@ -74,6 +74,7 @@ export default function Reply({ commentMutation }: Props) {
         <Tooltip title="Reply" offset={15}>
           <span onClickCapture={e => e.preventDefault()}>
             <IconButton
+              size="small"
               sx={{
                 transform: 'rotate(-30deg)',
                 '&:hover': {

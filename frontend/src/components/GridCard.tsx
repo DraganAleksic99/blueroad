@@ -35,8 +35,15 @@ export default function GridCard({ user }: { user: TUser }) {
 
   return (
     <Link to={`/profile/${user._id}`}>
-      <Card sx={{ height: '100%', border: 'none', boxShadow: 'none', '&:hover': { backgroundColor: 'rgb(246, 247, 248)' } }}>
+      <Card
+        sx={{
+          border: 'none',
+          boxShadow: 'none',
+          '&:hover': { backgroundColor: 'rgb(246, 247, 248)' }
+        }}
+      >
         <CardHeader
+          sx={{ alignItems: 'flex-start' }}
           avatar={
             <Avatar
               src={baseUrl + '/api/users/photo/' + user._id}
@@ -64,12 +71,13 @@ export default function GridCard({ user }: { user: TUser }) {
                   position: 'absolute',
                   top: '16px',
                   right: '16px',
-                  backgroundColor:'rgba(33, 150, 243, 0.1)',
+                  backgroundColor: 'rgba(33, 150, 243, 0.1)',
                   '&::before': {
                     content: 'attr(data-following)'
                   },
                   '&:hover, &.Mui-disabled': {
                     color: 'rgb(249, 24, 128)',
+                    backgroundColor: '#fff',
                     borderColor: 'rgb(249, 24, 128)',
                     '&::before': {
                       content: 'attr(data-unfollow)'
@@ -97,14 +105,18 @@ export default function GridCard({ user }: { user: TUser }) {
                   borderRadius: '20px',
                   position: 'absolute',
                   top: '16px',
-                  right: '16px',
+                  right: '16px'
                 }}
               >
-                { isFollower ? 'Follow back' : 'Follow'}
+                {isFollower ? 'Follow back' : 'Follow'}
               </Button>
             )
           }
-          title={<Typography sx={{ fontWeight: 600, maxWidth: '200px' }}>{user.name}</Typography>}
+          title={
+            <Typography className="text-underline" sx={{ fontWeight: 600, maxWidth: '200px' }}>
+              {user.name}
+            </Typography>
+          }
           subheader={
             <div>
               <Typography component="span">{user.email}</Typography>

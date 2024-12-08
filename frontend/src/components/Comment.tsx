@@ -124,6 +124,7 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
               }}
             >
               <IconButton
+                size="small"
                 sx={{
                   '&:hover': {
                     backgroundColor: 'rgba(33, 150, 243, 0.1)',

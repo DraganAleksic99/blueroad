@@ -21,9 +21,10 @@ import { createPost } from '../../services/postService'
 const ImageButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
   color: theme.palette.text.secondary,
-  marginLeft: '48px',
-  paddingBlock: 0,
-  borderRadius: '8px',
+  marginLeft: '44px',
+  height: '34px',
+  paddingInline: '12px',
+  borderRadius: '30px',
   '&:hover': {
     backgroundColor: 'rgba(33, 150, 243, 0.1)',
     '& .MuiButton-startIcon': {
@@ -118,8 +119,8 @@ export default function NewPost() {
   }
 
   return (
-    <Paper sx={{ p: 2, borderRadius: 0, borderBottom: '1px solid #e5e7eb' }}>
-      <Stack direction="row" spacing={2} sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+    <Paper sx={{ p: 2, pb: 1, borderRadius: 0, borderBottom: '1px solid #e5e7eb' }}>
+      <Stack direction="row" spacing={2} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
         <Link to={`/user/${user._id}`}>
           <Avatar src={baseUrl + '/api/users/photo/' + user._id} />
         </Link>
@@ -147,10 +148,18 @@ export default function NewPost() {
             height="400"
             image={imagePreview}
             alt="Post content"
-            sx={{ objectFit: 'cover', border: '1px solid #2196F3', borderRadius: '12px' }}
+            sx={{ objectFit: 'cover', border: '1px solid #e5e7eb', borderRadius: '12px' }}
           />
           <IconButton
-            sx={{ position: 'absolute', top: '5px', right: '4px', color: 'black' }}
+            sx={{
+              position: 'absolute',
+              top: '5px',
+              right: '4px',
+              color: 'rgb(33, 150, 243)',
+              '&:hover': {
+                backgroundColor: 'rgba(33, 150, 243, 0.1)'
+              }
+            }}
             aria-label="remove"
             onClick={() => setValues({ ...values, photo: null })}
           >

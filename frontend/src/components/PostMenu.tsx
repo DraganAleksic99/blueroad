@@ -74,6 +74,7 @@ export default function PostMenu({
     <>
       <Tooltip title="More" offset={8}>
         <IconButton
+          size="small"
           sx={{
             '&:hover': {
               backgroundColor: 'rgba(33, 150, 243, 0.1)',
