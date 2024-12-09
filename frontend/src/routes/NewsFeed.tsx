@@ -1,11 +1,8 @@
-import { useEffect, useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Card, Grid } from '@mui/material'
-import { listNewsFeed } from '../services/postService'
-import auth, { Session } from '../auth/authHelper'
-import PostList from '../views/post/PostList'
+import { useState, SyntheticEvent } from 'react'
+import { AppBar, Tabs, Tab, Box } from '@mui/material'
+import FollowingNewsFeed from '../components/FollowingNewsFeed'
+import DiscoverNewsFeed from '../components/DiscoverNewsFeed'
 import { TUser } from './Profile'
-import NewPost from '../views/post/NewPost'
 
 export type TComment = {
   _id?: string
@@ -33,37 +30,66 @@ export type TPost = {
 }
 
 export default function NewsFeed() {
-  const queryClient = useQueryClient()
-  const { user, token }: Session = auth.isAuthenticated()
-  const [posts, setPosts] = useState<TPost[]>([])
-  const { data, isPending, isSuccess } = useQuery({
-    queryKey: ['newsfeed', user, token],
-    queryFn: async () => {
-      return listNewsFeed(user._id, token)
-    }
-  })
+  const [currentTab, setCurrentTab] = useState(0)
 
-  useEffect(() => {
-    if (!isSuccess) return
-    setPosts(data)
-  }, [isSuccess, data])
-
-  const removePost = (post: TPost) => {
-    const updatedPosts = [...posts]
-    const index = updatedPosts.indexOf(post)
-    updatedPosts.splice(index, 1)
-    setPosts(updatedPosts)
-    queryClient.invalidateQueries({ queryKey: ['newsfeed'] })
+  const handleTabChange = (_event: SyntheticEvent, value: number) => {
+    setCurrentTab(value)
   }
 
   return (
-    <Grid container spacing={2} sx={{ borderRight: '1px solid #e5e7eb' }}>
-      <Grid item sx={{ width: '100%' }}>
-        <Card sx={{ borderRadius: 0 }}>
-          <NewPost />
-          <PostList arePostsPending={isPending} removePost={removePost} posts={posts} />
-        </Card>
-      </Grid>
-    </Grid>
+    <Box>
+      <AppBar
+        elevation={0}
+        sx={{
+          borderRight: '1px solid #e5e7eb',
+          borderBottom: '1px solid #e5e7eb',
+          maxWidth: '640px',
+          left: 'auto',
+          right: 'auto'
+        }}
+        position="fixed"
+        color="default"
+      >
+        <Tabs
+          value={currentTab}
+          onChange={handleTabChange}
+          sx={{
+            '& .MuiButtonBase-root': {
+              textTransform: 'none',
+              fontSize: '1rem',
+              px: '30px'
+            },
+            '& .MuiButtonBase-root:hover': {
+              backgroundColor: 'rgba(33, 150, 243, 0.1)'
+            },
+            '& .Mui-selected': {
+              color: 'rgb(33, 150, 243)',
+              fontWeight: 'bold'
+            }
+          }}
+          centered
+          TabIndicatorProps={{
+            sx: {
+              height: '4px',
+              borderRadius: '2px',
+              backgroundColor: 'rgb(33, 150, 243)'
+            }
+          }}
+        >
+          <Tab label="Following" />
+          <Tab label="Discover" />
+        </Tabs>
+      </AppBar>
+      {currentTab === 0 && (
+        <Box paddingTop="48px">
+          <FollowingNewsFeed />
+        </Box>
+      )}
+      {currentTab === 1 && (
+        <Box paddingTop="48px">
+          <DiscoverNewsFeed />
+        </Box>
+      )}
+    </Box>
   )
 }

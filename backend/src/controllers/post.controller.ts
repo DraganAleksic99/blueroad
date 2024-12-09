@@ -4,15 +4,33 @@ import Post from '../models/post.model'
 import dbErrorHandler from '../utils/dbErrorHandler'
 import formidable from 'formidable'
 
-const listNewsFeed = async (req: Request, res: Response) => {
+const listFollowingNewsFeed = async (req: Request, res: Response) => {
   const following = req.profile.following
   following.push(req.profile._id)
 
   try {
-    const posts = await Post.find({ postedBy: { $in: req.profile.following } })
+    const posts = await Post.find({ postedBy: { $in: following } })
       .populate('postedBy', '_id name email followers')
       .select('-photo.data')
       .sort('-created')
+      .lean()
+      .exec()
+
+    res.json(posts)
+  } catch (err) {
+    return res.status(400).json({
+      error: dbErrorHandler.getErrorMessage(err)
+    })
+  }
+}
+
+const listDiscoverNewsFeed = async (req: Request, res: Response) => {
+  try {
+    const posts = await Post.find({ postedBy: { $nin: req.profile.following } })
+      .populate('postedBy', '_id name email followers')
+      .select('-photo.data')
+      .sort('-created')
+      .limit(20)
       .lean()
       .exec()
 
@@ -200,7 +218,8 @@ const uncomment = async (req: Request, res: Response) => {
 }
 
 export default {
-  listNewsFeed,
+  listFollowingNewsFeed,
+  listDiscoverNewsFeed,
   listByUser,
   create,
   read,
