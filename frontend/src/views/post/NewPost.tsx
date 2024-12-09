@@ -55,7 +55,7 @@ export default function NewPost({
   isDialogOpen
 }: {
   closeDialog?: () => void
-  isDialogOpen: boolean
+  isDialogOpen?: boolean
 }) {
   const queryClient = useQueryClient()
   const [imagePreview, setImagePreview] = useState(null)
