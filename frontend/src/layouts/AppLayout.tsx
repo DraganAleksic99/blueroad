@@ -26,12 +26,19 @@ export default function AppLayout() {
         <Navigation />
       </Grid>
 
-      <Grid item xs={24} sm={18} md={12} lg={12} sx={{
-        height: '100%', 
-        overflowY: 'auto',
-        scrollbarWidth: 'none'
-      }} >
-          <Outlet />
+      <Grid
+        item
+        xs={24}
+        sm={18}
+        md={12}
+        lg={12}
+        sx={{
+          height: '100%',
+          overflowY: 'auto',
+          scrollbarWidth: 'none'
+        }}
+      >
+        <Outlet />
       </Grid>
 
       <Grid
@@ -47,7 +54,7 @@ export default function AppLayout() {
           }
         }}
       >
-          <FindPeople />
+        <FindPeople />
       </Grid>
     </Grid>
   )

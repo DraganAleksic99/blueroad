@@ -10,16 +10,16 @@ import { TComment } from '../routes/NewsFeed'
 const StyledTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
     padding: 0,
-  paddingBottom: 1,
+    paddingBottom: 1,
     '& fieldset': {
-        borderColor: 'transparent',
-      },
-      '&:hover fieldset': {
-        borderColor: 'transparent',
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: 'transparent',
-      }
+      borderColor: 'transparent'
+    },
+    '&:hover fieldset': {
+      borderColor: 'transparent'
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: 'transparent'
+    }
   }
 })
 
@@ -61,6 +61,9 @@ export default function Reply({ commentMutation }: Props) {
           fullWidth
           multiline
           size="small"
+          inputProps={{
+            maxLength: MAX_CHARS
+          }}
           placeholder="Post your reply..."
           onKeyDown={e => {
             if (e.code === 'Enter') {
@@ -102,7 +105,8 @@ export default function Reply({ commentMutation }: Props) {
             sx={{
               borderRadius: '20px',
               textTransform: 'none',
-              px: 2
+              px: 2,
+              height: '34px'
             }}
             onClick={e => {
               e.preventDefault()

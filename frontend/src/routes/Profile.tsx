@@ -25,7 +25,7 @@ export type TUser = {
   }
   following: TUser[]
   followers: TUser[]
-  bookmarkedPosts?: TPost[] 
+  bookmarkedPosts?: TPost[]
 }
 
 export default function Profile() {
@@ -69,27 +69,21 @@ export default function Profile() {
     setIsFollowing(isFollowing)
   }, [checkFollow])
 
-  const removePost = (post: TPost) => {
-    const updatedPosts = [...posts]
-    const index = updatedPosts.indexOf(post)
-    updatedPosts.splice(index, 1)
-  }
-
   return (
     <Paper elevation={2} sx={{ borderRight: '1px solid #e5e7eb' }}>
-        {isLoading ? (
-          <ProfileCardSkeleton />
-        ) : (
-          <ProfileCard
-            user={user}
-            posts={posts}
-            isFollowing={isFollowing}
-            isPending={profileMutation.isPending}
-            clickFollowButton={clickFollowButton}
-          />
-        )}
+      {isLoading ? (
+        <ProfileCardSkeleton />
+      ) : (
+        <ProfileCard
+          user={user}
+          posts={posts}
+          isFollowing={isFollowing}
+          isPending={profileMutation.isPending}
+          clickFollowButton={clickFollowButton}
+        />
+      )}
 
-        <ProfileTabs arePostsPending={arePostsPending} onRemove={removePost} posts={posts} user={user} />
+      <ProfileTabs arePostsPending={arePostsPending} posts={posts} user={user} />
     </Paper>
   )
 }

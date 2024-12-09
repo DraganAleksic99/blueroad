@@ -4,9 +4,9 @@ export default function Spinner() {
       style={{
         maxWidth: '715px',
         margin: 'auto',
-        backgroundColor: 'rgba(246, 247, 248, 0.5)',
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        paddingTop: '16px'
       }}
     >
       <svg

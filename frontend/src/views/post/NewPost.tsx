@@ -122,7 +122,7 @@ export default function NewPost() {
   }
 
   return (
-    <Paper sx={{ p: 2, pb: 1, borderRadius: 0, borderBottom: '1px solid #e5e7eb' }}>
+    <Paper sx={{ p: 2, borderRadius: 0, borderBottom: '1px solid #e5e7eb' }}>
       <Stack direction="row" spacing={2} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
         <Link to={`/user/${user._id}`}>
           <Avatar src={baseUrl + '/api/users/photo/' + user._id} />
@@ -137,9 +137,16 @@ export default function NewPost() {
           onChange={handleChange('text')}
           sx={{
             '& .MuiOutlinedInput-root': {
-              borderRadius: '12px',
-              backgroundColor: 'action.hover',
-              py: 1
+              p: 0,
+              '& fieldset': {
+                borderColor: 'transparent'
+              },
+              '&:hover fieldset': {
+                borderColor: 'transparent'
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: 'transparent'
+              }
             }
           }}
           inputMode="text"

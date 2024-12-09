@@ -69,8 +69,8 @@ export default function PostMenu({
       return { previousPostsData }
     },
     onSettled() {
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
-      queryClient.invalidateQueries({ queryKey: ['newsfeed'] })
+      queryClient.invalidateQueries({ queryKey: ['posts'], refetchType: 'all' })
+      queryClient.invalidateQueries({ queryKey: ['newsfeed'], refetchType: 'all' })
 
       if (redirectAfterDelete) navigate('/')
     },

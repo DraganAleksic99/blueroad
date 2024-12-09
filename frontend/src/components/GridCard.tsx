@@ -38,6 +38,7 @@ export default function GridCard({ user }: { user: TUser }) {
       <Card
         sx={{
           border: 'none',
+          borderRadius: 0,
           boxShadow: 'none',
           '&:hover': { backgroundColor: 'rgb(246, 247, 248)' }
         }}

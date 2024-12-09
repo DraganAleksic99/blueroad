@@ -45,6 +45,7 @@ export default function Comments({ postId, handleFollowOrUnfollow, comments, isF
           />
         )
       })}
+      <Box height="25vh"></Box>
     </>
   )
 }

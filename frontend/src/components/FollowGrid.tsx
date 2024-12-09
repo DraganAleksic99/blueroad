@@ -12,6 +12,7 @@ export default function FollowGrid({ users = [] }: { users: TUser[] }) {
           </Box>
         )
       })}
+      <Box height="50vh" width="100%"></Box>
     </Box>
   )
 }

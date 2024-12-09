@@ -246,20 +246,6 @@ export default function Post({
         </Box>
       </CardContent>
 
-      {match && match.params?.postId && (
-        <Box
-          sx={{
-            py: 1,
-            mx: 2,
-            mt: 1,
-            borderTop: '1px solid #e5e7eb',
-            borderBottom: '1px solid #e5e7eb'
-          }}
-        >
-          15 Likes
-        </Box>
-      )}
-
       <CardActions
         sx={{
           pl: match && match.params?.postId ? '8px' : '64px',

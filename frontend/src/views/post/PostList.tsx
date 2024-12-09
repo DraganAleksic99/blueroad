@@ -42,7 +42,13 @@ export default function PostList({ posts, arePostsPending }: Props) {
         </Link>
       ))}
       {!arePostsPending && posts.length !== 0 && (
-        <Box height="15vh" display="flex" justifyContent="center" alignItems="center">
+        <Box
+          height="15vh"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          sx={{ backgroundColor: '#fff' }}
+        >
           <Typography variant="inherit" color="textSecondary">
             End of feed.
           </Typography>

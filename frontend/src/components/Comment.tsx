@@ -80,6 +80,7 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
 
   return (
     <Card
+      elevation={0}
       sx={{
         '&:last-child': {
           mb: 0,

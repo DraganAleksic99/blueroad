@@ -9,11 +9,10 @@ import { TPost } from '../routes/NewsFeed'
 type Props = {
   user: TUser | Record<string, never>
   posts: TPost[]
-  onRemove: (post: TPost) => void
   arePostsPending: boolean
 }
 
-export default function ProfileTabs({ user = {}, posts = [], onRemove, arePostsPending }: Props) {
+export default function ProfileTabs({ user = {}, posts = [], arePostsPending }: Props) {
   const [currentTab, setCurrentTab] = useState(0)
   const {
     params: { userId }
@@ -27,7 +26,12 @@ export default function ProfileTabs({ user = {}, posts = [], onRemove, arePostsP
 
   return (
     <div>
-      <AppBar elevation={1} position="static" color="default">
+      <AppBar
+        sx={{ borderTop: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}
+        elevation={0}
+        position="static"
+        color="default"
+      >
         <Tabs
           value={currentTab}
           onChange={handleTabChange}
@@ -38,7 +42,7 @@ export default function ProfileTabs({ user = {}, posts = [], onRemove, arePostsP
               px: '30px'
             },
             '& .MuiButtonBase-root:hover': {
-              backgroundColor: 'rgba(33, 150, 243, 0.1)',
+              backgroundColor: 'rgba(33, 150, 243, 0.1)'
             },
             '& .Mui-selected': {
               color: 'rgb(33, 150, 243)',
@@ -61,7 +65,7 @@ export default function ProfileTabs({ user = {}, posts = [], onRemove, arePostsP
       </AppBar>
       {currentTab === 0 && (
         <Box sx={{ pt: '2px' }}>
-          <PostList arePostsPending={arePostsPending} removePost={onRemove} posts={posts} />
+          <PostList arePostsPending={arePostsPending} posts={posts} />
         </Box>
       )}
       {currentTab === 1 && (
