@@ -42,7 +42,7 @@ export default function Profile() {
   })
 
   const { data: posts, isPending: arePostsPending } = useQuery({
-    queryKey: ['posts', userId, session],
+    queryKey: ['posts', userId, session.token],
     queryFn: async () => loadPosts(userId, session.token)
   })
 

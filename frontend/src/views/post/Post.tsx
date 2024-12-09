@@ -1,7 +1,7 @@
 import { baseUrl } from '../../config/config'
 
 import { useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useMatch } from 'react-router-dom'
 import { useQueryClient, useMutation, UseMutateFunction } from '@tanstack/react-query'
 
 import {
@@ -54,7 +54,6 @@ const ActionButton = styled(Button)(({ theme }) => ({
 
 type Props = {
   post: TPost
-  onRemove?: (post: TPost) => void
   showComments?: boolean
   bookmarkedPostsIds?: string[]
   commentMutation?: UseMutateFunction<
@@ -72,14 +71,13 @@ type Props = {
 
 export default function Post({
   post,
-  onRemove,
   showComments,
   bookmarkedPostsIds,
   commentMutation
 }: Props) {
   const queryClient = useQueryClient()
   const { user, token }: Session = auth.isAuthenticated()
-  const { pathname } = useLocation()
+  const match = useMatch('/user/:userId/post/:postId')
 
   const [isFollowing, setIsFollowing] = useState<boolean>()
   const [showReplyButton, setShowReplyButton] = useState(false)
@@ -181,11 +179,12 @@ export default function Post({
       sx={{
         borderRadius: 0,
         '&:hover': {
-          backgroundColor: `${
-            pathname === '/' || pathname === '/bookmarks' ? 'rgb(246, 247, 248)' : ''
-          }`
+          backgroundColor: `${match && match.params?.postId ? '' : 'rgb(246, 247, 248)'}`,
+          '& .MuiCollapse-root': {
+            backgroundColor: '#fff'
+          }
         },
-        borderBottom: '1px solid #e5e7eb'
+        borderBottom: match ? '' : '1px solid #e5e7eb'
       }}
     >
       <CardHeader
@@ -202,7 +201,7 @@ export default function Post({
           <PostMenu
             post={post}
             isFollowing={isFollowing}
-            onRemove={onRemove}
+            redirectAfterDelete={!!match}
             handleFollowOrUnfollow={handleFollowOrUnfollow}
             setSnackbarInfo={setSnackbarInfo}
           />
@@ -222,7 +221,7 @@ export default function Post({
       />
 
       <CardContent sx={{ p: 0, pt: '4px' }}>
-        <Box sx={{ pl: '72px', pr: 2 }}>
+        <Box sx={{ pl: match && match.params?.postId ? '16px' : '72px', pr: 2 }}>
           <Typography variant="body1">{post.text}</Typography>
 
           {post.imagePreview && (
@@ -247,8 +246,28 @@ export default function Post({
         </Box>
       </CardContent>
 
+      {match && match.params?.postId && (
+        <Box
+          sx={{
+            py: 1,
+            mx: 2,
+            mt: 1,
+            borderTop: '1px solid #e5e7eb',
+            borderBottom: '1px solid #e5e7eb'
+          }}
+        >
+          15 Likes
+        </Box>
+      )}
+
       <CardActions
-        sx={{ pl: '64px', py: '4px', pr: '8px', display: 'flex', justifyContent: 'space-between' }}
+        sx={{
+          pl: match && match.params?.postId ? '8px' : '64px',
+          py: '6px',
+          pr: '8px',
+          display: 'flex',
+          justifyContent: 'space-between'
+        }}
       >
         <Box display="flex" width="30%" justifyContent="space-between">
           <LikeButton post={post} />

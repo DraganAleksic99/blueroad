@@ -1,18 +1,18 @@
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { Box, Typography } from '@mui/material'
 import Post from './Post'
 import Spinner from '../../components/Spinner'
 import { getBookmarksIds } from '../../services/userService'
-import { TPost } from '../../routes/NewsFeed'
 import auth, { Session } from '../../auth/authHelper'
+import { TPost } from '../../routes/NewsFeed'
 
 type Props = {
   posts: TPost[]
-  removePost?: (post: TPost) => void
   arePostsPending: boolean
 }
 
-export default function PostList({ posts, removePost, arePostsPending }: Props) {
+export default function PostList({ posts, arePostsPending }: Props) {
   const { user, token }: Session = auth.isAuthenticated()
 
   const { data } = useQuery({
@@ -24,8 +24,13 @@ export default function PostList({ posts, removePost, arePostsPending }: Props) 
   })
 
   return (
-    <div style={{ minHeight: '100vh', maxWidth: '715px', margin: 'auto', backgroundColor: 'rgba(246, 247, 248, 0.5)' }}>
-      { arePostsPending && <Spinner />}
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: 'rgba(246, 247, 248, 0.5)'
+      }}
+    >
+      {arePostsPending && <Spinner />}
       {posts?.map(post => (
         <Link
           to={`/user/${post.postedBy._id}/post/${post._id}`}
@@ -33,9 +38,16 @@ export default function PostList({ posts, removePost, arePostsPending }: Props) 
           state={{ bookmarkedPostsIds: data }}
           unstable_viewTransition
         >
-          <Post post={post} onRemove={removePost} bookmarkedPostsIds={data} />
+          <Post post={post} bookmarkedPostsIds={data} />
         </Link>
       ))}
+      {!arePostsPending && posts.length !== 0 && (
+        <Box height="15vh" display="flex" justifyContent="center" alignItems="center">
+          <Typography variant="inherit" color="textSecondary">
+            End of feed.
+          </Typography>
+        </Box>
+      )}
     </div>
   )
 }

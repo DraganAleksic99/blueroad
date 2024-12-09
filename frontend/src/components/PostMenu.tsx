@@ -1,5 +1,5 @@
 import { SyntheticEvent, useState } from 'react'
-import { useMatch } from 'react-router-dom'
+import { useMatch, useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { IconButton, Menu, MenuItem } from '@mui/material'
 import {
@@ -19,7 +19,7 @@ import { TFollowCallbackFn } from './FollowProfileButton'
 type Props = {
   post: TPost
   isFollowing: boolean
-  onRemove?: (post: TPost) => void
+  redirectAfterDelete: boolean
   handleFollowOrUnfollow: (callbackFn: TFollowCallbackFn, postUserId: string) => void
   setSnackbarInfo: React.Dispatch<
     React.SetStateAction<{
@@ -32,7 +32,7 @@ type Props = {
 export default function PostMenu({
   post,
   isFollowing,
-  onRemove,
+  redirectAfterDelete,
   handleFollowOrUnfollow,
   setSnackbarInfo
 }: Props) {
@@ -41,21 +41,44 @@ export default function PostMenu({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const match = useMatch('/profile/:userId')
+  const navigate = useNavigate()
 
   const removePostMutation = useMutation({
     mutationFn: async () => {
       return removePost(post._id, token)
+    },
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: [`${match ? 'posts' : 'newsfeed'}`, match ? user._id : user, token]
+      })
+
+      const previousPostsData: TPost[] = queryClient.getQueryData([
+        `${match ? 'posts' : 'newsfeed'}`,
+        match ? user._id : user,
+        token
+      ])
+
+      queryClient.setQueryData(
+        [`${match ? 'posts' : 'newsfeed'}`, match ? user._id : user, token],
+        (oldPosts: TPost[]) => {
+          const posts = [...oldPosts]
+          return posts.filter((newPost: TPost) => newPost._id !== post._id)
+        }
+      )
+
+      return { previousPostsData }
+    },
+    onSettled() {
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      queryClient.invalidateQueries({ queryKey: ['newsfeed'] })
+
+      if (redirectAfterDelete) navigate('/')
     },
     onSuccess: () => {
       setSnackbarInfo({
         open: true,
         message: 'Post succesfully deleted!'
       })
-      setAnchorEl(null)
-      onRemove(post)
-      if (match.params.userId && match.params.userId === user._id) {
-        queryClient.invalidateQueries({ queryKey: ['posts'] })
-      }
     }
   })
 
