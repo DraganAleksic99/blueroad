@@ -3,6 +3,7 @@ import { useState, useEffect, SyntheticEvent } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -10,10 +11,12 @@ import {
   Avatar,
   Typography,
   Box,
+  Button,
   Menu,
   useMediaQuery,
   SwipeableDrawer,
-  MenuItem
+  MenuItem,
+  Dialog
 } from '@mui/material'
 import {
   Home as HomeIcon,
@@ -23,11 +26,14 @@ import {
   MoreHoriz as MoreHorizIcon
 } from '@mui/icons-material'
 import auth, { Session } from '../auth/authHelper'
+import NewPost from '../views/post/NewPost'
 
 export default function Navigation() {
   const { user }: Session = auth.isAuthenticated()
   const isMobile = useMediaQuery('(max-width:600px)')
   const [open, setOpen] = useState(false)
+
+  const [isDialogOpen, setisDialogOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const navigate = useNavigate()
 
@@ -40,6 +46,10 @@ export default function Navigation() {
 
   const toggleDrawer = (state: boolean) => () => {
     setOpen(state)
+  }
+
+  const closeDialog = () => {
+    setisDialogOpen(false)
   }
 
   useEffect(() => {
@@ -93,34 +103,61 @@ export default function Navigation() {
             {navigationItems.map(item => (
               <NavLink key={item.url} to={item.url}>
                 {({ isActive }) => (
-                  <Box sx={{ '&:hover .MuiListItemButton-root': {backgroundColor: 'rgba(33, 150, 243, 0.1)' }}}>
-                  <ListItemButton
-                    key={item.text}
+                  <Box
                     sx={{
-                      width: 'fit-content',
-                      borderRadius: '40px',
-                      pr: 3,
-                      color: isActive ? 'rgb(33, 150, 243)' : '#6b7280',
-                      '& .MuiListItemIcon-root': {
-                        color: isActive ? 'rgb(33, 150, 243)' : ''
+                      '&:hover .MuiListItemButton-root': {
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)'
                       }
                     }}
                   >
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText
-                      primaryTypographyProps={{
-                        fontSize: {
-                          lg: '1.2rem'
-                        },
-                        fontWeight: 500
+                    <ListItemButton
+                      key={item.text}
+                      sx={{
+                        width: 'fit-content',
+                        borderRadius: '40px',
+                        pr: 3,
+                        color: isActive ? 'rgb(33, 150, 243)' : '#6b7280',
+                        '& .MuiListItemIcon-root': {
+                          color: isActive ? 'rgb(33, 150, 243)' : ''
+                        }
                       }}
-                      primary={item.text}
-                    />
-                  </ListItemButton>
+                    >
+                      <ListItemIcon>{item.icon}</ListItemIcon>
+                      <ListItemText
+                        primaryTypographyProps={{
+                          fontSize: {
+                            lg: '1.2rem'
+                          },
+                          fontWeight: 500
+                        }}
+                        primary={item.text}
+                      />
+                    </ListItemButton>
                   </Box>
                 )}
               </NavLink>
             ))}
+            <ListItem sx={{ pr: 6 }}>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: 'rgb(33, 150, 243)',
+                  borderRadius: '30px',
+                  textTransform: 'none',
+                  width: '100%',
+                  height: '50px',
+                  mt: 2,
+                  px: 2,
+                  fontSize: {
+                    lg: '1.1rem'
+                  },
+                  fontWeight: 500
+                }}
+                onClick={() => setisDialogOpen(true)}
+              >
+                New post
+              </Button>
+            </ListItem>
           </List>
         </Box>
         <List>
@@ -140,7 +177,7 @@ export default function Navigation() {
             </ListItemAvatar>
             <ListItemText
               primary={user.name}
-              secondary={`@${user.email}`}
+              secondary={`${user.email}`}
               sx={{
                 maxWidth: '145px',
                 overflowX: 'hidden'
@@ -174,12 +211,47 @@ export default function Navigation() {
               }
             }}
           >
-            <MenuItem onClick={() => {
-                    auth.clearJWT(() => navigate('/login'))
-                  }} sx={{ fontWeight: 500 }}>Log out @{user.email}</MenuItem>
+            <MenuItem
+              onClick={() => {
+                auth.clearJWT(() => navigate('/login'))
+              }}
+              sx={{ fontWeight: 500 }}
+            >
+              Log out {user.email}
+            </MenuItem>
           </Menu>
         </List>
       </Box>
+      <Dialog
+        PaperProps={{
+          style: {
+            width: '600px',
+            borderRadius: '12px',
+            position: 'absolute',
+            top: 60,
+            margin: 0
+          }
+        }}
+        open={isDialogOpen}
+        onClose={() => setisDialogOpen(false)}
+      >
+        <Box p={1} pb={0} borderBottom="1px solid #e5e7eb">
+          <Button
+            variant="text"
+            sx={{
+              color: 'rgb(33, 150, 243)',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 1,
+              borderRadius: '20px'
+            }}
+            onClick={() => setisDialogOpen(false)}
+          >
+            Cancel
+          </Button>
+        </Box>
+        <NewPost closeDialog={closeDialog} isDialogOpen={isDialogOpen} />
+      </Dialog>
     </SwipeableDrawer>
   )
 }

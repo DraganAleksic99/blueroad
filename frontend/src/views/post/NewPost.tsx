@@ -50,7 +50,13 @@ const VisuallyHiddenInput = styled('input')({
 
 const MAX_CHARS = 300
 
-export default function NewPost() {
+export default function NewPost({
+  closeDialog,
+  isDialogOpen
+}: {
+  closeDialog?: () => void
+  isDialogOpen: boolean
+}) {
   const queryClient = useQueryClient()
   const [imagePreview, setImagePreview] = useState(null)
   const { user, token }: Session = auth.isAuthenticated()
@@ -61,7 +67,7 @@ export default function NewPost() {
   })
   const progress = (values.text.length / MAX_CHARS) * 100
 
-  const { mutate } = useMutation({
+  const addPostMutation = useMutation({
     mutationFn: async (postData: FormData) => {
       return createPost(user._id, token, postData)
     },
@@ -112,7 +118,8 @@ export default function NewPost() {
     values.text && postData.append('text', values.text)
     values.photo && postData.append('photo', values.photo)
 
-    mutate(postData)
+    addPostMutation.mutate(postData)
+    closeDialog()
     setValues({ ...values, text: '', photo: null })
   }
 
@@ -123,14 +130,14 @@ export default function NewPost() {
 
   return (
     <Paper sx={{ p: 2, borderRadius: 0, borderBottom: '1px solid #e5e7eb' }}>
-      <Stack direction="row" spacing={2} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
+      <Stack direction="row" spacing={2} sx={{ mb: 1, display: 'flex', alignItems: 'flex-start' }}>
         <Link to={`/user/${user._id}`}>
           <Avatar src={baseUrl + '/api/users/photo/' + user._id} />
         </Link>
         <TextField
           fullWidth
           multiline
-          minRows={2}
+          minRows={isDialogOpen ? 4 : 2}
           variant="outlined"
           placeholder="What's on your mind?"
           value={values.text}

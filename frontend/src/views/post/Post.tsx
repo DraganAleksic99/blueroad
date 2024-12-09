@@ -69,12 +69,7 @@ type Props = {
   >
 }
 
-export default function Post({
-  post,
-  showComments,
-  bookmarkedPostsIds,
-  commentMutation
-}: Props) {
+export default function Post({ post, showComments, bookmarkedPostsIds, commentMutation }: Props) {
   const queryClient = useQueryClient()
   const { user, token }: Session = auth.isAuthenticated()
   const match = useMatch('/user/:userId/post/:postId')
@@ -245,6 +240,20 @@ export default function Post({
           )}
         </Box>
       </CardContent>
+
+      {match && match.params?.postId && (
+        <Box
+          sx={{
+            py: 1,
+            mx: 2,
+            mt: 1,
+            borderTop: '1px solid #e5e7eb',
+            borderBottom: '1px solid #e5e7eb'
+          }}
+        >
+          15 Likes
+        </Box>
+      )}
 
       <CardActions
         sx={{
