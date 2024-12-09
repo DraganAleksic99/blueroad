@@ -1,11 +1,10 @@
 import { useEffect } from 'react'
-import { defer, useLocation } from 'react-router-dom'
+import { defer, useLocation, Link } from 'react-router-dom'
 import { useQuery, QueryClient } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
 import { Paper, Box } from '@mui/material'
-import MainLayout from '../layouts/MainLayout'
 import UserCard from '../components/UserCard'
 import UserCardSkeleton from '../components/skeletons/UserCardSkeleton'
+import SectionTitle from '../components/SectionTitle'
 import { getUsers } from '../services/userService'
 
 const usersQuery = () => ({
@@ -30,32 +29,31 @@ export default function Users() {
   const { data: users, isPending } = useQuery(usersQuery())
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    window.scrollTo(0, 0)
+  }, [pathname])
 
   return (
     <Paper elevation={2} sx={{ borderRight: '1px solid #e5e7eb' }}>
-      <MainLayout>
-        <Box sx={{ p: 2, pt: 0, columnCount: 2 }}>
-          {isPending
-            ? Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} style={{ display: 'inline-block', width: '100%', marginTop: '16px' }}>
-                  <UserCardSkeleton />
-                </div>
-              ))
-            : users.map(user => {
-                return (
-                  <Link
-                    to={`/user/${user._id}`}
-                    key={user._id}
-                    style={{ display: 'inline-block', width: '100%', marginTop: '16px' }}
-                  >
-                    <UserCard user={user} />
-                  </Link>
-                )
-              })}
-        </Box>
-      </MainLayout>
+      <SectionTitle title="Users" />
+      <Box sx={{ p: 2, pt: 0, columnCount: 2 }}>
+        {isPending
+          ? Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} style={{ display: 'inline-block', width: '100%', marginTop: '16px' }}>
+                <UserCardSkeleton />
+              </div>
+            ))
+          : users.map(user => {
+              return (
+                <Link
+                  to={`/profile/${user._id}`}
+                  key={user._id}
+                  style={{ display: 'inline-block', width: '100%', marginTop: '16px' }}
+                >
+                  <UserCard user={user} />
+                </Link>
+              )
+            })}
+      </Box>
     </Paper>
   )
 }
