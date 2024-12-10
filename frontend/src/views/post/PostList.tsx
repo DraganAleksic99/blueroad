@@ -4,7 +4,7 @@ import { Box, Typography } from '@mui/material'
 import Post from './Post'
 import Spinner from '../../components/Spinner'
 import { getBookmarksIds } from '../../services/userService'
-import auth, { Session } from '../../auth/authHelper'
+import auth, { Session } from '../../utils/utils'
 import { TPost } from '../../routes/NewsFeed'
 
 type Props = {

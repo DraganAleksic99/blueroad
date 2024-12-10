@@ -14,7 +14,7 @@ import {
   styled
 } from '@mui/material'
 import { ImageOutlined, Close } from '@mui/icons-material'
-import auth, { Session } from '../../auth/authHelper'
+import auth, { Session } from '../../utils/utils'
 import { TPost } from '../../routes/NewsFeed'
 import { createPost } from '../../services/postService'
 

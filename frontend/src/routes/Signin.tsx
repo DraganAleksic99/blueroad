@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { signin } from '../auth/apiAuth'
-import auth from '../auth/authHelper'
+import { signin } from '../services/authService'
+import auth from '../utils/utils'
 import { Navigate } from 'react-router'
 import {
   Typography,

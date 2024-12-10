@@ -12,7 +12,7 @@ import {
 import Tooltip from './Tooltip'
 import { followUser, unfollowUser } from '../services/userService'
 import { removePost } from '../services/postService'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import { TPost } from '../routes/NewsFeed'
 import { TFollowCallbackFn } from './FollowProfileButton'
 

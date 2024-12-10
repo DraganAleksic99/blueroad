@@ -5,7 +5,7 @@ import { Card, CardContent, CardMedia, Box, Typography, Button } from '@mui/mate
 import { CalendarToday as CalendarIcon } from '@mui/icons-material'
 import FollowProfileButton, { TFollowCallbackFn } from './FollowProfileButton'
 import SectionTitle from './SectionTitle'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import { TUser } from '../routes/Profile'
 import { TPost } from '../routes/NewsFeed'
 import { createHandleFromEmail } from '../utils/utils'

@@ -4,7 +4,7 @@ import { Box } from '@mui/material'
 import FollowGrid from '../components/FollowGrid'
 import SectionTitle from '../components/SectionTitle'
 import { listLikedByUsers } from '../services/postService'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 
 export default function LikedBy() {
   const session: Session = auth.isAuthenticated()

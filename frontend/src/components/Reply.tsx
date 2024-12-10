@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { UseMutateFunction } from '@tanstack/react-query'
 import { Box, CardContent, Button, TextField, styled, Avatar, Stack } from '@mui/material'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import { TComment } from '../routes/NewsFeed'
 
 const StyledTextField = styled(TextField)({

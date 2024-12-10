@@ -21,7 +21,7 @@ import {
 } from '@mui/icons-material'
 import { followUser, unfollowUser } from '../services/userService'
 import { uncomment } from '../services/postService'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import { TComment, TPost } from '../routes/NewsFeed'
 import { TFollowCallbackFn } from './FollowProfileButton'
 import { createHandleFromEmail } from '../utils/utils'

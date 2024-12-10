@@ -1,7 +1,7 @@
 import { baseUrl } from '../config/config'
 import { ChangeEvent, useState } from 'react'
 import { useMatch, useLocation, useNavigate } from 'react-router'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import { update } from '../services/userService'
 import {
   Card,

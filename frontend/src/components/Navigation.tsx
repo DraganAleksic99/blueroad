@@ -26,7 +26,7 @@ import {
   MoreHoriz as MoreHorizIcon,
   Settings as SettingsIcon
 } from '@mui/icons-material'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import NewPost from '../views/post/NewPost'
 import { createHandleFromEmail } from '../utils/utils'
 

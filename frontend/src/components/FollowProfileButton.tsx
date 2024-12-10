@@ -1,6 +1,6 @@
 import { Button } from '@mui/material'
 import { followUser, unfollowUser } from '../services/userService'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 
 type FollowFn = typeof followUser
 type UnfollowFn = typeof unfollowUser

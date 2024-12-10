@@ -28,7 +28,7 @@ import LikeButton from '../../components/LikeButton'
 import PostMenu from '../../components/PostMenu'
 
 import { comment } from '../../services/postService'
-import auth, { Session } from '../../auth/authHelper'
+import auth, { Session } from '../../utils/utils'
 import { TUser } from '../../routes/Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 import { TComment, TPost } from '../../routes/NewsFeed'

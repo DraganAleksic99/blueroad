@@ -6,7 +6,7 @@ import { IconButton } from '@mui/material'
 import { Bookmark as BookmarkIcon, BookmarkBorder as BookmarkBorderIcon } from '@mui/icons-material'
 import Tooltip from './Tooltip'
 import { addBookmark, removeBookmark } from '../services/userService'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import { TPost } from '../routes/NewsFeed'
 
 type addBookmarkFn = typeof addBookmark

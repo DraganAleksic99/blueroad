@@ -9,7 +9,7 @@ import ProfileCardSkeleton from '../components/skeletons/ProfileCardSkeleton'
 
 import { getUser } from '../services/userService'
 import { loadPosts } from '../services/postService'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import { TPost } from '../routes/NewsFeed'
 import { TFollowCallbackFn } from '../components/FollowProfileButton'
 

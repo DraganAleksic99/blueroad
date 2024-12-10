@@ -5,7 +5,7 @@ import { Card, Grid } from '@mui/material'
 import Post from '../views/post/Post'
 import PostSkeleton from '../components/skeletons/PostSkeleton'
 import SectionTitle from '../components/SectionTitle'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import { loadPost, comment } from '../services/postService'
 import { TPost } from './NewsFeed'
 

@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Avatar, Card, CardHeader, Button, Typography, Box } from '@mui/material'
 import { followUser, unfollowUser } from '../services/userService'
 import { TUser } from '../routes/Profile'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import { TFollowCallbackFn } from './FollowProfileButton'
 import { createHandleFromEmail } from '../utils/utils'
 

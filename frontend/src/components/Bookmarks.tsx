@@ -3,7 +3,7 @@ import { Box } from '@mui/material'
 import PostList from '../views/post/PostList'
 import SectionTitle from './SectionTitle'
 import { getBookmarks } from '../services/userService'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 
 export default function Bookmarks() {
   const { user, token }: Session = auth.isAuthenticated()

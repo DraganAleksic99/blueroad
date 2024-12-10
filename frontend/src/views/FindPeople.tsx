@@ -17,7 +17,7 @@ import {
   styled
 } from '@mui/material'
 import { followUser, getUsersToFollow } from '../services/userService'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import { createHandleFromEmail } from '../utils/utils'
 import { TUser } from '../routes/Profile'
 

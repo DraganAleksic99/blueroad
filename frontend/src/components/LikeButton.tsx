@@ -5,7 +5,7 @@ import { Button, styled } from '@mui/material'
 import { FavoriteBorder as FavoriteBorderIcon, Favorite as FavoriteIcon } from '@mui/icons-material'
 import Tooltip from './Tooltip'
 import { likePost, unlikePost } from '../services/postService'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import { TPost } from '../routes/NewsFeed'
 
 const ActionButton = styled(Button)(({ theme }) => ({

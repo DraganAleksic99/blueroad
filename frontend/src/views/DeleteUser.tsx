@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 import { remove } from '../services/userService'
 import { Navigate } from 'react-router'
 import {

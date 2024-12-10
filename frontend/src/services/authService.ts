@@ -1,4 +1,4 @@
-import { baseUrl } from "../config/config";
+import { baseUrl } from '../config/config'
 
 const signin = async (user: { email: string; password: string }) => {
   try {
@@ -29,7 +29,7 @@ const signout = async () => {
     if (!response.ok) {
       throw new Error(`Something went wrong. Please try again.`)
     }
-    
+
     return await response.json()
   } catch (err) {
     throw new Error(`Something went wrong. Please try again.`)

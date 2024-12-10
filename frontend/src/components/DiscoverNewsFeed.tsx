@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Card, Grid } from '@mui/material'
 import PostList from '../views/post/PostList'
 import { listDiscoverNewsFeed } from '../services/postService'
-import auth, { Session } from '../auth/authHelper'
+import auth, { Session } from '../utils/utils'
 
 export default function DiscoverNewsFeed() {
   const { user, token }: Session = auth.isAuthenticated()
