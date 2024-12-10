@@ -7,6 +7,7 @@ import { followUser, unfollowUser } from '../services/userService'
 import { TUser } from '../routes/Profile'
 import auth, { Session } from '../auth/authHelper'
 import { TFollowCallbackFn } from './FollowProfileButton'
+import { createHandleFromEmail } from '../utils/utils'
 
 export default function GridCard({ user }: { user: TUser }) {
   const queryClient = useQueryClient()
@@ -120,7 +121,7 @@ export default function GridCard({ user }: { user: TUser }) {
           }
           subheader={
             <div>
-              <Typography component="span">{user.email}</Typography>
+              <Typography component="span">{createHandleFromEmail(user.email)}</Typography>
               {isFollower && (
                 <Box
                   sx={{

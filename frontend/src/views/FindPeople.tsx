@@ -18,6 +18,7 @@ import {
 } from '@mui/material'
 import { followUser, getUsersToFollow } from '../services/userService'
 import auth, { Session } from '../auth/authHelper'
+import { createHandleFromEmail } from '../utils/utils'
 import { TUser } from '../routes/Profile'
 
 const WhoToFollowPaper = styled(Paper)({
@@ -170,7 +171,7 @@ export default function FindPeople() {
                 </ListItemAvatar>
                 <ListItemText
                   primary={user.name}
-                  secondary={user.email}
+                  secondary={createHandleFromEmail(user.email)}
                   sx={{
                     maxWidth: '170px',
                     overflowX: 'hidden',

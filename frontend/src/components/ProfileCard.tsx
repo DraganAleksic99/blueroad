@@ -8,6 +8,7 @@ import SectionTitle from './SectionTitle'
 import auth, { Session } from '../auth/authHelper'
 import { TUser } from '../routes/Profile'
 import { TPost } from '../routes/NewsFeed'
+import { createHandleFromEmail } from '../utils/utils'
 
 type Props = {
   user: TUser
@@ -68,7 +69,7 @@ export default function ProfileCard({
               )}
             </Typography>
             <Typography variant="subtitle1" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
-              {user.email}
+              {createHandleFromEmail(user.email)}
             </Typography>
             <Box sx={{ display: 'flex', gap: '30px', pt: 2 }}>
               <div>

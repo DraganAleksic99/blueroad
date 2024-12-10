@@ -24,6 +24,7 @@ import { uncomment } from '../services/postService'
 import auth, { Session } from '../auth/authHelper'
 import { TComment, TPost } from '../routes/NewsFeed'
 import { TFollowCallbackFn } from './FollowProfileButton'
+import { createHandleFromEmail } from '../utils/utils'
 
 type Props = {
   postId?: string
@@ -108,7 +109,7 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
             <span>{new Date(comment.created).toDateString()}</span>
           </div>
         }
-        subheader={comment.postedBy.email}
+        subheader={createHandleFromEmail(comment.postedBy.email)}
         action={
           <>
             <Tooltip

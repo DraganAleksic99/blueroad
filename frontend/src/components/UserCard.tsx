@@ -16,6 +16,7 @@ import {
   CalendarToday as CalendarIcon
 } from '@mui/icons-material'
 import { TUser } from '../routes/Profile'
+import { createHandleFromEmail } from '../utils/utils'
 
 export const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -54,7 +55,7 @@ export default function UserCard({ user }: { user: TUser }) {
         subheader={
           <InfoRow>
             <EmailIcon fontSize="small" />
-            <Typography variant="body2">{user.email}</Typography>
+            <Typography variant="body2">{createHandleFromEmail(user.email)}</Typography>
           </InfoRow>
         }
       />

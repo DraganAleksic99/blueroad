@@ -32,6 +32,7 @@ import auth, { Session } from '../../auth/authHelper'
 import { TUser } from '../../routes/Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 import { TComment, TPost } from '../../routes/NewsFeed'
+import { createHandleFromEmail } from '../../utils/utils'
 
 export const ActionButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
@@ -213,7 +214,7 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
             <span>{new Date(post.created).toDateString()}</span>
           </>
         }
-        subheader={post.postedBy.email}
+        subheader={createHandleFromEmail(post.postedBy.email)} 
       />
 
       <CardContent sx={{ p: 0, pt: '4px' }}>

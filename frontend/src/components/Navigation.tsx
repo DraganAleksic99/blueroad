@@ -1,6 +1,6 @@
 import { baseUrl } from '../config/config'
 import { useState, useEffect, SyntheticEvent } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import {
   List,
   ListItem,
@@ -28,6 +28,7 @@ import {
 } from '@mui/icons-material'
 import auth, { Session } from '../auth/authHelper'
 import NewPost from '../views/post/NewPost'
+import { createHandleFromEmail } from '../utils/utils'
 
 export default function Navigation() {
   const { user }: Session = auth.isAuthenticated()
@@ -97,9 +98,14 @@ export default function Navigation() {
         }}
       >
         <Box>
-          <Typography variant="h6" sx={{ p: 2, fontWeight: 'bold', color: 'rgb(33, 150, 243)' }}>
-            Blueroad
-          </Typography>
+          <Link style={{ width: 'fit-content', display: 'inline-block' }} to="/">
+            <Typography
+              variant="h6"
+              sx={{ p: 2, fontWeight: 'bold', color: 'rgb(33, 150, 243)' }}
+            >
+              Blueroad
+            </Typography>
+          </Link>
           <List>
             {navigationItems.map(item => (
               <NavLink key={item.url} to={item.url}>
@@ -212,7 +218,7 @@ export default function Navigation() {
             </ListItemAvatar>
             <ListItemText
               primary={user.name}
-              secondary={`${user.email}`}
+              secondary={createHandleFromEmail(user.email)}
               sx={{
                 maxWidth: '145px',
                 overflowX: 'hidden'
@@ -252,7 +258,7 @@ export default function Navigation() {
               }}
               sx={{ fontWeight: 500 }}
             >
-              Log out {user.email}
+              Log out {createHandleFromEmail(user.email)}
             </MenuItem>
           </Menu>
         </List>
