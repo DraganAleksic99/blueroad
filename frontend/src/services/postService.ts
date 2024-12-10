@@ -1,7 +1,7 @@
 import { baseUrl } from '../config/config'
 import { TComment, TPost } from '../routes/NewsFeed'
 
-const listFollowingNewsFeed = async (userId: string, token: string) => {
+const listFollowingNewsFeed = async (userId: string, token: string): Promise<TPost[]> => {
   try {
     const response = await fetch(baseUrl + '/api/posts/feed/following/' + userId, {
       method: 'GET',
@@ -24,9 +24,32 @@ const listFollowingNewsFeed = async (userId: string, token: string) => {
   }
 }
 
-const listDiscoverNewsFeed = async (userId: string, token: string) => {
+const listDiscoverNewsFeed = async (userId: string, token: string): Promise<TPost[]> => {
   try {
     const response = await fetch(baseUrl + '/api/posts/feed/discover/' + userId, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      }
+    })
+
+    if (response.status === 401) sessionStorage.removeItem('jwt')
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
+
+    return await response.json()
+  } catch (err) {
+    throw new Error('Something went wrong. Try again.')
+  }
+}
+
+const listLikedByUsers = async (postId: string, token: string) => {
+  try {
+    const response = await fetch(baseUrl + '/api/post/' + postId + '/likedBy', {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -241,6 +264,7 @@ const uncomment = async (
 export {
   listFollowingNewsFeed,
   listDiscoverNewsFeed,
+  listLikedByUsers,
   loadPost,
   loadPosts,
   createPost,

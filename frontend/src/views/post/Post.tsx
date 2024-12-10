@@ -76,6 +76,7 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
 
   const [isFollowing, setIsFollowing] = useState<boolean>()
   const [showReplyButton, setShowReplyButton] = useState(false)
+  const [likesCount, setLikesCount] = useState(post.likes.length)
 
   const [snackbarInfo, setSnackbarInfo] = useState({
     open: false,
@@ -221,7 +222,6 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
 
           {post.imagePreview && (
             <CardMedia
-              loading="lazy"
               component="img"
               image={post.imagePreview}
               alt="Post content"
@@ -232,6 +232,8 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
           {post.photo && (
             <CardMedia
               loading="lazy"
+              height="100%"
+              width="100%"
               component="img"
               image={baseUrl + '/api/posts/photo/' + post._id}
               alt="Post content"
@@ -240,6 +242,25 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
           )}
         </Box>
       </CardContent>
+
+      {match && match.params?.postId && (
+        <Box
+          sx={{
+            py: 1,
+            mx: 2,
+            mt: '10px',
+            borderTop: '1px solid #e5e7eb',
+            borderBottom: '1px solid #e5e7eb'
+          }}
+        >
+          <Link to={match?.pathname + '/likedBy'} className="text-underline">
+            <Typography component="span" sx={{ pr: 1, fontWeight: 600 }}>
+              {likesCount}
+            </Typography>
+            {likesCount === 1 ? 'like' : 'likes'}
+          </Link>
+        </Box>
+      )}
 
       <CardActions
         sx={{
@@ -251,7 +272,7 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
         }}
       >
         <Box display="flex" width="30%" justifyContent="space-between">
-          <LikeButton post={post} />
+          <LikeButton post={post} onLike={setLikesCount} />
           <Tooltip title="Reply" offset={-5}>
             <ActionButton
               sx={{ borderRadius: '30px' }}

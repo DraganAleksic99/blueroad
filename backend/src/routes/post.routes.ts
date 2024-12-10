@@ -15,6 +15,7 @@ router.route('/api/posts/by/:userId').get(authCtrl.requireSignIn, postCtrl.listB
 router.route('/api/posts/new/:userId').post(authCtrl.requireSignIn, postCtrl.create)
 
 router.route('/api/post/by/:postId').get(authCtrl.requireSignIn, postCtrl.read)
+router.route('/api/post/:id/likedBy').get(authCtrl.requireSignIn, postCtrl.listLikedByUsers)
 
 router.route('/api/posts/photo/:postId').get(postCtrl.photo)
 router

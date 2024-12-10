@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Card, Grid } from '@mui/material'
 import Post from '../views/post/Post'
 import PostSkeleton from '../components/skeletons/PostSkeleton'
+import SectionTitle from '../components/SectionTitle'
 import auth, { Session } from '../auth/authHelper'
 import { loadPost, comment } from '../services/postService'
 import { TPost } from './NewsFeed'
@@ -79,6 +80,7 @@ export default function PostFeed() {
   return (
     <Grid container sx={{ borderRight: '1px solid #e5e7eb', minHeight: '100vh' }}>
       <Grid item sx={{ width: '100%' }}>
+        <SectionTitle title='Post' />
         <Card elevation={0} sx={{ borderRadius: 0 }}>
           {isPending ? (
             <PostSkeleton />

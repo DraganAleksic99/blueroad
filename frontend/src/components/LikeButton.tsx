@@ -34,9 +34,10 @@ export type TLikeCallbackFn = likeFn | unlikeFn
 
 type Props = {
   post: TPost
+  onLike: React.Dispatch<React.SetStateAction<number>>
 }
 
-export default function LikeButton({ post }: Props) {
+export default function LikeButton({ post, onLike }: Props) {
   const queryClient = useQueryClient()
   const { user, token }: Session = auth.isAuthenticated()
 
@@ -77,6 +78,7 @@ export default function LikeButton({ post }: Props) {
       if (match !== isLiked) {
         setIsLiked(match)
         setLikesCount(data.length)
+        onLike(data.length)
       }
 
       queryClient.invalidateQueries({
@@ -93,6 +95,11 @@ export default function LikeButton({ post }: Props) {
         queryKey: ['posts'],
         refetchType: 'all'
       })
+
+      queryClient.invalidateQueries({
+        queryKey: ['likedBy'],
+        refetchType: 'all'
+      })
     }
   })
 
@@ -106,17 +113,21 @@ export default function LikeButton({ post }: Props) {
 
     if (previousLikeMutation === 'unliked' && !isLiked) {
       setIsLiked(true)
+      onLike(likesCount + 1)
       return setLikesCount(likesCount + 1)
     }
 
     if (previousLikeMutation === 'liked' && isLiked) {
       setIsLiked(false)
+      onLike(likesCount - 1)
       return setLikesCount(likesCount - 1)
     }
 
     if (isLiked) {
+      onLike(likesCount - 1)
       setLikesCount(likesCount - 1)
     } else {
+      onLike(likesCount + 1)
       setLikesCount(likesCount + 1)
     }
   }

@@ -19,6 +19,7 @@ import EditProfile from './routes/EditProfile'
 import NewsFeed from './routes/NewsFeed'
 import PostFeed from './routes/PostFeed'
 import Bookmarks from './components/Bookmarks'
+import LikedBy from './routes/LikedBy'
 
 const queryClient = new QueryClient()
 
@@ -76,6 +77,7 @@ const router = createBrowserRouter(
             </ProtectedRoute>
           }
         />
+        <Route path="user/:userId/post/:postId/likedBy" element={<LikedBy />} />
       </Route>
     </Route>
   )

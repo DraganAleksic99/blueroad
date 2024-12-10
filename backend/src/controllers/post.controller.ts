@@ -42,6 +42,22 @@ const listDiscoverNewsFeed = async (req: Request, res: Response) => {
   }
 }
 
+const listLikedByUsers = async (req: Request, res: Response) => {
+  try {
+    const post = await Post.findById(req.params.id)
+      .select('likes')
+      .populate('likes', '_id name email about followers following')
+      .lean()
+      .exec()
+
+    res.json(post.likes)
+  } catch (err) {
+    return res.status(400).json({
+      error: dbErrorHandler.getErrorMessage(err)
+    })
+  }
+}
+
 const listByUser = async (req: Request, res: Response) => {
   try {
     const posts = await Post.find({ postedBy: req.profile._id })
@@ -220,6 +236,7 @@ const uncomment = async (req: Request, res: Response) => {
 export default {
   listFollowingNewsFeed,
   listDiscoverNewsFeed,
+  listLikedByUsers,
   listByUser,
   create,
   read,
