@@ -33,9 +33,24 @@ export default function ProfileTabs({ user = {}, posts = [], arePostsPending }: 
         color="default"
       >
         <Tabs
+          classes={{
+            flexContainer: 'flexContainer',
+            indicator: 'indicator'
+          }}
           value={currentTab}
           onChange={handleTabChange}
           sx={{
+            '& .indicator': {
+              display: 'flex',
+              justifyContent: 'center',
+              backgroundColor: 'transparent',
+              '& > span': {
+                maxWidth: 70,
+                width: '100%',
+                backgroundColor: 'rgb(33, 150, 243)',
+                borderRadius: '2px'
+              }
+            },
             '& .MuiButtonBase-root': {
               textTransform: 'none',
               fontSize: '1rem',
@@ -51,10 +66,10 @@ export default function ProfileTabs({ user = {}, posts = [], arePostsPending }: 
           }}
           centered
           TabIndicatorProps={{
+            children: <span />,
             sx: {
               height: '4px',
-              borderRadius: '2px',
-              backgroundColor: 'rgb(33, 150, 243)'
+              borderRadius: '4px'
             }
           }}
         >

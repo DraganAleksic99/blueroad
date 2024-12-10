@@ -7,14 +7,13 @@ import { listLikedByUsers } from '../services/postService'
 import auth, { Session } from '../auth/authHelper'
 
 export default function LikedBy() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { user, token }: Session = auth.isAuthenticated()
+  const session: Session = auth.isAuthenticated()
   const match = useMatch('/user/:userId/post/:postId/likedBy')
 
   const { data } = useQuery({
-    queryKey: ['likedBy', match.params.postId, token],
+    queryKey: ['likedBy', match.params.postId, session.token],
     queryFn: async () => {
-      return listLikedByUsers(match.params.postId, token)
+      return listLikedByUsers(match.params.postId, session.token)
     },
     staleTime: Infinity
   })
