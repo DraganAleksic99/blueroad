@@ -33,7 +33,7 @@ import { TUser } from '../../routes/Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 import { TComment, TPost } from '../../routes/NewsFeed'
 
-const ActionButton = styled(Button)(({ theme }) => ({
+export const ActionButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
   color: theme.palette.text.secondary,
   borderRadius: '8px',
@@ -240,7 +240,7 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
           )}
         </Box>
       </CardContent>
-      
+
       <CardActions
         sx={{
           pl: match && match.params?.postId ? '8px' : '64px',

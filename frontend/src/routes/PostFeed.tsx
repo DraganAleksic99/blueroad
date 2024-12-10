@@ -3,6 +3,7 @@ import { useMatch, useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Card, Grid } from '@mui/material'
 import Post from '../views/post/Post'
+import PostSkeleton from '../components/skeletons/PostSkeleton'
 import auth, { Session } from '../auth/authHelper'
 import { loadPost, comment } from '../services/postService'
 import { TPost } from './NewsFeed'
@@ -80,7 +81,7 @@ export default function PostFeed() {
       <Grid item sx={{ width: '100%' }}>
         <Card elevation={0} sx={{ borderRadius: 0 }}>
           {isPending ? (
-            <h1>Loading...</h1>
+            <PostSkeleton />
           ) : (
             <Post commentMutation={addCommentMutation.mutate} post={post} showComments />
           )}

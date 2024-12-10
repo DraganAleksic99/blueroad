@@ -111,6 +111,7 @@ export default function Navigation() {
                     }}
                   >
                     <ListItemButton
+                      disableRipple
                       key={item.text}
                       sx={{
                         width: 'fit-content',
@@ -139,6 +140,8 @@ export default function Navigation() {
             ))}
             <ListItem sx={{ pr: 6 }}>
               <Button
+                disableRipple
+                disableElevation
                 variant="contained"
                 sx={{
                   backgroundColor: 'rgb(33, 150, 243)',
@@ -162,6 +165,7 @@ export default function Navigation() {
         </Box>
         <List>
           <ListItemButton
+            disableRipple
             onClick={handleMenuOpen}
             sx={{
               borderRadius: '40px',
