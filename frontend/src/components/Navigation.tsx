@@ -23,7 +23,8 @@ import {
   People as UsersIcon,
   Person as ProfileIcon,
   Bookmark as BookmarkIcon,
-  MoreHoriz as MoreHorizIcon
+  MoreHoriz as MoreHorizIcon,
+  Settings as SettingsIcon
 } from '@mui/icons-material'
 import auth, { Session } from '../auth/authHelper'
 import NewPost from '../views/post/NewPost'
@@ -138,6 +139,36 @@ export default function Navigation() {
                 )}
               </NavLink>
             ))}
+            <Box
+              sx={{
+                '&:hover .MuiListItemButton-root': {
+                  backgroundColor: 'rgba(33, 150, 243, 0.1)'
+                }
+              }}
+            >
+              <ListItemButton
+                disableRipple
+                sx={{
+                  width: 'fit-content',
+                  borderRadius: '40px',
+                  pr: 3,
+                  color: '#6b7280'
+                }}
+              >
+                <ListItemIcon>
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primaryTypographyProps={{
+                    fontSize: {
+                      lg: '1.2rem'
+                    },
+                    fontWeight: 500
+                  }}
+                  primary="Settings"
+                />
+              </ListItemButton>
+            </Box>
             <ListItem sx={{ pr: 6 }}>
               <Button
                 disableRipple
