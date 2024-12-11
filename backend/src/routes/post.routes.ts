@@ -28,6 +28,8 @@ router.route('/api/posts/unlike').put(authCtrl.requireSignIn, postCtrl.unlike)
 router.route('/api/posts/comment/:userId').put(authCtrl.requireSignIn, postCtrl.comment)
 router.route('/api/posts/uncomment').put(authCtrl.requireSignIn, postCtrl.uncomment)
 
+router.route('/api/post/:id/views/increment').get(authCtrl.requireSignIn, postCtrl.incrementViews)
+
 router.param('userId', userCtrl.userById)
 router.param('postId', postCtrl.postById)
 

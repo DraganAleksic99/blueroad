@@ -233,6 +233,22 @@ const uncomment = async (req: Request, res: Response) => {
   }
 }
 
+const incrementViews = async (req: Request, res: Response) => {
+  try {
+    await Post.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } })
+      .lean()
+      .exec()
+
+    res.json({
+      message: 'Views incremented successfully.'
+    })
+  } catch (err) {
+    return res.status(400).json({
+      error: dbErrorHandler.getErrorMessage(err)
+    })
+  }
+}
+
 export default {
   listFollowingNewsFeed,
   listDiscoverNewsFeed,
@@ -247,5 +263,6 @@ export default {
   like,
   unlike,
   comment,
-  uncomment
+  uncomment,
+  incrementViews
 }

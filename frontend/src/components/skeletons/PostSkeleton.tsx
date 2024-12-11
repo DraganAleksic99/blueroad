@@ -11,7 +11,8 @@ import {
   MoreHoriz as MoreHorizIcon,
   ChatBubbleOutline as ChatBubbleOutlineIcon,
   BookmarkBorder as BookmarkBorderIcon,
-  FavoriteBorder as FavoriteBorderIcon
+  FavoriteBorder as FavoriteBorderIcon,
+  AssessmentOutlined as AssessmentOutlinedIcon,
 } from '@mui/icons-material'
 import { ActionButton } from '../../views/post/Post'
 
@@ -73,14 +74,15 @@ export default function PostSkeleton() {
           justifyContent: 'space-between'
         }}
       >
-        <Box display="flex" width="30%" justifyContent="space-between">
           <ActionButton sx={{ borderRadius: '30px' }} startIcon={<FavoriteBorderIcon />}>
             0
           </ActionButton>
           <ActionButton sx={{ borderRadius: '30px' }} startIcon={<ChatBubbleOutlineIcon />}>
             0
           </ActionButton>
-        </Box>
+          <ActionButton sx={{ borderRadius: '30px' }} startIcon={<AssessmentOutlinedIcon />}>
+            0
+          </ActionButton>
         <IconButton size="small">
           <BookmarkBorderIcon />
         </IconButton>

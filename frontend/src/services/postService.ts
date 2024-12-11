@@ -261,6 +261,32 @@ const uncomment = async (
   }
 }
 
+const incrementPostViews = async (
+  postId: string,
+  token: string,
+): Promise<{
+  message: string
+}> => {
+  try {
+    const response = await fetch(baseUrl + '/api/post/' + postId + '/views/increment', {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error(`Something went wrong. Please try again.`)
+    }
+
+    return await response.json()
+  } catch (err) {
+    throw new Error('Something went wrong. Try again.')
+  }
+}
+
 export {
   listFollowingNewsFeed,
   listDiscoverNewsFeed,
@@ -272,5 +298,6 @@ export {
   likePost,
   unlikePost,
   comment,
-  uncomment
+  uncomment,
+  incrementPostViews
 }

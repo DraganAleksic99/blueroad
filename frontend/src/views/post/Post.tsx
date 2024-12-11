@@ -1,6 +1,6 @@
 import { baseUrl } from '../../config/config'
 
-import { useEffect, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 import { Link, useMatch } from 'react-router-dom'
 import { useQueryClient, useMutation, UseMutateFunction } from '@tanstack/react-query'
 
@@ -13,13 +13,19 @@ import {
   Avatar,
   Typography,
   Button,
+  IconButton,
   Collapse,
   Box,
   Snackbar,
+  Dialog,
   styled
 } from '@mui/material'
 
-import { ChatBubbleOutline as ChatBubbleOutlineIcon } from '@mui/icons-material'
+import {
+  ChatBubbleOutline as ChatBubbleOutlineIcon,
+  AssessmentOutlined as AssessmentOutlinedIcon,
+  Close as CloseIcon
+} from '@mui/icons-material'
 import Reply from '../../components/Reply'
 import Comments from './Comments'
 import BookmarkButton from '../../components/BookmarkButton'
@@ -27,12 +33,11 @@ import Tooltip from '../../components/Tooltip'
 import LikeButton from '../../components/LikeButton'
 import PostMenu from '../../components/PostMenu'
 
-import { comment } from '../../services/postService'
-import auth, { Session } from '../../utils/utils'
+import { comment, incrementPostViews } from '../../services/postService'
+import auth, { Session, createHandleFromEmail, useInView } from '../../utils/utils'
 import { TUser } from '../../routes/Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 import { TComment, TPost } from '../../routes/NewsFeed'
-import { createHandleFromEmail } from '../../utils/utils'
 
 export const ActionButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
@@ -41,16 +46,7 @@ export const ActionButton = styled(Button)(({ theme }) => ({
   padding: 0,
   paddingBlock: '3px',
   fontSize: '1rem',
-  maxHeight: '34px',
-  '&:hover': {
-    backgroundColor: 'rgba(33, 150, 243, 0.1)',
-    '& .MuiButton-startIcon': {
-      color: 'rgb(33, 150, 243)'
-    },
-    '&': {
-      color: 'rgb(33, 150, 243)'
-    }
-  }
+  maxHeight: '34px'
 }))
 
 type Props = {
@@ -74,6 +70,8 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
   const queryClient = useQueryClient()
   const { user, token }: Session = auth.isAuthenticated()
   const match = useMatch('/user/:userId/post/:postId')
+  const { ref, hasBeenViewed } = useInView({ threshold: 0.5 })
+  const [isDialogOpen, setisDialogOpen] = useState(false)
 
   const [isFollowing, setIsFollowing] = useState<boolean>()
   const [showReplyButton, setShowReplyButton] = useState(false)
@@ -83,6 +81,20 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
     open: false,
     message: ''
   })
+
+  const { mutate } = useMutation({
+    mutationFn: async () => {
+      return incrementPostViews(post._id, token)
+    }
+  })
+
+  useEffect(() => {
+    if (match) return
+
+    if (hasBeenViewed) {
+      mutate()
+    }
+  }, [hasBeenViewed, mutate, match])
 
   const addCommentMutation = useMutation({
     mutationFn: async (text: string) => {
@@ -173,6 +185,7 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
 
   return (
     <Card
+      ref={ref}
       sx={{
         borderRadius: 0,
         '&:hover': {
@@ -214,7 +227,7 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
             <span>{new Date(post.created).toDateString()}</span>
           </>
         }
-        subheader={createHandleFromEmail(post.postedBy.email)} 
+        subheader={createHandleFromEmail(post.postedBy.email)}
       />
 
       <CardContent sx={{ p: 0, pt: '4px' }}>
@@ -272,21 +285,53 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
           justifyContent: 'space-between'
         }}
       >
-        <Box display="flex" width="30%" justifyContent="space-between">
-          <LikeButton post={post} onLike={setLikesCount} />
-          <Tooltip title="Reply" offset={-5}>
-            <ActionButton
-              sx={{ borderRadius: '30px' }}
-              startIcon={<ChatBubbleOutlineIcon />}
-              onClick={e => {
-                e.preventDefault()
-                setShowReplyButton(!showReplyButton)
-              }}
-            >
-              {post.comments.length}
-            </ActionButton>
-          </Tooltip>
-        </Box>
+        <LikeButton post={post} onLike={setLikesCount} />
+        <Tooltip title="Reply" offset={-5}>
+          <ActionButton
+            sx={{
+              borderRadius: '30px',
+              '&:hover': {
+                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                '& .MuiButton-startIcon': {
+                  color: 'rgb(33, 150, 243)'
+                },
+                '&': {
+                  color: 'rgb(33, 150, 243)'
+                }
+              }
+            }}
+            startIcon={<ChatBubbleOutlineIcon />}
+            onClick={e => {
+              e.preventDefault()
+              setShowReplyButton(!showReplyButton)
+            }}
+          >
+            {post.comments.length}
+          </ActionButton>
+        </Tooltip>
+        <Tooltip title="View" offset={-5}>
+          <ActionButton
+            sx={{
+              borderRadius: '30px',
+              '&:hover': {
+                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                '& .MuiButton-startIcon': {
+                  color: 'rgb(33, 150, 243)'
+                },
+                '&': {
+                  color: 'rgb(33, 150, 243)'
+                }
+              }
+            }}
+            startIcon={<AssessmentOutlinedIcon />}
+            onClick={e => {
+              e.preventDefault()
+              setisDialogOpen(true)
+            }}
+          >
+            {post.views ?? 0}
+          </ActionButton>
+        </Tooltip>
         <BookmarkButton
           bookmarkedPostsIds={bookmarkedPostsIds}
           post={post}
@@ -328,6 +373,71 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
         autoHideDuration={6000}
         message={<span>{snackbarInfo.message}</span>}
       />
+      <Dialog
+        PaperProps={{
+          style: {
+            borderRadius: '12px'
+          }
+        }}
+        open={isDialogOpen}
+        onClose={(e: SyntheticEvent) => {
+          e.preventDefault()
+          setisDialogOpen(false)
+        }}
+      >
+        <Box p={1} borderBottom="1px solid #e5e7eb">
+          <IconButton
+            sx={{
+              color: 'rgb(33, 150, 243)',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 1,
+              borderRadius: '20px',
+              '&:hover': {
+                backgroundColor: 'rgba(33, 150, 243, 0.1)'
+              }
+            }}
+            onClick={e => {
+              e.preventDefault()
+              setisDialogOpen(false)
+            }}
+          >
+            <CloseIcon fontSize="medium" />
+          </IconButton>
+          <Box p={15} pt={10}>
+            <Typography variant="h2" fontWeight="bold">
+              Views
+            </Typography>
+            <Typography variant="body1">
+              Times this post was seen. To learn more, visit the Help Center.
+            </Typography>
+            <Button
+              disableRipple
+              disableElevation
+              variant="contained"
+              sx={{
+                backgroundColor: 'rgb(33, 150, 243)',
+                borderRadius: '30px',
+                textTransform: 'none',
+                width: '100%',
+                height: '50px',
+                mt: 4,
+                px: 2,
+                fontSize: {
+                  lg: '1.1rem'
+                },
+                fontWeight: 500
+              }}
+              onClick={e => {
+                e.preventDefault()
+                setisDialogOpen(false)
+              }}
+            >
+              Dismiss
+            </Button>
+          </Box>
+        </Box>
+      </Dialog>
     </Card>
   )
 }

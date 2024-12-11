@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { signout } from '../services/authService'
 import { TUser } from '../routes/Profile'
 
@@ -34,5 +35,33 @@ function clearJWT(cb) {
   })
 }
 
+function useInView(options?: IntersectionObserverInit) {
+  const [hasBeenViewed, setHasBeenViewed] = useState(false)
+  const ref = useRef<HTMLDivElement | null>(null)
+  const current = ref.current
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !hasBeenViewed) {
+        setHasBeenViewed(true)
+      }
+    }, options)
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => {
+      if (current) {
+        observer.unobserve(current)
+      }
+    }
+  }, [options, hasBeenViewed, current])
+
+  return { ref, hasBeenViewed }
+}
+
+
+
 export default { authenticate, isAuthenticated, clearJWT }
-export { createHandleFromEmail }
+export { createHandleFromEmail, useInView }

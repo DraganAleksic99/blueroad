@@ -17,6 +17,7 @@ export interface IPost {
   created: Date
   likes: IUserDocument[]
   comments: TComment[]
+  views: number
 }
 
 export interface IPostDocument extends IPost, Document {}
@@ -45,7 +46,11 @@ const PostSchema = new Schema<IPostDocument>({
       created: { type: Date, default: Date.now },
       postedBy: { type: Schema.ObjectId, ref: 'User' }
     }
-  ]
+  ],
+  views: {
+    type: Number,
+    default: 0
+  }
 })
 
 export default model<IPostDocument>('Post', PostSchema)

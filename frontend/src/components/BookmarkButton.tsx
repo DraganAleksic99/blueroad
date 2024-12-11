@@ -165,7 +165,7 @@ export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, po
         }}
         onClick={handleBookmark}
       >
-        {isBookmarked ? <BookmarkIcon color="primary" /> : <BookmarkBorderIcon />}
+        {isBookmarked ? <BookmarkIcon sx={{ color: 'rgb(33, 150, 243)' }} /> : <BookmarkBorderIcon />}
       </IconButton>
     </Tooltip>
   )

@@ -27,6 +27,7 @@ export type TPost = {
   likes: string[]
   comments: TComment[]
   imagePreview?: string
+  views: number
 }
 
 export default function NewsFeed() {
