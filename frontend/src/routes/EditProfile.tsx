@@ -37,11 +37,15 @@ const schema = Yup.object({
   name: Yup.string().min(2).max(255).required(),
   about: Yup.string().max(150),
   email: Yup.string().email().max(255).required(),
-  password: Yup.string().min(6).max(255).required().test(
-    'current-password', 
-    'Incorrect password. Enter your current password', 
-    (value) => value === 'Pass123'
-  ),
+  password: Yup.string()
+    .min(6)
+    .max(255)
+    .required()
+    .test(
+      'current-password',
+      'Incorrect password. Enter your current password',
+      value => value === 'Pass123'
+    )
 }).required()
 
 export default function EditProfile() {
@@ -95,7 +99,7 @@ export default function EditProfile() {
 
   return (
     <div style={{ minHeight: 'calc(100vh - 64px)', display: 'flex', justifyContent: 'center' }}>
-      <Card sx={{ width: '100%' }}>
+      <Card elevation={0} sx={{ width: '100%' }}>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <CardContent sx={{ maxWidth: '700px', margin: 'auto' }}>
             <Typography variant="h6" sx={{ my: theme.spacing(3), mb: '32px' }}>
@@ -147,7 +151,12 @@ export default function EditProfile() {
                     variant="outlined"
                     color="primary"
                     component="span"
-                    sx={{ borderRadius: '20px', textTransform: 'none' }}
+                    sx={{
+                      borderRadius: '20px',
+                      textTransform: 'none',
+                      border: '1px solid rgb(33, 150, 243)',
+                      color: 'rgb(33, 150, 243)'
+                    }}
                   >
                     Change photo
                   </Button>
@@ -310,7 +319,14 @@ export default function EditProfile() {
               type="submit"
               color="primary"
               variant="outlined"
-              sx={{ borderRadius: '20px', mr: 2, px: 3, textTransform: 'none' }}
+              sx={{
+                borderRadius: '20px',
+                mr: 2,
+                px: 3,
+                textTransform: 'none',
+                border: '1px solid rgb(33, 150, 243)',
+                color: 'rgb(33, 150, 243)'
+              }}
               disabled={isLoading}
             >
               Save
@@ -318,7 +334,13 @@ export default function EditProfile() {
             <Button
               color="primary"
               variant="outlined"
-              sx={{ borderRadius: '20px', px: 3, textTransform: 'none' }}
+              sx={{
+                borderRadius: '20px',
+                px: 3,
+                textTransform: 'none',
+                border: '1px solid rgb(33, 150, 243)',
+                color: 'rgb(33, 150, 243)'
+              }}
               onClick={() => navigate(`/profile/${match.params.userId}`)}
               disabled={isLoading}
             >

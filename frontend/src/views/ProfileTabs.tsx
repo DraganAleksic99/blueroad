@@ -37,9 +37,11 @@ export default function ProfileTabs({ user = {}, posts = [], arePostsPending }: 
             flexContainer: 'flexContainer',
             indicator: 'indicator'
           }}
+          variant="fullWidth"
           value={currentTab}
           onChange={handleTabChange}
           sx={{
+            color: 'rgb(33, 150, 243)',
             '& .indicator': {
               display: 'flex',
               justifyContent: 'center',
@@ -73,9 +75,9 @@ export default function ProfileTabs({ user = {}, posts = [], arePostsPending }: 
             }
           }}
         >
-          <Tab label="Posts" />
-          <Tab label="Followers" />
-          <Tab label="Following" />
+          <Tab disableRipple label="Posts" />
+          <Tab disableRipple label="Followers" />
+          <Tab disableRipple label="Following" />
         </Tabs>
       </AppBar>
       {currentTab === 0 && (

@@ -71,6 +71,7 @@ export default function PostMenu({
     onSettled() {
       queryClient.invalidateQueries({ queryKey: ['posts'], refetchType: 'all' })
       queryClient.invalidateQueries({ queryKey: ['newsfeed'], refetchType: 'all' })
+      queryClient.invalidateQueries({ queryKey: ['usersToFollow'], refetchType: 'all' })
 
       if (redirectAfterDelete) navigate('/')
     },
@@ -97,6 +98,7 @@ export default function PostMenu({
     <>
       <Tooltip title="More" offset={8}>
         <IconButton
+          disableRipple
           size="small"
           sx={{
             '&:hover': {

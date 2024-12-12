@@ -50,9 +50,11 @@ export default function Profile() {
     mutationFn: (callbackFn: TFollowCallbackFn) => {
       return callbackFn(session.user._id, session.token, userId)
     },
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] })
       queryClient.invalidateQueries({ queryKey: ['usersToFollow'] })
+      queryClient.invalidateQueries({ queryKey: ['newsfeed'], refetchType: 'inactive' })
+      queryClient.invalidateQueries({ queryKey: ['discover'], refetchType: 'inactive' })
     }
   })
 

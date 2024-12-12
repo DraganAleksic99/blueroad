@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useMatch, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDebouncedCallback, useThrottledCallback } from 'use-debounce'
 import { IconButton } from '@mui/material'
@@ -28,7 +28,6 @@ type Props = {
 export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, post }: Props) {
   const { user, token }: Session = auth.isAuthenticated()
   const queryClient = useQueryClient()
-  const match = useMatch('/user/:userId')
   const { state } = useLocation()
 
   const [isBookmarked, setIsBookmarked] = useState(false)
@@ -68,8 +67,6 @@ export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, po
     onMutate: async () => {
       if (previousBookmarkMutation === 'bookmark') {
         setPreviousBookmarkMutation('unbookmark')
-
-        if (!match) return
 
         await queryClient.cancelQueries({ queryKey: ['bookmarks', user, token] })
 
@@ -155,6 +152,7 @@ export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, po
     >
       <IconButton
         size="small"
+        disableRipple
         sx={{
           '&:hover': {
             backgroundColor: 'rgba(33, 150, 243, 0.1)',

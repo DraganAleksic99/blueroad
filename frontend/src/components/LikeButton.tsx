@@ -14,7 +14,6 @@ const ActionButton = styled(Button)(({ theme }) => ({
   borderRadius: '8px',
   padding: 0,
   paddingBlock: '3px',
-  fontSize: '1rem',
   maxHeight: '34px',
   '&:hover': {
     backgroundColor: 'rgba(249, 24, 128, 0.1)',

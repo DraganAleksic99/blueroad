@@ -106,7 +106,9 @@ export default function Reply({ commentMutation }: Props) {
               borderRadius: '20px',
               textTransform: 'none',
               px: 2,
-              height: '34px'
+              height: '34px',
+              border: '1px solid rgb(33, 150, 243)',
+              color: 'rgb(33, 150, 243)'
             }}
             onClick={e => {
               e.preventDefault()

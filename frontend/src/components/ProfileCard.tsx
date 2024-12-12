@@ -1,10 +1,11 @@
 import { baseUrl } from '../config/config'
 
 import { Link } from 'react-router-dom'
-import { Card, CardContent, CardMedia, Box, Typography, Button } from '@mui/material'
-import { CalendarToday as CalendarIcon } from '@mui/icons-material'
+import { Card, CardContent, CardMedia, Box, Typography, Button, IconButton } from '@mui/material'
+import { CalendarToday as CalendarIcon, MoreHoriz as MoreHorizIcon } from '@mui/icons-material'
 import FollowProfileButton, { TFollowCallbackFn } from './FollowProfileButton'
 import SectionTitle from './SectionTitle'
+import Tooltip from './Tooltip'
 import auth, { Session } from '../utils/utils'
 import { TUser } from '../routes/Profile'
 import { TPost } from '../routes/NewsFeed'
@@ -50,23 +51,49 @@ export default function ProfileCard({
               variant="h5"
             >
               {user.name}
-              {session && session.user?._id === user._id ? (
-                <Link to={`/user/edit/${user._id}`} state={user}>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    sx={{ px: 2, textTransform: 'none', borderRadius: '20px' }}
-                  >
-                    Edit Profile
-                  </Button>
-                </Link>
-              ) : (
-                <FollowProfileButton
-                  onButtonClick={clickFollowButton}
-                  isPending={isPending}
-                  following={isFollowing}
-                />
-              )}
+              <Box display="flex" gap={2}>
+                {session && session.user?._id === user._id ? (
+                  <Link to={`/user/edit/${user._id}`} state={user}>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      sx={{
+                        px: 2,
+                        textTransform: 'none',
+                        borderRadius: '20px',
+                        border: '1px solid rgb(33, 150, 243)',
+                        color: 'rgb(33, 150, 243)'
+                      }}
+                    >
+                      Edit Profile
+                    </Button>
+                  </Link>
+                ) : (
+                  <FollowProfileButton
+                    onButtonClick={clickFollowButton}
+                    isPending={isPending}
+                    following={isFollowing}
+                  />
+                )}
+                {session && session.user?._id !== user._id && (
+                  <Tooltip title="More" offset={8}>
+                    <IconButton
+                      size="small"
+                      sx={{
+                        border: '1px solid rgb(33, 150, 243)',
+                        '& .MuiSvgIcon-root': {
+                          color: 'rgb(33, 150, 243)'
+                        },
+                        '&:hover': {
+                          backgroundColor: 'rgba(33, 150, 243, 0.1)'
+                        }
+                      }}
+                    >
+                      <MoreHorizIcon />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </Box>
             </Typography>
             <Typography variant="subtitle1" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
               {createHandleFromEmail(user.email)}

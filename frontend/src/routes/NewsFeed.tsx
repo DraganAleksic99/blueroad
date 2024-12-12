@@ -60,6 +60,7 @@ export default function NewsFeed() {
           value={currentTab}
           onChange={handleTabChange}
           sx={{
+            color: 'rgb(33, 150, 243)',
             '& .indicator': {
               display: 'flex',
               justifyContent: 'center',
@@ -93,8 +94,8 @@ export default function NewsFeed() {
             }
           }}
         >
-          <Tab label="Following" />
-          <Tab label="Discover" />
+          <Tab disableRipple label="Following" />
+          <Tab disableRipple label="Discover" />
         </Tabs>
       </AppBar>
       {currentTab === 0 && (

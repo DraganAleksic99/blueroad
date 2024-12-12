@@ -1,7 +1,7 @@
 import { baseUrl } from '../../config/config'
 
 import { SyntheticEvent, useEffect, useState } from 'react'
-import { Link, useMatch } from 'react-router-dom'
+import { Link, useMatch, useLocation } from 'react-router-dom'
 import { useQueryClient, useMutation, UseMutateFunction } from '@tanstack/react-query'
 
 import {
@@ -34,7 +34,7 @@ import LikeButton from '../../components/LikeButton'
 import PostMenu from '../../components/PostMenu'
 
 import { comment, incrementPostViews } from '../../services/postService'
-import auth, { Session, createHandleFromEmail, useInView } from '../../utils/utils'
+import auth, { Session, createHandleFromEmail, useInView, formatDate } from '../../utils/utils'
 import { TUser } from '../../routes/Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 import { TComment, TPost } from '../../routes/NewsFeed'
@@ -43,9 +43,7 @@ export const ActionButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
   color: theme.palette.text.secondary,
   borderRadius: '8px',
-  padding: 0,
   paddingBlock: '3px',
-  fontSize: '1rem',
   maxHeight: '34px'
 }))
 
@@ -72,6 +70,7 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
   const match = useMatch('/user/:userId/post/:postId')
   const { ref, hasBeenViewed } = useInView({ threshold: 0.5 })
   const [isDialogOpen, setisDialogOpen] = useState(false)
+  const location = useLocation()
 
   const [isFollowing, setIsFollowing] = useState<boolean>()
   const [showReplyButton, setShowReplyButton] = useState(false)
@@ -90,11 +89,12 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
 
   useEffect(() => {
     if (match) return
+    if (location.pathname === '/bookmarks') return
 
     if (hasBeenViewed) {
       mutate()
     }
-  }, [hasBeenViewed, mutate, match])
+  }, [hasBeenViewed, mutate, match, location])
 
   const addCommentMutation = useMutation({
     mutationFn: async (text: string) => {
@@ -163,6 +163,10 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
     }) => {
       return callbackFn(user._id, token, postUserId)
     },
+    onSettled() {
+      queryClient.invalidateQueries({ queryKey: ['posts'], refetchType: 'all' })
+      queryClient.invalidateQueries({ queryKey: ['usersToFollow'], refetchType: 'all' })
+    },
     onSuccess: data => {
       setIsFollowing(!isFollowing)
       setSnackbarInfo({
@@ -223,14 +227,28 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
                 {post.postedBy.name}
               </span>
             </Link>
-            {' • '}
-            <span>{new Date(post.created).toDateString()}</span>
+            {match && match.params?.postId ? (
+              ''
+            ) : (
+              <>
+                {' '}
+                <span style={{ fontSize: '1rem' }}>
+                  {createHandleFromEmail(post.postedBy.email)}
+                </span>
+                {' • '}
+                <span>{formatDate(post.created)}</span>
+              </>
+            )}
           </>
         }
-        subheader={createHandleFromEmail(post.postedBy.email)}
+        subheader={
+          match && match.params?.postId ? <>{createHandleFromEmail(post.postedBy.email)}</> : ''
+        }
+        subheaderTypographyProps={{
+        }}
       />
 
-      <CardContent sx={{ p: 0, pt: '4px' }}>
+      <CardContent sx={{ p: 0, marginTop: `${match && match.params?.postId ? '8px' : '-16px'}` }}>
         <Box sx={{ pl: match && match.params?.postId ? '16px' : '72px', pr: 2 }}>
           <Typography variant="body1">{post.text}</Typography>
 
@@ -404,7 +422,7 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
           >
             <CloseIcon fontSize="medium" />
           </IconButton>
-          <Box p={15} pt={10}>
+          <Box p={10} pt={5}>
             <Typography variant="h2" fontWeight="bold">
               Views
             </Typography>

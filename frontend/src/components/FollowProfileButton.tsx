@@ -16,11 +16,11 @@ type Props = {
 export default function FollowProfileButton({ onButtonClick, following, isPending }: Props) {
   const session: Session = auth.isAuthenticated()
 
-  const followClick = () => {
+  const handleFollow = () => {
     onButtonClick(followUser, session)
   }
 
-  const unfollowClick = () => {
+  const handleUnfollow = () => {
     onButtonClick(unfollowUser, session)
   }
 
@@ -28,21 +28,52 @@ export default function FollowProfileButton({ onButtonClick, following, isPendin
     <>
       {following ? (
         <Button
-          disabled={isPending}
           variant="outlined"
           size="small"
-          sx={{ ml: 4, px: 2, textTransform: 'none', borderRadius: '20px' }}
-          onClick={unfollowClick}
-        >
-          Unfollow
-        </Button>
+          disabled={isPending}
+          onClick={handleUnfollow}
+          data-following="Following"
+          data-unfollow="Unfollow"
+          sx={{
+            border: '1px solid rgb(33, 150, 243)',
+            color: 'rgb(33, 150, 243)',
+            px: 2,
+            py: '4px',
+            textTransform: 'none',
+            borderRadius: '20px',
+            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+            '&::before': {
+              content: 'attr(data-following)'
+            },
+            '&:hover, &.Mui-disabled': {
+              px: '18.5px',
+              color: 'rgb(249, 24, 128)',
+              backgroundColor: 'rgba(249, 24, 128, 0.1)',
+              borderColor: 'rgb(249, 24, 128)',
+              '&::before': {
+                content: 'attr(data-unfollow)'
+              }
+            },
+            '&.Mui-disabled': {
+              opacity: 0.5,
+              pointerEvents: 'none'
+            }
+          }}
+        />
       ) : (
         <Button
           disabled={isPending}
           variant="outlined"
           size="small"
-          sx={{ ml: 4, px: 2, textTransform: 'none', borderRadius: '20px' }}
-          onClick={followClick}
+          sx={{
+            ml: 4,
+            px: 2,
+            textTransform: 'none',
+            borderRadius: '20px',
+            border: '1px solid rgb(33, 150, 243)',
+            color: 'rgb(33, 150, 243)'
+          }}
+          onClick={handleFollow}
         >
           Follow
         </Button>

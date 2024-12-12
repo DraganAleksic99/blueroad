@@ -2,16 +2,7 @@ import { baseUrl } from '../config/config'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  Avatar,
-  IconButton,
-  Tooltip,
-  Menu,
-  MenuItem
-} from '@mui/material'
+import { Card, CardHeader, CardContent, Avatar, IconButton, Menu, MenuItem } from '@mui/material'
 import {
   DeleteOutlined as DeleteIcon,
   MoreHoriz as MoreHorizIcon,
@@ -19,9 +10,10 @@ import {
   PersonRemoveOutlined as PersonRemoveIcon,
   PersonAddAlt1Outlined as PersonAddAlt1Icon
 } from '@mui/icons-material'
+import Tooltip from './Tooltip'
 import { followUser, unfollowUser } from '../services/userService'
 import { uncomment } from '../services/postService'
-import auth, { Session } from '../utils/utils'
+import auth, { Session, formatDate } from '../utils/utils'
 import { TComment, TPost } from '../routes/NewsFeed'
 import { TFollowCallbackFn } from './FollowProfileButton'
 import { createHandleFromEmail } from '../utils/utils'
@@ -104,27 +96,17 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
               <span className="text-underline" style={{ fontWeight: 600, fontSize: '1rem' }}>
                 {comment.postedBy.name}
               </span>
-            </Link>
+            </Link>{' '}
+            <span style={{ fontSize: '1rem' }}>
+              {createHandleFromEmail(comment.postedBy.email)}
+            </span>
             {' • '}
-            <span>{new Date(comment.created).toDateString()}</span>
+            <span>{formatDate(comment.created)}</span>
           </div>
         }
-        subheader={createHandleFromEmail(comment.postedBy.email)}
         action={
           <>
-            <Tooltip
-              title="More"
-              componentsProps={{
-                tooltip: {
-                  sx: {
-                    bgcolor: 'rgba(191, 191, 191, 0.2)',
-                    fontSize: '14px',
-                    color: '#2196F3',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                  }
-                }
-              }}
-            >
+            <Tooltip title="More" offset={7}>
               <IconButton
                 size="small"
                 sx={{
@@ -206,6 +188,7 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
       />
       <CardContent
         sx={{
+          mt:'-16px',
           pl: '72px',
           pt: '4px',
           '&.MuiCardContent-root:last-child': {

@@ -74,12 +74,15 @@ export default function GridCard({ user }: { user: TUser }) {
                   top: '16px',
                   right: '16px',
                   backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                  border: '1px solid rgb(33, 150, 243)',
+                  color: 'rgb(33, 150, 243)',
                   '&::before': {
                     content: 'attr(data-following)'
                   },
                   '&:hover, &.Mui-disabled': {
+                    px: '18.5px',
                     color: 'rgb(249, 24, 128)',
-                    backgroundColor: '#fff',
+                    backgroundColor: 'rgba(249, 24, 128, 0.1)',
                     borderColor: 'rgb(249, 24, 128)',
                     '&::before': {
                       content: 'attr(data-unfollow)'
@@ -107,7 +110,9 @@ export default function GridCard({ user }: { user: TUser }) {
                   borderRadius: '20px',
                   position: 'absolute',
                   top: '16px',
-                  right: '16px'
+                  right: '16px',
+                  border: '1px solid rgb(33, 150, 243)',
+                  color: 'rgb(33, 150, 243)'
                 }}
               >
                 {isFollower ? 'Follow back' : 'Follow'}

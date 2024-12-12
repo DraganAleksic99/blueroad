@@ -235,7 +235,9 @@ export default function NewPost({
             sx={{
               borderRadius: '20px',
               textTransform: 'none',
-              px: 2
+              px: 2,
+              border: '1px solid rgb(33, 150, 243)',
+              color: 'rgb(33, 150, 243)'
             }}
             onClick={handleAddPost}
           >

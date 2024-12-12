@@ -44,7 +44,8 @@ const WhoToFollowPaper = styled(Paper)({
 
 const usersToFollowQuery = (userId: string, token: string) => ({
   queryKey: ['usersToFollow', userId, token],
-  queryFn: async () => getUsersToFollow(userId, token)
+  queryFn: async () => getUsersToFollow(userId, token),
+  staleTime: Infinity
 })
 
 export default function FindPeople() {
@@ -78,6 +79,7 @@ export default function FindPeople() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['usersToFollow', user._id, token] })
+      queryClient.invalidateQueries({ queryKey: ['profile', user._id, { user, token }], refetchType: 'all' })
     },
     onSuccess: () => {
       setSnackbarInfo({
@@ -155,7 +157,8 @@ export default function FindPeople() {
                       borderRadius: '20px',
                       textTransform: 'none',
                       px: 2,
-                      py: '5px'
+                      border: '1px solid rgb(33, 150, 243)',
+                      color: 'rgb(33, 150, 243)'
                     }}
                     onClick={e => {
                       e.preventDefault()

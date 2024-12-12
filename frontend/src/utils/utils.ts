@@ -61,7 +61,12 @@ function useInView(options?: IntersectionObserverInit) {
   return { ref, hasBeenViewed }
 }
 
-
+function formatDate(timestamp: Date) {
+  const date = new Date(timestamp)
+  const month = date.toLocaleString('en-US', { month: 'short' })
+  const day = date.getDate()
+  return `${month} ${day}`
+}
 
 export default { authenticate, isAuthenticated, clearJWT }
-export { createHandleFromEmail, useInView }
+export { createHandleFromEmail, useInView, formatDate }
