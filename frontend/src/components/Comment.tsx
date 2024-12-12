@@ -23,9 +23,10 @@ type Props = {
   comment: TComment
   isFollowing?: boolean
   handleFollowOrUnfollow?: (callbackFn: TFollowCallbackFn, postUserId: string) => void
+  isOnDiscoverFeed: boolean
 }
 
-export default function Comment({ postId, comment, isFollowing, handleFollowOrUnfollow }: Props) {
+export default function Comment({ postId, comment, isFollowing, handleFollowOrUnfollow, isOnDiscoverFeed }: Props) {
   const queryClient = useQueryClient()
   const [anchorEl, setAnchorEl] = useState<HTMLElement>()
   const { user, token }: Session = auth.isAuthenticated()
@@ -56,7 +57,7 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
       })
 
       queryClient.invalidateQueries({
-        queryKey: ['newsfeed'],
+        queryKey: [isOnDiscoverFeed ? 'discover' : 'newsfeed'],
         refetchType: 'all'
       })
 

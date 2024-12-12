@@ -34,9 +34,10 @@ export type TLikeCallbackFn = likeFn | unlikeFn
 type Props = {
   post: TPost
   onLike: React.Dispatch<React.SetStateAction<number>>
+  isOnDiscoverFeed: boolean
 }
 
-export default function LikeButton({ post, onLike }: Props) {
+export default function LikeButton({ post, onLike, isOnDiscoverFeed }: Props) {
   const queryClient = useQueryClient()
   const { user, token }: Session = auth.isAuthenticated()
 
@@ -86,7 +87,7 @@ export default function LikeButton({ post, onLike }: Props) {
       })
 
       queryClient.invalidateQueries({
-        queryKey: ['newsfeed'],
+        queryKey: [isOnDiscoverFeed ? 'discover' : 'newsfeed'],
         refetchType: 'all'
       })
 

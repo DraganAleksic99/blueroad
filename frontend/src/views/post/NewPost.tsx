@@ -102,7 +102,7 @@ export default function NewPost({
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ['newsfeed'],
-        refetchType: 'all'
+        refetchType: 'active'
       })
 
       queryClient.invalidateQueries({

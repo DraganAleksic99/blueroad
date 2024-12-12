@@ -10,9 +10,10 @@ import { TPost } from '../../routes/NewsFeed'
 type Props = {
   posts: TPost[]
   arePostsPending: boolean
+  isOnDiscoverFeed: boolean
 }
 
-export default function PostList({ posts, arePostsPending }: Props) {
+export default function PostList({ posts, arePostsPending, isOnDiscoverFeed }: Props) {
   const { user, token }: Session = auth.isAuthenticated()
 
   const { data } = useQuery({
@@ -35,10 +36,10 @@ export default function PostList({ posts, arePostsPending }: Props) {
         <Link
           to={`/user/${post.postedBy._id}/post/${post._id}`}
           key={post._id}
-          state={{ bookmarkedPostsIds: data }}
+          state={{ bookmarkedPostsIds: data, isFromDiscoverFeed: isOnDiscoverFeed ?? false }}
           unstable_viewTransition
         >
-          <Post post={post} bookmarkedPostsIds={data} />
+          <Post post={post} bookmarkedPostsIds={data} isOnDiscoverFeed={isOnDiscoverFeed} />
         </Link>
       ))}
       {!arePostsPending && posts.length !== 0 && (

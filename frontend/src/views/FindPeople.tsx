@@ -80,6 +80,7 @@ export default function FindPeople() {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['usersToFollow', user._id, token] })
       queryClient.invalidateQueries({ queryKey: ['profile', user._id, { user, token }], refetchType: 'all' })
+      queryClient.invalidateQueries({ queryKey: ['newsfeed'], refetchType: 'inactive' })
     },
     onSuccess: () => {
       setSnackbarInfo({

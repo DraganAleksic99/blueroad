@@ -51,6 +51,7 @@ type Props = {
   post: TPost
   showComments?: boolean
   bookmarkedPostsIds?: string[]
+  isOnDiscoverFeed: boolean
   commentMutation?: UseMutateFunction<
     {
       _id: string
@@ -64,7 +65,13 @@ type Props = {
   >
 }
 
-export default function Post({ post, showComments, bookmarkedPostsIds, commentMutation }: Props) {
+export default function Post({
+  post,
+  showComments,
+  bookmarkedPostsIds,
+  isOnDiscoverFeed,
+  commentMutation
+}: Props) {
   const queryClient = useQueryClient()
   const { user, token }: Session = auth.isAuthenticated()
   const match = useMatch('/user/:userId/post/:postId')
@@ -101,28 +108,40 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
       return comment(user._id, token, post._id, { text })
     },
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['newsfeed', user, token] })
-
-      const previousData = queryClient.getQueryData(['newsfeed', user, token])
-
-      queryClient.setQueryData(['newsfeed', user, token], (oldPosts: TPost[]) => {
-        const postToUpdate = oldPosts.find(oldPost => oldPost._id === post._id)
-
-        postToUpdate.comments.length += 1
-
-        const postToUpdateIndex = oldPosts.findIndex(oldPost => oldPost._id === post._id)
-
-        return [
-          ...oldPosts.slice(0, postToUpdateIndex),
-          postToUpdate,
-          ...oldPosts.slice(postToUpdateIndex + 1)
-        ]
+      await queryClient.cancelQueries({
+        queryKey: [isOnDiscoverFeed ? 'discover' : 'newsfeed', user, token]
       })
+
+      const previousData = queryClient.getQueryData([
+        isOnDiscoverFeed ? 'discover' : 'newsfeed',
+        user,
+        token
+      ])
+
+      queryClient.setQueryData(
+        [isOnDiscoverFeed ? 'discover' : 'newsfeed', user, token],
+        (oldPosts: TPost[]) => {
+          const postToUpdate = oldPosts.find(oldPost => oldPost._id === post._id)
+
+          postToUpdate.comments.length += 1
+
+          const postToUpdateIndex = oldPosts.findIndex(oldPost => oldPost._id === post._id)
+
+          return [
+            ...oldPosts.slice(0, postToUpdateIndex),
+            postToUpdate,
+            ...oldPosts.slice(postToUpdateIndex + 1)
+          ]
+        }
+      )
 
       return { previousData }
     },
     onError: (_err, _newPost, context) => {
-      queryClient.setQueryData(['newsfeed', user, token], context.previousData)
+      queryClient.setQueryData(
+        [isOnDiscoverFeed ? 'discover' : 'newsfeed', user, token],
+        context.previousData
+      )
     },
     onSettled: () => {
       queryClient.invalidateQueries({
@@ -131,7 +150,7 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
       })
 
       queryClient.invalidateQueries({
-        queryKey: ['newsfeed'],
+        queryKey: [isOnDiscoverFeed ? 'discover' : 'newsfeed'],
         refetchType: 'all'
       })
 
@@ -164,8 +183,11 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
       return callbackFn(user._id, token, postUserId)
     },
     onSettled() {
-      queryClient.invalidateQueries({ queryKey: ['posts'], refetchType: 'all' })
+      queryClient.invalidateQueries({ queryKey: ['profile'], refetchType: 'all' })
       queryClient.invalidateQueries({ queryKey: ['usersToFollow'], refetchType: 'all' })
+      queryClient.invalidateQueries({ queryKey: ['post'], refetchType: 'all' })
+      queryClient.invalidateQueries({ queryKey: ['newsfeed'], refetchType: 'inactive' })
+      queryClient.invalidateQueries({ queryKey: ['discover'], refetchType: 'inactive' })
     },
     onSuccess: data => {
       setIsFollowing(!isFollowing)
@@ -244,8 +266,7 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
         subheader={
           match && match.params?.postId ? <>{createHandleFromEmail(post.postedBy.email)}</> : ''
         }
-        subheaderTypographyProps={{
-        }}
+        subheaderTypographyProps={{}}
       />
 
       <CardContent sx={{ p: 0, marginTop: `${match && match.params?.postId ? '8px' : '-16px'}` }}>
@@ -303,7 +324,7 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
           justifyContent: 'space-between'
         }}
       >
-        <LikeButton post={post} onLike={setLikesCount} />
+        <LikeButton post={post} onLike={setLikesCount} isOnDiscoverFeed={isOnDiscoverFeed} />
         <Tooltip title="Reply" offset={-5}>
           <ActionButton
             sx={{
@@ -365,6 +386,7 @@ export default function Post({ post, showComments, bookmarkedPostsIds, commentMu
               comments={post.comments}
               isFollowing={isFollowing}
               handleFollowOrUnfollow={handleFollowOrUnfollow}
+              isOnDiscoverFeed={isOnDiscoverFeed}
             />
           </Box>
         </>

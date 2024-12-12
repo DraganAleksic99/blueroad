@@ -11,14 +11,15 @@ export default function DiscoverNewsFeed() {
     queryKey: ['discover', user, token],
     queryFn: async () => {
       return listDiscoverNewsFeed(user._id, token)
-    }
+    },
+    staleTime: Infinity
   })
 
   return (
     <Grid container spacing={2} sx={{ borderRight: '1px solid #e5e7eb' }}>
       <Grid item sx={{ width: '100%' }}>
         <Card sx={{ borderRadius: 0 }}>
-          <PostList arePostsPending={isPending} posts={posts} />
+          <PostList isOnDiscoverFeed={true} arePostsPending={isPending} posts={posts} />
         </Card>
       </Grid>
     </Grid>

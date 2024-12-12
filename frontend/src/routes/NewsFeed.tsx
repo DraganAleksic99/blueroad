@@ -98,16 +98,12 @@ export default function NewsFeed() {
           <Tab disableRipple label="Discover" />
         </Tabs>
       </AppBar>
-      {currentTab === 0 && (
-        <Box paddingTop="48px">
+        <Box display={currentTab === 0 ? 'block' : 'none'} paddingTop="48px">
           <FollowingNewsFeed />
         </Box>
-      )}
-      {currentTab === 1 && (
-        <Box paddingTop="48px">
+        <Box display={currentTab === 1 ? 'block' : 'none'} paddingTop="48px">
           <DiscoverNewsFeed />
         </Box>
-      )}
     </Box>
   )
 }

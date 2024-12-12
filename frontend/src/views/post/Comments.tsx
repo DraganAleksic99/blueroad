@@ -9,9 +9,16 @@ type Props = {
   comments: TComment[]
   isFollowing: boolean
   handleFollowOrUnfollow: (callbackFn: TFollowCallbackFn, postUserId: string) => void
+  isOnDiscoverFeed: boolean
 }
 
-export default function Comments({ postId, handleFollowOrUnfollow, comments, isFollowing }: Props) {
+export default function Comments({
+  postId,
+  handleFollowOrUnfollow,
+  comments,
+  isFollowing,
+  isOnDiscoverFeed
+}: Props) {
   if (comments.length === 0) {
     return (
       <Card sx={{ p: 2 }}>
@@ -42,6 +49,7 @@ export default function Comments({ postId, handleFollowOrUnfollow, comments, isF
             comment={comment}
             isFollowing={isFollowing}
             handleFollowOrUnfollow={handleFollowOrUnfollow}
+            isOnDiscoverFeed={isOnDiscoverFeed}
           />
         )
       })}

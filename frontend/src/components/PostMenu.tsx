@@ -71,7 +71,6 @@ export default function PostMenu({
     onSettled() {
       queryClient.invalidateQueries({ queryKey: ['posts'], refetchType: 'all' })
       queryClient.invalidateQueries({ queryKey: ['newsfeed'], refetchType: 'all' })
-      queryClient.invalidateQueries({ queryKey: ['usersToFollow'], refetchType: 'all' })
 
       if (redirectAfterDelete) navigate('/')
     },

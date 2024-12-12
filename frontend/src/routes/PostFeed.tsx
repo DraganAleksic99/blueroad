@@ -10,7 +10,7 @@ import { loadPost, comment } from '../services/postService'
 import { TPost } from './NewsFeed'
 
 export default function PostFeed() {
-  const { pathname } = useLocation()
+  const { pathname, state } = useLocation()
   const { user, token }: Session = auth.isAuthenticated()
   const {
     params: { postId }
@@ -21,7 +21,8 @@ export default function PostFeed() {
     queryKey: ['post', postId, token],
     queryFn: async () => {
       return loadPost(postId, token)
-    }
+    },
+    staleTime: Infinity
   })
 
   const addCommentMutation = useMutation({
@@ -62,7 +63,7 @@ export default function PostFeed() {
       })
 
       queryClient.invalidateQueries({
-        queryKey: ['newsfeed'],
+        queryKey: [state.isFromDiscoverFeed ? 'discover' : 'newsfeed'],
         refetchType: 'all'
       })
 
@@ -80,12 +81,17 @@ export default function PostFeed() {
   return (
     <Grid container sx={{ borderRight: '1px solid #e5e7eb', minHeight: '100vh' }}>
       <Grid item sx={{ width: '100%' }}>
-        <SectionTitle title='Post' />
+        <SectionTitle title="Post" />
         <Card elevation={0} sx={{ borderRadius: 0 }}>
           {isPending ? (
             <PostSkeleton />
           ) : (
-            <Post commentMutation={addCommentMutation.mutate} post={post} showComments />
+            <Post
+              isOnDiscoverFeed={state.isFromDiscoverFeed}
+              commentMutation={addCommentMutation.mutate}
+              post={post}
+              showComments
+            />
           )}
         </Card>
       </Grid>

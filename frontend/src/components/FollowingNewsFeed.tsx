@@ -12,7 +12,8 @@ export default function FollowingNewsFeed() {
     queryKey: ['newsfeed', user, token],
     queryFn: async () => {
       return listFollowingNewsFeed(user._id, token)
-    }
+    },
+    staleTime: Infinity
   })
 
   return (
@@ -20,7 +21,7 @@ export default function FollowingNewsFeed() {
       <Grid item sx={{ width: '100%' }}>
         <Card sx={{ borderRadius: 0 }}>
           <NewPost />
-          <PostList arePostsPending={isPending} posts={posts} />
+          <PostList isOnDiscoverFeed={false} arePostsPending={isPending} posts={posts} />
         </Card>
       </Grid>
     </Grid>
