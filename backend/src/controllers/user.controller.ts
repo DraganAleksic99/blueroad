@@ -259,7 +259,12 @@ const addBookmark = async (req: Request, res: Response) => {
 
   try {
     await User.findByIdAndUpdate(id, {
-      $push: { bookmarkedPosts: req.body.post }
+      $push: {
+        bookmarkedPosts: {
+          $each: [req.body.post],
+          $position: 0
+        }
+      }
     })
 
     res.json({
