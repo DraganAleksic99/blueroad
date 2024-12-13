@@ -27,10 +27,9 @@ export default function ProfileTabs({ user = {}, posts = [], arePostsPending }: 
   return (
     <div>
       <AppBar
-        sx={{ borderTop: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}
+        sx={{ borderTop: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb', backgroundColor: '#fff'  }}
         elevation={0}
         position="static"
-        color="default"
       >
         <Tabs
           classes={{
@@ -56,7 +55,8 @@ export default function ProfileTabs({ user = {}, posts = [], arePostsPending }: 
             '& .MuiButtonBase-root': {
               textTransform: 'none',
               fontSize: '1rem',
-              px: '30px'
+              px: '30px',
+              color: 'rgb(33, 150, 243)'
             },
             '& .MuiButtonBase-root:hover': {
               backgroundColor: 'rgba(33, 150, 243, 0.1)'
@@ -82,7 +82,7 @@ export default function ProfileTabs({ user = {}, posts = [], arePostsPending }: 
       </AppBar>
       {currentTab === 0 && (
         <Box sx={{ pt: '2px' }}>
-          <PostList arePostsPending={arePostsPending} posts={posts} />
+          <PostList isOnDiscoverFeed={false} arePostsPending={arePostsPending} posts={posts} />
         </Box>
       )}
       {currentTab === 1 && (

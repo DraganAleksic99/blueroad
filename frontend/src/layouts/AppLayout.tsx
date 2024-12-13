@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom'
-import { Grid } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import Navigation from '../components/Navigation'
 import FindPeople from '../views/FindPeople'
 
@@ -35,7 +35,8 @@ export default function AppLayout() {
         sx={{
           height: '100%',
           overflowY: 'auto',
-          scrollbarWidth: 'none'
+          scrollbarWidth: 'none',
+          borderRight: '1px solid #e5e7eb'
         }}
       >
         <Outlet />
@@ -46,7 +47,6 @@ export default function AppLayout() {
         lg={7}
         md={7}
         sx={{
-          backgroundColor: '#f5f5f5',
           height: '100%',
           display: { xs: 'none', sm: 'none', md: 'block' },
           paddingLeft: {
@@ -55,6 +55,20 @@ export default function AppLayout() {
         }}
       >
         <FindPeople />
+        <Box width="100%" p={2}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            fontSize="13px"
+            color="rgb(33, 150, 243)"
+          >
+            <span className='text-underline'>Terms of Service</span>
+            <span>•</span>
+            <span className='text-underline'>Privacy Policy</span>
+            <span>•</span>
+            <span className='text-underline'>Cookie Policy</span>
+          </Box>
+        </Box>
       </Grid>
     </Grid>
   )

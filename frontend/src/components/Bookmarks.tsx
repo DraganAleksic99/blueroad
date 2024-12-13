@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Box, Card, Typography } from '@mui/material'
-import { BookmarkBorder as BookmarkBorderIcon } from '@mui/icons-material'
+import { Book as BookIcon } from '@mui/icons-material'
 import PostList from '../views/post/PostList'
 import SectionTitle from './SectionTitle'
 import { getBookmarks } from '../services/userService'
@@ -18,10 +18,10 @@ export default function Bookmarks() {
   })
 
   return (
-    <Box sx={{ borderRight: '1px solid #e5e7eb' }}>
+    <Box>
       <SectionTitle title="Bookmarks" />
       {data?.bookmarkedPosts.length === 0 && (
-            <Card elevation={0} sx={{ p: 2, backgroundColor: 'rgba(246, 247, 248, 0.5)' }}>
+            <Card elevation={0} sx={{ p: 2, }}>
               <Box
                 display="flex"
                 flexDirection="column"
@@ -30,14 +30,14 @@ export default function Bookmarks() {
                 height="100%"
                 textAlign="center"
               >
-                <BookmarkBorderIcon sx={{ fontSize: 64, color: 'gray', mb: 2 }} />
+                <BookIcon sx={{ fontSize: 64, color: 'gray', mb: 2 }} />
                 <Typography variant="inherit" color="textSecondary">
                   No bookmarked posts yet.
                 </Typography>
               </Box>
             </Card>
       )} 
-      <PostList posts={data?.bookmarkedPosts} arePostsPending={isPending} />
+      <PostList isOnDiscoverFeed={false} posts={data?.bookmarkedPosts} arePostsPending={isPending} />
     </Box>
   )
 }

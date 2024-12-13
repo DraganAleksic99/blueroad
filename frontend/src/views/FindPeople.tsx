@@ -23,9 +23,11 @@ import { TUser } from '../routes/Profile'
 
 const WhoToFollowPaper = styled(Paper)({
   borderRadius: 0,
-  borderLeft: '1px solid #e5e7eb',
-  borderRight: '1px solid #e5e7eb',
-  maxHeight: '100vh',
+  border: '1px solid #e5e7eb',
+  borderTop: 'none',
+  borderBottomLeftRadius: '16px',
+  borderBottomRightRadius: '16px',
+  maxHeight: 'calc(100vh - 51px)',
   overflowY: 'auto',
   '&::-webkit-scrollbar': {
     width: '6px'

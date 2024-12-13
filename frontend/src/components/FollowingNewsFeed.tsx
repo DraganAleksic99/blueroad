@@ -17,7 +17,7 @@ export default function FollowingNewsFeed() {
   })
 
   return (
-    <Grid container spacing={2} sx={{ borderRight: '1px solid #e5e7eb' }}>
+    <Grid container spacing={2}>
       <Grid item sx={{ width: '100%' }}>
         <Card sx={{ borderRadius: 0 }}>
           <NewPost />

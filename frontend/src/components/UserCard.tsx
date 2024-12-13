@@ -63,7 +63,8 @@ export default function UserCard({ user }: { user: TUser }) {
         <InfoRow style={{ marginBottom: '16px' }}>
           <CalendarIcon fontSize="small" />
           <Typography variant="body2">
-            {'Joined: ' + new Date(user.created).toDateString()}
+            {'Joined ' +
+              new Date(user.created).toLocaleString('en-US', { month: 'short', year: 'numeric' })}
           </Typography>
         </InfoRow>
         {user.about && (

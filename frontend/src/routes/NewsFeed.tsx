@@ -42,14 +42,14 @@ export default function NewsFeed() {
       <AppBar
         elevation={0}
         sx={{
-          borderRight: '1px solid #e5e7eb',
-          borderBottom: '1px solid #e5e7eb',
           maxWidth: '640px',
           left: 'auto',
-          right: 'auto'
+          right: 'auto',
+          borderRight: '1px solid #e5e7eb',
+          borderBottom: '1px solid #e5e7eb',
+          backgroundColor: '#fff',
         }}
         position="fixed"
-        color="default"
       >
         <Tabs
           classes={{
@@ -75,7 +75,8 @@ export default function NewsFeed() {
             '& .MuiButtonBase-root': {
               textTransform: 'none',
               fontSize: '1rem',
-              px: '30px'
+              px: '30px',
+              color: 'rgb(33, 150, 243)'
             },
             '& .MuiButtonBase-root:hover': {
               backgroundColor: 'rgba(33, 150, 243, 0.1)'

@@ -79,7 +79,7 @@ export default function PostFeed() {
   }, [pathname])
 
   return (
-    <Grid container sx={{ borderRight: '1px solid #e5e7eb', minHeight: '100vh' }}>
+    <Grid container sx={{ minHeight: '100vh' }}>
       <Grid item sx={{ width: '100%' }}>
         <SectionTitle title="Post" />
         <Card elevation={0} sx={{ borderRadius: 0 }}>

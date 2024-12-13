@@ -28,7 +28,6 @@ export default function PostList({ posts, arePostsPending, isOnDiscoverFeed }: P
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: 'rgba(246, 247, 248, 0.5)'
       }}
     >
       {arePostsPending && <Spinner />}

@@ -19,7 +19,7 @@ export type TUser = {
   email: string
   password: string
   about: string
-  created: number
+  created: Date
   photo: {
     data: Buffer
   }
@@ -73,7 +73,7 @@ export default function Profile() {
   }, [checkFollow])
 
   return (
-    <Paper elevation={2} sx={{ borderRight: '1px solid #e5e7eb' }}>
+    <Paper elevation={2}>
       {isLoading ? (
         <ProfileCardSkeleton />
       ) : (

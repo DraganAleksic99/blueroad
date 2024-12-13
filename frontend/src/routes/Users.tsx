@@ -33,7 +33,7 @@ export default function Users() {
   }, [pathname])
 
   return (
-    <Paper elevation={2} sx={{ borderRight: '1px solid #e5e7eb' }}>
+    <Paper elevation={2}>
       <SectionTitle title="Users" />
       <Box sx={{ p: 2, pt: 0, columnCount: 2 }}>
         {isPending

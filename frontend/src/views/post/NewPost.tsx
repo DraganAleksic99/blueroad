@@ -129,7 +129,7 @@ export default function NewPost({
   }
 
   return (
-    <Paper sx={{ p: 2, borderRadius: 0, borderBottom: '1px solid #e5e7eb' }}>
+    <Paper elevation={0} sx={{ p: 2, borderRadius: 0, borderBottom: '1px solid #e5e7eb' }}>
       <Stack direction="row" spacing={2} sx={{ mb: 1, display: 'flex', alignItems: 'flex-start' }}>
         <Link to={`/user/${user._id}`}>
           <Avatar src={baseUrl + '/api/users/photo/' + user._id} />

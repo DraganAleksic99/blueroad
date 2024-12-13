@@ -123,7 +123,7 @@ export default function ProfileCard({
             </Typography>
             <Typography sx={{ display: 'flex', alignItems: 'center', pt: 2 }} variant="body2">
               <CalendarIcon sx={{ mr: 1 }} fontSize="small" />
-              {'Joined: ' + new Date(user.created).toDateString()}
+              {'Joined ' + new Date(user.created).toLocaleString('en-US', { month: 'short', year: 'numeric' })}
             </Typography>
           </CardContent>
         </Box>
