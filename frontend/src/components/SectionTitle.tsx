@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Box, Typography, IconButton } from '@mui/material'
-import { ArrowBack as ArrowBackIcon } from '@mui/icons-material'
+import { ArrowBackRounded as ArrowBackRoundedIcon } from '@mui/icons-material'
 import Tooltip from './Tooltip'
 
 export default function SectionTitle({ title }: { title: string }) {
@@ -14,25 +14,25 @@ export default function SectionTitle({ title }: { title: string }) {
       display="flex"
       alignItems="center"
       sx={{
-        borderBottom: '1px solid #e5e7eb',
         zIndex: 999,
         backdropFilter: 'blur(12px)'
       }}
     >
       <Tooltip title="Back" offset={12}>
         <IconButton
+          disableRipple
           size="small"
           sx={{
+            '& .MuiSvgIcon-root': {
+              color: 'rgb(33, 150, 243)'
+            },
             '&:hover': {
-              backgroundColor: 'rgba(33, 150, 243, 0.1)',
-              '& .MuiSvgIcon-root': {
-                color: 'rgb(33, 150, 243)'
-              }
+              backgroundColor: 'rgba(33, 150, 243, 0.1)'
             }
           }}
           onClick={() => navigate(-1)}
         >
-          <ArrowBackIcon />
+          <ArrowBackRoundedIcon />
         </IconButton>
       </Tooltip>
       <Typography

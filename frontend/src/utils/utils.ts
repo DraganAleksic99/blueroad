@@ -68,5 +68,26 @@ function formatDate(timestamp: Date) {
   return `${month} ${day}`
 }
 
+function formatDateAndTime(timestamp) {
+  const date = new Date(timestamp);
+  
+  // Format time (9:55 PM)
+  const timeFormatted = date.toLocaleString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+  
+  // Format date (Dec 13 2024)
+  const dateFormatted = date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+  
+  // Combine with middle dot
+  return `${timeFormatted} · ${dateFormatted}`;
+}
+
 export default { authenticate, isAuthenticated, clearJWT }
-export { createHandleFromEmail, useInView, formatDate }
+export { createHandleFromEmail, useInView, formatDate, formatDateAndTime }

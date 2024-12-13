@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDebouncedCallback, useThrottledCallback } from 'use-debounce'
-import { Button, styled } from '@mui/material'
+import { Box, Button, styled } from '@mui/material'
 import { FavoriteBorder as FavoriteBorderIcon, Favorite as FavoriteIcon } from '@mui/icons-material'
 import Tooltip from './Tooltip'
 import { likePost, unlikePost } from '../services/postService'
@@ -21,7 +21,7 @@ const ActionButton = styled(Button)(({ theme }) => ({
       color: 'rgb(249, 24, 128)'
     },
     '&': {
-      color: 'rgb(249, 24, 128)'
+      color: 'rgb(249, 24, 128)',
     }
   }
 }))
@@ -164,7 +164,9 @@ export default function LikeButton({ post, onLike, isOnDiscoverFeed }: Props) {
         }
         onClick={handleLike}
       >
+        <Box display="flex" alignItems="center" pt="2px">
         {likesCount}
+        </Box>
       </ActionButton>
     </Tooltip>
   )

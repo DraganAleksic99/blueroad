@@ -100,15 +100,21 @@ export default function Reply({ commentMutation }: Props) {
             </svg>
           </Box>
           <Button
-            variant="outlined"
+            disableRipple
             size="small"
             sx={{
               borderRadius: '20px',
               textTransform: 'none',
               px: 2,
               height: '34px',
-              border: '1px solid rgb(33, 150, 243)',
-              color: 'rgb(33, 150, 243)'
+              backgroundColor: 'rgb(33, 150, 243)',
+              color: '#fff',
+              fontWeight: 'bold',
+              fontSize: '15px',
+              '&.Mui-disabled': {
+                backgroundColor: 'rgba(33, 150, 243, 0.5)',
+                color: 'rgba(255, 255, 255, 0.8)',
+              }
             }}
             onClick={e => {
               e.preventDefault()

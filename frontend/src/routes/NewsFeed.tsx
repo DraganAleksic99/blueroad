@@ -82,8 +82,8 @@ export default function NewsFeed() {
               backgroundColor: 'rgba(33, 150, 243, 0.1)'
             },
             '& .Mui-selected': {
-              color: 'rgb(33, 150, 243)',
-              fontWeight: 'bold'
+              fontWeight: 'bold',
+              color: 'rgb(33, 150, 243)'
             }
           }}
           centered

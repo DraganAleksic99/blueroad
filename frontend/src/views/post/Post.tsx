@@ -34,7 +34,7 @@ import LikeButton from '../../components/LikeButton'
 import PostMenu from '../../components/PostMenu'
 
 import { comment, incrementPostViews } from '../../services/postService'
-import auth, { Session, createHandleFromEmail, useInView, formatDate } from '../../utils/utils'
+import auth, { Session, createHandleFromEmail, useInView, formatDate, formatDateAndTime } from '../../utils/utils'
 import { TUser } from '../../routes/Profile'
 import { TFollowCallbackFn } from '../../components/FollowProfileButton'
 import { TComment, TPost } from '../../routes/NewsFeed'
@@ -224,7 +224,7 @@ export default function Post({
       }}
     >
       <CardHeader
-        sx={{ pb: 0, alignItems: 'flex-start' }}
+        sx={{ pb: 0, pt: '12px', alignItems: 'flex-start' }}
         avatar={
           <Link to={`/profile/${post.postedBy._id}`}>
             <Avatar
@@ -296,6 +296,10 @@ export default function Post({
         </Box>
       </CardContent>
 
+      {match && match.params?.postId && <Box mt="10px" ml={2}>
+        {formatDateAndTime(post.created)}
+        </Box>}
+
       {match && match.params?.postId && (
         <Box
           sx={{
@@ -318,7 +322,7 @@ export default function Post({
       <CardActions
         sx={{
           pl: match && match.params?.postId ? '8px' : '64px',
-          py: '6px',
+          py: '5px',
           pr: '8px',
           display: 'flex',
           justifyContent: 'space-between'
@@ -345,7 +349,9 @@ export default function Post({
               setShowReplyButton(!showReplyButton)
             }}
           >
-            {post.comments.length}
+            <Box display="flex" alignItems="center" pt="2px">
+              {post.comments.length}
+            </Box>
           </ActionButton>
         </Tooltip>
         <Tooltip title="View" offset={-5}>
@@ -368,7 +374,9 @@ export default function Post({
               setisDialogOpen(true)
             }}
           >
-            {post.views ?? 0}
+            <Box display="flex" alignItems="center" pt="2px">
+              {post.views ?? 0}
+            </Box>
           </ActionButton>
         </Tooltip>
         <BookmarkButton

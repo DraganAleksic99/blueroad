@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Box, Card, Typography } from '@mui/material'
-import { Book as BookIcon } from '@mui/icons-material'
+import { BookOutlined as BookOutlinedIcon } from '@mui/icons-material'
 import PostList from '../views/post/PostList'
 import SectionTitle from './SectionTitle'
 import { getBookmarks } from '../services/userService'
@@ -30,7 +30,7 @@ export default function Bookmarks() {
                 height="100%"
                 textAlign="center"
               >
-                <BookIcon sx={{ fontSize: 64, color: 'gray', mb: 2 }} />
+                <BookOutlinedIcon sx={{ fontSize: 64, color: 'gray', mb: 2 }} />
                 <Typography variant="inherit" color="textSecondary">
                   No bookmarked posts yet.
                 </Typography>

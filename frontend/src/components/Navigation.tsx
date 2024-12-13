@@ -12,6 +12,7 @@ import {
   Typography,
   Box,
   Button,
+  IconButton,
   Menu,
   useMediaQuery,
   SwipeableDrawer,
@@ -24,7 +25,8 @@ import {
   Person as ProfileIcon,
   Bookmark as BookmarkIcon,
   MoreHoriz as MoreHorizIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Close as CloseIcon
 } from '@mui/icons-material'
 import auth, { Session } from '../utils/utils'
 import NewPost from '../views/post/NewPost'
@@ -99,10 +101,7 @@ export default function Navigation() {
       >
         <Box>
           <Link style={{ width: 'fit-content', display: 'inline-block' }} to="/">
-            <Typography
-              variant="h6"
-              sx={{ p: 2, fontWeight: 'bold', color: 'rgb(33, 150, 243)' }}
-            >
+            <Typography variant="h6" sx={{ p: 2, fontWeight: 'bold', color: 'rgb(33, 150, 243)' }}>
               Blueroad
             </Typography>
           </Link>
@@ -124,9 +123,9 @@ export default function Navigation() {
                         width: 'fit-content',
                         borderRadius: '40px',
                         pr: 3,
-                        color: isActive ? 'rgb(33, 150, 243)' : '#6b7280',
+                        color: isActive ? 'rgb(33, 150, 243)' : '#000',
                         '& .MuiListItemIcon-root': {
-                          color: isActive ? 'rgb(33, 150, 243)' : ''
+                          color: isActive ? 'rgb(33, 150, 243)' : '#000'
                         }
                       }}
                     >
@@ -136,7 +135,7 @@ export default function Navigation() {
                           fontSize: {
                             lg: '1.2rem'
                           },
-                          fontWeight: 500
+                          fontWeight: isActive ? '700' : '400'
                         }}
                         primary={item.text}
                       />
@@ -158,7 +157,10 @@ export default function Navigation() {
                   width: 'fit-content',
                   borderRadius: '40px',
                   pr: 3,
-                  color: '#6b7280'
+                  color: '#000',
+                  '& .MuiListItemIcon-root': {
+                    color: '#000'
+                  }
                 }}
               >
                 <ListItemIcon>
@@ -169,7 +171,7 @@ export default function Navigation() {
                     fontSize: {
                       lg: '1.2rem'
                     },
-                    fontWeight: 500
+                    fontWeight: 400
                   }}
                   primary="Settings"
                 />
@@ -276,20 +278,25 @@ export default function Navigation() {
         open={isDialogOpen}
         onClose={() => setisDialogOpen(false)}
       >
-        <Box p={1} pb={0} borderBottom="1px solid #e5e7eb">
-          <Button
-            variant="text"
+        <Box p={1} pb={0}>
+        <IconButton
             sx={{
               color: 'rgb(33, 150, 243)',
               textTransform: 'none',
               fontWeight: 500,
               px: 1,
-              borderRadius: '20px'
+              borderRadius: '20px',
+              '&:hover': {
+                backgroundColor: 'rgba(33, 150, 243, 0.1)'
+              }
             }}
-            onClick={() => setisDialogOpen(false)}
+            onClick={e => {
+              e.preventDefault()
+              setisDialogOpen(false)
+            }}
           >
-            Cancel
-          </Button>
+            <CloseIcon fontSize="medium" />
+          </IconButton>
         </Box>
         <NewPost closeDialog={closeDialog} isDialogOpen={isDialogOpen} />
       </Dialog>

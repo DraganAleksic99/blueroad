@@ -35,13 +35,11 @@ export default function FollowProfileButton({ onButtonClick, following, isPendin
           data-following="Following"
           data-unfollow="Unfollow"
           sx={{
-            border: '1px solid rgb(33, 150, 243)',
             color: 'rgb(33, 150, 243)',
             px: 2,
             py: '4px',
             textTransform: 'none',
             borderRadius: '20px',
-            backgroundColor: 'rgba(33, 150, 243, 0.1)',
             '&::before': {
               content: 'attr(data-following)'
             },
@@ -71,7 +69,8 @@ export default function FollowProfileButton({ onButtonClick, following, isPendin
             textTransform: 'none',
             borderRadius: '20px',
             border: '1px solid rgb(33, 150, 243)',
-            color: 'rgb(33, 150, 243)'
+            color: '#fff',
+            backgroundColor: 'rgb(33, 150, 243)',
           }}
           onClick={handleFollow}
         >

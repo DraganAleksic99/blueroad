@@ -45,7 +45,7 @@ export default function GridCard({ user }: { user: TUser }) {
         }}
       >
         <CardHeader
-          sx={{ alignItems: 'flex-start' }}
+          sx={{ alignItems: 'flex-start', py: '12px' }}
           avatar={
             <Avatar
               src={baseUrl + '/api/users/photo/' + user._id}
@@ -73,7 +73,6 @@ export default function GridCard({ user }: { user: TUser }) {
                   position: 'absolute',
                   top: '16px',
                   right: '16px',
-                  backgroundColor: 'rgba(33, 150, 243, 0.1)',
                   border: '1px solid rgb(33, 150, 243)',
                   color: 'rgb(33, 150, 243)',
                   '&::before': {
@@ -96,7 +95,6 @@ export default function GridCard({ user }: { user: TUser }) {
               />
             ) : session.user._id === user._id ? null : (
               <Button
-                variant="outlined"
                 size="small"
                 disabled={isPending}
                 onClick={e => {
@@ -112,7 +110,8 @@ export default function GridCard({ user }: { user: TUser }) {
                   top: '16px',
                   right: '16px',
                   border: '1px solid rgb(33, 150, 243)',
-                  color: 'rgb(33, 150, 243)'
+                  color: '#fff',
+                  backgroundColor: 'rgb(33, 150, 243)'
                 }}
               >
                 {isFollower ? 'Follow back' : 'Follow'}

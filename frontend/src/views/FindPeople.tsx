@@ -151,17 +151,18 @@ export default function FindPeople() {
           {data.map(user => (
             <Link key={user._id} to={`/profile/${user._id}`}>
               <ListItem
-                sx={{ '&:hover': { backgroundColor: 'rgb(246, 247, 248)' } }}
+                sx={{ '&:hover': { backgroundColor: 'rgb(246, 247, 248)' }, py: '12px' }}
                 secondaryAction={
                   <Button
-                    variant="outlined"
                     size="small"
                     sx={{
                       borderRadius: '20px',
                       textTransform: 'none',
                       px: 2,
                       border: '1px solid rgb(33, 150, 243)',
-                      color: 'rgb(33, 150, 243)'
+                      backgroundColor: 'rgb(33, 150, 243)',
+                      color: '#fff',
+                      fontSize: '14px'
                     }}
                     onClick={e => {
                       e.preventDefault()
@@ -179,6 +180,7 @@ export default function FindPeople() {
                   primary={user.name}
                   secondary={createHandleFromEmail(user.email)}
                   sx={{
+                    m: 0,
                     maxWidth: '170px',
                     overflowX: 'hidden',
                     '.MuiListItemText-primary:hover': {

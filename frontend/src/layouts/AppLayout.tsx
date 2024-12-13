@@ -50,7 +50,7 @@ export default function AppLayout() {
           height: '100%',
           display: { xs: 'none', sm: 'none', md: 'block' },
           paddingLeft: {
-            lg: '16px'
+            lg: '24px'
           }
         }}
       >

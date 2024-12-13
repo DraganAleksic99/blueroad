@@ -21,15 +21,15 @@ import { createPost } from '../../services/postService'
 const ImageButton = styled(Button)(({ theme }) => ({
   textTransform: 'none',
   color: theme.palette.text.secondary,
-  marginLeft: '44px',
+  alignItems: 'center',
   height: '34px',
   paddingInline: '12px',
   borderRadius: '30px',
+  '& .MuiButton-startIcon': {
+    color: '#2196F3'
+  },
   '&:hover': {
     backgroundColor: 'rgba(33, 150, 243, 0.1)',
-    '& .MuiButton-startIcon': {
-      color: '#2196F3'
-    },
     '&': {
       color: '#2196F3'
     }
@@ -119,7 +119,11 @@ export default function NewPost({
     values.photo && postData.append('photo', values.photo)
 
     addPostMutation.mutate(postData)
-    closeDialog()
+
+    if (isDialogOpen) {
+      closeDialog()
+    }
+
     setValues({ ...values, text: '', photo: null })
   }
 
@@ -129,8 +133,8 @@ export default function NewPost({
   }
 
   return (
-    <Paper elevation={0} sx={{ p: 2, borderRadius: 0, borderBottom: '1px solid #e5e7eb' }}>
-      <Stack direction="row" spacing={2} sx={{ mb: 1, display: 'flex', alignItems: 'flex-start' }}>
+    <Paper elevation={0} sx={{ p: 2, pb: 1, borderRadius: 0, borderBottom: '1px solid #e5e7eb' }}>
+      <Stack direction="row" spacing={2} sx={{ display: 'flex', alignItems: 'flex-start' }}>
         <Link to={`/user/${user._id}`}>
           <Avatar src={baseUrl + '/api/users/photo/' + user._id} />
         </Link>
@@ -145,6 +149,7 @@ export default function NewPost({
           sx={{
             '& .MuiOutlinedInput-root': {
               p: 0,
+              pb: '12px',
               '& fieldset': {
                 borderColor: 'transparent'
               },
@@ -161,7 +166,7 @@ export default function NewPost({
         />
       </Stack>
       {values.photo && (
-        <Box sx={{ mb: 2, ml: '56px', position: 'relative' }}>
+        <Box sx={{ mb: 1, ml: '56px', position: 'relative' }}>
           <CardMedia
             component="img"
             height="400"
@@ -186,15 +191,12 @@ export default function NewPost({
           </IconButton>
         </Box>
       )}
+      <Box ml={ isDialogOpen ? 0 : '56px'} mb={1} borderBottom="1px solid #e5e7eb"></Box>
       <Stack sx={{ justifyContent: 'space-between' }} direction="row">
-        <ImageButton
-          role={undefined}
-          // @ts-expect-error required prop, ts doesn't recognize
-          component="label"
-          tabIndex={-1}
-          startIcon={<ImageOutlined />}
-        >
-          Photo
+        <ImageButton sx={{ ml: isDialogOpen ? '-10px' : '44px' }} role={undefined} tabIndex={-1} startIcon={<ImageOutlined />}>
+          <Box display="flex" alignItems="center" pt="2px">
+            Photo
+          </Box>
           <VisuallyHiddenInput
             type="file"
             onChange={e => {
@@ -229,15 +231,21 @@ export default function NewPost({
             </svg>
           </Box>
           <Button
-            disabled={!values.text}
-            variant="outlined"
+            disableRipple
+            disabled={!values.text.trim()}
             size="small"
             sx={{
               borderRadius: '20px',
               textTransform: 'none',
               px: 2,
-              border: '1px solid rgb(33, 150, 243)',
-              color: 'rgb(33, 150, 243)'
+              backgroundColor: 'rgb(33, 150, 243)',
+              color: '#fff',
+              fontWeight: 'bold',
+              fontSize: '15px',
+              '&.Mui-disabled': {
+                backgroundColor: 'rgba(33, 150, 243, 0.5)',
+                color: 'rgba(255, 255, 255, 0.8)'
+              }
             }}
             onClick={handleAddPost}
           >
