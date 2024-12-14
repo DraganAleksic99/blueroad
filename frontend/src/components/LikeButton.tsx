@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDebouncedCallback, useThrottledCallback } from 'use-debounce'
 import { Box, Button, styled } from '@mui/material'
 import { FavoriteBorder as FavoriteBorderIcon, Favorite as FavoriteIcon } from '@mui/icons-material'
+import { motion, AnimatePresence } from 'framer-motion'
 import Tooltip from './Tooltip'
 import { likePost, unlikePost } from '../services/postService'
 import auth, { Session } from '../utils/utils'
@@ -21,7 +22,7 @@ const ActionButton = styled(Button)(({ theme }) => ({
       color: 'rgb(249, 24, 128)'
     },
     '&': {
-      color: 'rgb(249, 24, 128)',
+      color: 'rgb(249, 24, 128)'
     }
   }
 }))
@@ -165,7 +166,17 @@ export default function LikeButton({ post, onLike, isOnDiscoverFeed }: Props) {
         onClick={handleLike}
       >
         <Box display="flex" alignItems="center" pt="2px">
-        {likesCount}
+          <AnimatePresence initial={false} mode="wait" >
+            <motion.span
+              key={likesCount}
+              initial={{ y: likesCount % 2 === 0 ? 7 : -7 }}
+              animate={{ y: 0 }}
+              exit={{ y: likesCount % 2 === 0 ? 7 : -7 }}
+              transition={{ duration: 0.1, ease: 'easeOut' }}
+            >
+              {likesCount}
+            </motion.span>
+          </AnimatePresence>
         </Box>
       </ActionButton>
     </Tooltip>

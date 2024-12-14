@@ -26,6 +26,7 @@ import {
   AssessmentOutlined as AssessmentOutlinedIcon,
   Close as CloseIcon
 } from '@mui/icons-material'
+import { motion, AnimatePresence } from 'framer-motion'
 import Reply from '../../components/Reply'
 import Comments from './Comments'
 import BookmarkButton from '../../components/BookmarkButton'
@@ -350,7 +351,17 @@ export default function Post({
             }}
           >
             <Box display="flex" alignItems="center" pt="2px">
+            <AnimatePresence initial={false} mode="wait" >
+            <motion.span
+              key={post.comments.length}
+              initial={{ y: -7 }}
+              animate={{ y: 0 }}
+              exit={{ y: 7 }}
+              transition={{ duration: 0.1, ease: 'easeOut' }}
+            >
               {post.comments.length}
+            </motion.span>
+          </AnimatePresence>
             </Box>
           </ActionButton>
         </Tooltip>
@@ -407,14 +418,16 @@ export default function Post({
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'right'
+          horizontal: 'center'
         }}
         sx={{
           '& .MuiPaper-root': {
-            color: '#2196F3',
-            bgcolor: '#fff',
-            borderRadius: '12px'
-          }
+            bgcolor: '#2196F3',
+            color: '#fff',
+            borderRadius: '12px',
+            fontSize: '1.1rem', 
+          },
+          width: 'fit-content'
         }}
         onClose={() => setSnackbarInfo({ open: false, message: '' })}
         open={snackbarInfo.open}
