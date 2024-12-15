@@ -28,7 +28,7 @@ type Props = {
 export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, post }: Props) {
   const { user, token }: Session = auth.isAuthenticated()
   const queryClient = useQueryClient()
-  const { state } = useLocation()
+  const { state, pathname } = useLocation()
 
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [previousBookmarkMutation, setPreviousBookmarkMutation] = useState<
@@ -68,25 +68,27 @@ export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, po
       if (previousBookmarkMutation === 'bookmark') {
         setPreviousBookmarkMutation('unbookmark')
 
-        await queryClient.cancelQueries({ queryKey: ['bookmarks', user, token] })
+        if (pathname === '/bookmarks') {
+          await queryClient.cancelQueries({ queryKey: ['bookmarks', user, token] })
 
-        const previousBookmarks = queryClient.getQueryData(['bookmarks', user, token])
+          const previousBookmarks = queryClient.getQueryData(['bookmarks', user, token])
 
-        queryClient.setQueryData(
-          ['bookmarks', user, token],
-          (oldData: { _id: string; bookmarkedPosts: TPost[] }) => {
-            const updatedBookmarks = [
-              ...oldData.bookmarkedPosts.filter(oldPost => oldPost._id !== post._id)
-            ]
+          queryClient.setQueryData(
+            ['bookmarks', user, token],
+            (oldData: { _id: string; bookmarkedPosts: TPost[] }) => {
+              const updatedBookmarks = [
+                ...oldData.bookmarkedPosts.filter(oldPost => oldPost._id !== post._id)
+              ]
 
-            return {
-              ...oldData,
-              bookmarkedPosts: updatedBookmarks
+              return {
+                ...oldData,
+                bookmarkedPosts: updatedBookmarks
+              }
             }
-          }
-        )
+          )
 
-        return { previousBookmarks }
+          return { previousBookmarks }
+        }
       } else {
         setPreviousBookmarkMutation('bookmark')
       }
@@ -100,6 +102,15 @@ export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, po
       setSnackbarInfo({
         open: true,
         message: `Something went wrong. Please try again.`
+      })
+    },
+    onSuccess() {
+      setSnackbarInfo({
+        open: true,
+        message:
+          previousBookmarkMutation === 'bookmark'
+            ? 'Added to your bookmarks'
+            : 'Removed from your bookmarks'
       })
     },
     onSettled() {
@@ -139,6 +150,7 @@ export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, po
 
   const handleBookmark = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
+
     const callbackFn = previousBookmarkMutation === 'bookmark' ? removeBookmark : addBookmark
 
     throttledOptimisticBookmarkUpdate()
@@ -163,7 +175,11 @@ export default function BookmarkButton({ bookmarkedPostsIds, setSnackbarInfo, po
         }}
         onClick={handleBookmark}
       >
-        {isBookmarked ? <BookmarkIcon sx={{ color: 'rgb(33, 150, 243)' }} /> : <BookmarkBorderIcon />}
+        {isBookmarked ? (
+          <BookmarkIcon sx={{ color: 'rgb(33, 150, 243)' }} />
+        ) : (
+          <BookmarkBorderIcon />
+        )}
       </IconButton>
     </Tooltip>
   )

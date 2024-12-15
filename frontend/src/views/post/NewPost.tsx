@@ -148,6 +148,7 @@ export default function NewPost({
           onChange={handleChange('text')}
           sx={{
             '& .MuiOutlinedInput-root': {
+              fontSize: '1.2rem',
               p: 0,
               pb: '12px',
               '& fieldset': {

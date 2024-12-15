@@ -9,6 +9,7 @@ import { TComment } from '../routes/NewsFeed'
 
 const StyledTextField = styled(TextField)({
   '& .MuiOutlinedInput-root': {
+    fontSize: '1.2rem',
     padding: 0,
     paddingBottom: 1,
     '& fieldset': {

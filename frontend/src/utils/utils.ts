@@ -69,25 +69,45 @@ function formatDate(timestamp: Date) {
 }
 
 function formatDateAndTime(timestamp) {
-  const date = new Date(timestamp);
-  
-  // Format time (9:55 PM)
+  const date = new Date(timestamp)
+
   const timeFormatted = date.toLocaleString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true
-  });
-  
-  // Format date (Dec 13 2024)
+  })
+
   const dateFormatted = date.toLocaleString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric'
-  });
-  
-  // Combine with middle dot
-  return `${timeFormatted} · ${dateFormatted}`;
+  })
+
+  return `${timeFormatted} · ${dateFormatted}`
+}
+
+async function copyToClipboard(
+  text: string,
+  snackbarCb: React.Dispatch<
+    React.SetStateAction<{
+      open: boolean
+      message: string
+    }>
+  >
+) {
+  try {
+    await navigator.clipboard.writeText(text)
+    snackbarCb({
+      open: true,
+      message: 'Copied to clipboard'
+    })
+  } catch (err) {
+    snackbarCb({
+      open: true,
+      message: 'Something went wrong. Please try again.'
+    })
+  }
 }
 
 export default { authenticate, isAuthenticated, clearJWT }
-export { createHandleFromEmail, useInView, formatDate, formatDateAndTime }
+export { createHandleFromEmail, useInView, formatDate, formatDateAndTime, copyToClipboard }

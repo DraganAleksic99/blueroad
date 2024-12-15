@@ -81,7 +81,10 @@ export default function FindPeople() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['usersToFollow', user._id, token] })
-      queryClient.invalidateQueries({ queryKey: ['profile', user._id, { user, token }], refetchType: 'all' })
+      queryClient.invalidateQueries({
+        queryKey: ['profile', user._id, { user, token }],
+        refetchType: 'all'
+      })
       queryClient.invalidateQueries({ queryKey: ['newsfeed'], refetchType: 'inactive' })
     },
     onSuccess: () => {
@@ -200,13 +203,14 @@ export default function FindPeople() {
         <Snackbar
           anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'right'
+            horizontal: 'center'
           }}
           sx={{
             '& .MuiPaper-root': {
-              color: '#2196F3',
-              bgcolor: '#fff',
-              borderRadius: '12px'
+              bgcolor: '#2196F3',
+              color: '#fff',
+              borderRadius: '12px',
+              fontSize: '1.1rem'
             }
           }}
           open={snackbarInfo.open}

@@ -169,9 +169,9 @@ export default function LikeButton({ post, onLike, isOnDiscoverFeed }: Props) {
           <AnimatePresence initial={false} mode="wait" >
             <motion.span
               key={likesCount}
-              initial={{ y: likesCount % 2 === 0 ? 7 : -7 }}
+              initial={{ y: likesCount % 2 === 0 ? -7 : 7 }}
               animate={{ y: 0 }}
-              exit={{ y: likesCount % 2 === 0 ? 7 : -7 }}
+              exit={{ y: likesCount % 2 === 0 ? -7 : 7 }}
               transition={{ duration: 0.1, ease: 'easeOut' }}
             >
               {likesCount}

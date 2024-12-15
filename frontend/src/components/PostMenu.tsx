@@ -7,12 +7,14 @@ import {
   FlagOutlined as FlagIcon,
   DeleteOutlined as DeleteIcon,
   PersonRemoveOutlined as PersonRemoveIcon,
-  PersonAddAlt1Outlined as PersonAddAlt1Icon
+  PersonAddAlt1Outlined as PersonAddAlt1Icon,
+  LinkOutlined as LinkOutlinedIcon,
+  ContentPasteOutlined as ContentPasteOutlinedIcon
 } from '@mui/icons-material'
 import Tooltip from './Tooltip'
 import { followUser, unfollowUser } from '../services/userService'
 import { removePost } from '../services/postService'
-import auth, { Session } from '../utils/utils'
+import auth, { Session, copyToClipboard } from '../utils/utils'
 import { TPost } from '../routes/NewsFeed'
 import { TFollowCallbackFn } from './FollowProfileButton'
 
@@ -130,7 +132,8 @@ export default function PostMenu({
               padding: '8px 0'
             },
             '& .MuiMenuItem-root': {
-              fontWeight: '500'
+              fontWeight: '500',
+              py: 1
             }
           }
         }}
@@ -162,6 +165,29 @@ export default function PostMenu({
             {isFollowing ? 'Unfollow' : 'Follow'} {post.postedBy.name}
           </MenuItem>
         )}
+        <MenuItem
+          onClick={e => {
+            e.preventDefault()
+            copyToClipboard(post.text, setSnackbarInfo)
+            setAnchorEl(null)
+          }}
+        >
+          <ContentPasteOutlinedIcon sx={{ mr: '12px' }} />
+          Copy post text
+        </MenuItem>
+        <MenuItem
+          onClick={e => {
+            e.preventDefault()
+            copyToClipboard(
+              "https://blue-road.netlify.app" + '/user/' + post.postedBy._id + '/post/' + post._id,
+              setSnackbarInfo
+            )
+            setAnchorEl(null)
+          }}
+        >
+          <LinkOutlinedIcon sx={{ mr: '12px' }} />
+          Copy link to post
+        </MenuItem>
         <MenuItem
           onClick={e => {
             e.preventDefault()

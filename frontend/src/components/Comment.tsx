@@ -8,12 +8,14 @@ import {
   MoreHoriz as MoreHorizIcon,
   FlagOutlined as FlagIcon,
   PersonRemoveOutlined as PersonRemoveIcon,
-  PersonAddAlt1Outlined as PersonAddAlt1Icon
+  PersonAddAlt1Outlined as PersonAddAlt1Icon,
+  LinkOutlined as LinkOutlinedIcon,
+  ContentPasteOutlined as ContentPasteOutlinedIcon
 } from '@mui/icons-material'
 import Tooltip from './Tooltip'
 import { followUser, unfollowUser } from '../services/userService'
 import { uncomment } from '../services/postService'
-import auth, { Session, formatDate } from '../utils/utils'
+import auth, { Session, formatDate, copyToClipboard } from '../utils/utils'
 import { TComment, TPost } from '../routes/NewsFeed'
 import { TFollowCallbackFn } from './FollowProfileButton'
 import { createHandleFromEmail } from '../utils/utils'
@@ -26,7 +28,13 @@ type Props = {
   isOnDiscoverFeed: boolean
 }
 
-export default function Comment({ postId, comment, isFollowing, handleFollowOrUnfollow, isOnDiscoverFeed }: Props) {
+export default function Comment({
+  postId,
+  comment,
+  isFollowing,
+  handleFollowOrUnfollow,
+  isOnDiscoverFeed
+}: Props) {
   const queryClient = useQueryClient()
   const [anchorEl, setAnchorEl] = useState<HTMLElement>()
   const { user, token }: Session = auth.isAuthenticated()
@@ -140,7 +148,8 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
                     padding: '8px 0'
                   },
                   '& .MuiMenuItem-root': {
-                    fontWeight: '500'
+                    fontWeight: '500',
+                    py: 1
                   }
                 }
               }}
@@ -178,6 +187,29 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
               <MenuItem
                 onClick={e => {
                   e.preventDefault()
+                  copyToClipboard(comment.text, () => {})
+                  setAnchorEl(null)
+                }}
+              >
+                <ContentPasteOutlinedIcon sx={{ mr: '12px' }} />
+                Copy post text
+              </MenuItem>
+              <MenuItem
+                onClick={e => {
+                  e.preventDefault()
+                  copyToClipboard(
+                    "https://blue-road.netlify.app" + '/user/' + comment.postedBy._id + '/post/' + comment._id,
+                    () => {}
+                  )
+                  setAnchorEl(null)
+                }}
+              >
+                <LinkOutlinedIcon sx={{ mr: '12px' }} />
+                Copy link to post
+              </MenuItem>
+              <MenuItem
+                onClick={e => {
+                  e.preventDefault()
                   setAnchorEl(null)
                 }}
               >
@@ -189,7 +221,7 @@ export default function Comment({ postId, comment, isFollowing, handleFollowOrUn
       />
       <CardContent
         sx={{
-          mt:'-16px',
+          mt: '-16px',
           pl: '72px',
           pt: '4px',
           '&.MuiCardContent-root:last-child': {

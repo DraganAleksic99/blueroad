@@ -1,15 +1,31 @@
 import { baseUrl } from '../config/config'
 
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Card, CardContent, CardMedia, Box, Typography, Button, IconButton } from '@mui/material'
-import { CalendarToday as CalendarIcon, MoreHoriz as MoreHorizIcon } from '@mui/icons-material'
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Box,
+  Typography,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Snackbar
+} from '@mui/material'
+import {
+  CalendarToday as CalendarIcon,
+  MoreHoriz as MoreHorizIcon,
+  LinkOutlined as LinkOutlinedIcon
+} from '@mui/icons-material'
 import FollowProfileButton, { TFollowCallbackFn } from './FollowProfileButton'
 import SectionTitle from './SectionTitle'
 import Tooltip from './Tooltip'
 import auth, { Session } from '../utils/utils'
 import { TUser } from '../routes/Profile'
 import { TPost } from '../routes/NewsFeed'
-import { createHandleFromEmail } from '../utils/utils'
+import { createHandleFromEmail, copyToClipboard } from '../utils/utils'
 
 type Props = {
   user: TUser
@@ -27,6 +43,12 @@ export default function ProfileCard({
   clickFollowButton
 }: Props) {
   const session: Session = auth.isAuthenticated()
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+
+  const [snackbarInfo, setSnackbarInfo] = useState({
+    open: false,
+    message: ''
+  })
 
   const photoUrl = user.photo
     ? `${baseUrl}/api/users/photo/${user._id}`
@@ -78,6 +100,8 @@ export default function ProfileCard({
                 {session && session.user?._id !== user._id && (
                   <Tooltip title="More" offset={8}>
                     <IconButton
+                      onClick={e => setAnchorEl(e.currentTarget)}
+                      disableRipple
                       size="small"
                       sx={{
                         border: '1px solid rgb(33, 150, 243)',
@@ -93,6 +117,37 @@ export default function ProfileCard({
                     </IconButton>
                   </Tooltip>
                 )}
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={() => setAnchorEl(null)}
+                  disableScrollLock={true}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                  PaperProps={{
+                    sx: {
+                      borderRadius: '12px',
+                      minWidth: '200px',
+                      '& .MuiList-root': {
+                        padding: '8px 0'
+                      },
+                      '& .MuiMenuItem-root': {
+                        fontWeight: '500',
+                        py: 1
+                      }
+                    }
+                  }}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      copyToClipboard('https://blue-road.netlify.app/profile/' + user._id, setSnackbarInfo)
+                      setAnchorEl(null)
+                    }}
+                  >
+                    <LinkOutlinedIcon sx={{ mr: '12px' }} />
+                    Copy link to profile
+                  </MenuItem>
+                </Menu>
               </Box>
             </Typography>
             <Typography variant="subtitle1" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
@@ -123,11 +178,31 @@ export default function ProfileCard({
             </Typography>
             <Typography sx={{ display: 'flex', alignItems: 'center', pt: 2 }} variant="body2">
               <CalendarIcon sx={{ mr: 1 }} fontSize="small" />
-              {'Joined ' + new Date(user.created).toLocaleString('en-US', { month: 'short', year: 'numeric' })}
+              {'Joined ' +
+                new Date(user.created).toLocaleString('en-US', { month: 'short', year: 'numeric' })}
             </Typography>
           </CardContent>
         </Box>
       </Card>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+        sx={{
+          '& .MuiPaper-root': {
+            bgcolor: '#2196F3',
+            color: '#fff',
+            borderRadius: '12px',
+            fontSize: '1.1rem', 
+          },
+          width: 'fit-content'
+        }}
+        onClose={() => setSnackbarInfo({ open: false, message: '' })}
+        open={snackbarInfo.open}
+        autoHideDuration={6000}
+        message={<span>{snackbarInfo.message}</span>}
+      />
     </>
   )
 }
